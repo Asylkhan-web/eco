@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Зерттеу</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config={darkMode:"class",theme:{extend:{
+    colors:{
+      "primary":"#0d631b","on-primary":"#fff","primary-fixed":"#a3f69c","primary-container":"#2e7d32",
+      "surface":"#f0fdf1","on-surface":"#131e17","on-surface-variant":"#40493d",
+      "outline-variant":"#bfcaba","surface-container":"#e4f1e5","surface-container-low":"#eaf7eb",
+      "surface-container-lowest":"#ffffff","tertiary":"#734e00","tertiary-fixed":"#ffdeac","tertiary-fixed-dim":"#ffba38"
+    },
+    fontFamily:{"headline":["Space Grotesk"],"body":["Inter"]}
+  }}}
+</script>
+<style>
+  body{font-family:'Inter',sans-serif;}
+  .font-headline{font-family:'Space Grotesk',sans-serif;}
+  .mission-card{transition:transform 0.2s ease,box-shadow 0.2s ease;}
+  .mission-card:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(13,99,27,0.1);}
+  .toast{animation:slideIn 0.3s ease,fadeOut 0.5s ease 2.5s forwards;}
+  @keyframes slideIn{from{transform:translateY(80px) translateX(-50%);opacity:0}to{transform:translateY(0) translateX(-50%);opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  @keyframes shimmer{0%,100%{opacity:0.5}50%{opacity:1}}
+  .shimmer{animation:shimmer 2s ease-in-out infinite;}
+</style>
+</head>
+<body class="bg-[#f0fdf1] font-body text-on-surface min-h-screen flex flex-col">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-[0_1px_0_rgba(19,30,23,0.08)]">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter font-headline">PhysiNature</a>
+    <div class="hidden md:flex items-center space-x-8 font-headline font-medium text-sm">
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html">Курстар</a>
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1" href="#">Зерттеу</a>
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 bg-[#e8f5e9] px-4 py-1.5 rounded-full">
+        <span class="material-symbols-outlined text-[#734e00] text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        <span class="text-sm font-bold text-[#0d631b]">420 Эко-тиын</span>
+      </div>
+      <a href="../user_dashboard_progress/code.html">
+        <div class="w-9 h-9 rounded-full bg-[#0d631b] flex items-center justify-center shadow">
+          <span class="material-symbols-outlined text-white text-base" style="font-variation-settings:'FILL' 1;">person</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div style="background:linear-gradient(135deg,#071a0a 0%,#0d2e12 50%,#071a0a 100%);" class="text-white relative overflow-hidden">
+  <div class="absolute inset-0 opacity-20" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2220%22 cy=%2280%22 r=%221%22 fill=%22%23a3f69c%22/><circle cx=%2260%22 cy=%2230%22 r=%220.8%22 fill=%22%23a3f69c%22/><circle cx=%2280%22 cy=%2270%22 r=%221.2%22 fill=%22%23a3f69c%22/><circle cx=%2240%22 cy=%2250%22 r=%220.6%22 fill=%22%23a3f69c%22/><circle cx=%2290%22 cy=%2240%22 r=%221%22 fill=%22%23a3f69c%22/></svg>');"></div>
+  <div class="max-w-5xl mx-auto px-6 lg:px-8 py-12 lg:py-16 relative z-10">
+    <div class="flex items-center gap-2 mb-5 text-white/60 text-sm">
+      <a href="../user_dashboard_progress/code.html" class="hover:text-white transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>Басқару тақтасы
+      </a>
+      <span>/</span><span class="text-white font-medium">Зерттеу</span>
+    </div>
+    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-5">
+      <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">biotech</span>
+      Ғылыми зерттеу орталығы
+    </div>
+    <h1 class="text-4xl lg:text-5xl font-headline font-extrabold tracking-tighter mb-4">Табиғатты зерттеу</h1>
+    <p class="text-white/70 max-w-xl text-sm lg:text-base leading-relaxed mb-8">Табиғат байқаулары, ғылыми мақалалар, далалық тапсырмалар. Физиканы шынайы өмірмен байланыстырыңыз.</p>
+    <div class="flex flex-wrap gap-3">
+      <div class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#a3f69c] text-sm" style="font-variation-settings:'FILL' 1;">assignment</span>
+        <span><strong>12</strong> белсенді тапсырма</span>
+      </div>
+      <div class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#ffba38] text-sm" style="font-variation-settings:'FILL' 1;">emoji_events</span>
+        <span><strong>+50</strong> тиын / тапсырма</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-5xl mx-auto px-6 lg:px-8 py-10 flex-1">
+
+  <!-- Active missions -->
+  <section class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-headline font-bold">🎯 Белсенді тапсырмалар</h2>
+      <span class="text-sm text-[#40493d]/60">Аяқтап Эко-тиын жинаңыз</span>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="missions-grid"></div>
+  </section>
+
+  <!-- Research articles -->
+  <section class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-headline font-bold">📖 Ғылыми мақалалар</h2>
+    </div>
+    <div class="space-y-4" id="articles-list"></div>
+  </section>
+
+  <!-- Nature discoveries -->
+  <section>
+    <h2 class="text-2xl font-headline font-bold mb-6">🌿 Табиғат ашулары</h2>
+    <div class="grid md:grid-cols-2 gap-5" id="discoveries-grid"></div>
+  </section>
+
+</main>
+
+<!-- Complete mission modal -->
+<div id="mission-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeMissionModal(event)">
+  <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl" onclick="event.stopPropagation()">
+    <div class="text-center mb-6">
+      <div class="text-5xl mb-3" id="modal-emoji">🎉</div>
+      <h3 class="text-xl font-headline font-bold" id="modal-title">Тапсырма аяқталды!</h3>
+      <p class="text-[#40493d] text-sm mt-2" id="modal-desc"></p>
+    </div>
+    <div class="bg-[#e8f5e9] rounded-xl p-4 text-center mb-6">
+      <div class="text-3xl font-headline font-bold text-[#0d631b]" id="modal-reward">+50 тиын</div>
+      <div class="text-sm text-[#40493d]/70 mt-1">Сіздің балансыңызға қосылды</div>
+    </div>
+    <button onclick="closeMissionModal()" class="w-full bg-[#0d631b] text-white py-3 rounded-xl font-bold hover:brightness-110 transition-all">
+      Жалғастыру
+    </button>
+  </div>
+</div>
+
+<footer class="bg-[#131e17]">
+  <div class="max-w-screen-2xl mx-auto py-8 px-8 flex justify-between items-center">
+    <span class="text-base font-headline text-white font-bold">PhysiNature</span>
+    <div class="text-xs text-white/40">© 2024 PhysiNature.</div>
+  </div>
+</footer>
+
+<div id="toast" class="hidden fixed bottom-6 left-1/2 bg-[#131e17] text-white px-5 py-3 rounded-full font-medium text-sm shadow-2xl z-[100] flex items-center gap-2" style="transform:translateX(-50%)">
+  <span class="material-symbols-outlined text-[#a3f69c] text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const missions=[
+  {id:'m1',emoji:'🌡️',title:'Температура байқауы',desc:'Сыртта/ішінде температураны өлшеп, фазалық өтулер симуляторымен салыстырыңыз.',subject:'Молекулалық физика',reward:50,xp:100,link:'../lesson_kinematics_in_nature/code.html',difficulty:'Оңай'},
+  {id:'m2',emoji:'🐦',title:'Құс ұшу траекториясы',desc:'Терезеден ұшып бара жатқан құсты бақылап, траекториясын сипаттаңыз.',subject:'Механика',reward:50,xp:150,link:'../lesson_kinematics_in_nature/code.html',difficulty:'Оңай'},
+  {id:'m3',emoji:'🔭',title:'Жарық сыну бақылауы',desc:'Стакан суға қалам тығып, жарық сынуын фотосуретке түсіріңіз.',subject:'Оптика',reward:75,xp:200,link:'../chlorophyll_physics/code.html',difficulty:'Орташа'},
+  {id:'m4',emoji:'🧲',title:'Магнит тәжірибесі',desc:'Үй магнитімен металл заттарды тартып, Кулон заңын растаңыз.',subject:'Электростатика',reward:75,xp:200,link:'../section3_electrostatics/code.html',difficulty:'Орташа'},
+  {id:'m5',emoji:'🌿',title:'Хлорофилл зерттеуі',desc:'Жасыл жапырақтың неліктен жасыл екенін диффузия моделімен түсіндіріңіз.',subject:'Молекулалық физика',reward:100,xp:250,link:'../chlorophyll_physics/code.html',difficulty:'Күрделі'},
+  {id:'m6',emoji:'⚡',title:'Статикалық электр',desc:'Шарды шашқа үйкеп, статикалық электрдің табиғатын зерттеңіз.',subject:'Электростатика',reward:60,xp:150,link:'../section3_electrostatics/code.html',difficulty:'Оңай'},
+];
+
+const articles=[
+  {emoji:'🦟',title:'Аралардың магнит навигациясы',desc:'Bal aralarы жерлік магнит өрісін қолданып 5 км-ге дейін дәл навигация жасайды. Кванттық биологияның ғажайып мысалы.',subject:'Кванттық физика',readTime:'5 мин',link:'../section4_quantum/code.html',date:'2024-03'},
+  {emoji:'🌊',title:'Су молекулаларының диффузиясы',desc:'Океандағы жылы және суық ағымдар молекулалар диффузиясының нәтижесі. Жылу алмасу формулалары.',subject:'Молекулалық физика',readTime:'4 мин',link:'../chlorophyll_physics/code.html',date:'2024-02'},
+  {emoji:'🦅',title:'Сапсанның кинематикасы',desc:'Сапсан 320 км/сағ жылдамдыққа жетеді. Снарядтық қозғалыс принциптері қалай қолданылады?',subject:'Механика',readTime:'6 мин',link:'../lesson_kinematics_in_nature/code.html',date:'2024-01'},
+  {emoji:'🌩️',title:'Найзағайдың физикасы',desc:'Найзағай кезінде 100 МВ-қа дейін потенциал айырымы пайда болады. Кулон заңы мен атмосфера.',subject:'Электростатика',readTime:'5 мин',link:'../section3_electrostatics/code.html',date:'2024-01'},
+];
+
+const discoveries=[
+  {emoji:'🌸',title:'Фотосинтез — кванттық процесс',desc:'2007 жылы ғалымдар фотосинтездің 95% тиімділігі кванттық когеренттілік арқылы жүзеге асатынын дәлелдеді.',tags:['Кванттық биология','Термодинамика'],subject:'Кванттық физика'},
+  {emoji:'🐠',title:'Балықтардың биолюминесценциясы',desc:'Терең су балықтарының жарық шығаруы — фотоэлектрлік принциптерге ұқсас биохимиялық реакция.',tags:['Оптика','Биофизика'],subject:'Кванттық физика'},
+  {emoji:'🕷️',title:'Өрмекші торының серпімділігі',desc:'Өрмекші жібі болаттан 5 есе берік. Молекулалық физика тұрғысынан: ковалентті байланыстар мен полимер физикасы.',tags:['Молекулалық физика','Механика'],subject:'Молекулалық физика'},
+  {emoji:'🌡️',title:'Термиттердің климат-контролі',desc:'Термит ұяларының ішкі температурасы тәулік бойы 31°C±1°C. Фазалық тепе-теңдік пен жылу алмасу.',tags:['Термодинамика','Молекулалық физика'],subject:'Молекулалық физика'},
+];
+
+function getUser(){return JSON.parse(localStorage.getItem('pn_current_user')||'null');}
+function getCompleted(){const u=getUser();return(u&&u.missions)||{};}
+
+function renderMissions(){
+  const completed=getCompleted();
+  document.getElementById('missions-grid').innerHTML=missions.map(m=>{
+    const done=!!completed[m.id];
+    return `
+    <div class="mission-card bg-white rounded-2xl border ${done?'border-[#a3f69c] bg-[#f0fdf1]':'border-[#e4f1e5]'} overflow-hidden">
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-3">
+          <span class="text-3xl">${m.emoji}</span>
+          ${done
+            ?'<span class="bg-[#e8f5e9] text-[#0d631b] text-xs font-bold px-2.5 py-0.5 rounded-full">✓ Орындалды</span>'
+            :`<span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${m.difficulty==='Оңай'?'bg-[#e8f5e9] text-[#0d631b]':m.difficulty==='Орташа'?'bg-[#fff3e0] text-[#e65100]':'bg-[#ffdad6] text-[#ba1a1a]'}">${m.difficulty}</span>`
+          }
+        </div>
+        <h3 class="font-headline font-bold text-[#131e17] mb-1">${m.title}</h3>
+        <p class="text-sm text-[#40493d] leading-relaxed mb-3">${m.desc}</p>
+        <div class="flex items-center justify-between text-xs text-[#40493d]/60 mb-4">
+          <span>${m.subject}</span>
+          <span class="font-bold text-[#734e00]">+${m.reward} тиын</span>
+        </div>
+        ${done
+          ?'<div class="w-full bg-[#e8f5e9] text-[#0d631b] py-2.5 rounded-xl text-sm font-bold text-center">✓ Аяқталды</div>'
+          :`<div class="flex gap-2">
+              <a href="${m.link}" class="flex-1 bg-[#0d631b] text-white py-2.5 rounded-xl text-sm font-bold text-center hover:brightness-110 transition-all">Бастау</a>
+              <button onclick="completeMission('${m.id}','${m.emoji}','${m.title}',${m.reward})" class="px-3 py-2.5 border border-[#bfcaba] rounded-xl text-sm hover:bg-[#f0fdf1] transition-colors text-[#40493d]" title="Орындалды деп белгілеу">
+                <span class="material-symbols-outlined text-sm">check</span>
+              </button>
+            </div>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderArticles(){
+  document.getElementById('articles-list').innerHTML=articles.map(a=>`
+    <a href="${a.link}" class="mission-card flex gap-4 bg-white rounded-2xl border border-[#e4f1e5] p-5 hover:border-[#a3f69c] transition-colors">
+      <span class="text-3xl shrink-0 mt-0.5">${a.emoji}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-1">
+          <span class="text-xs font-bold text-[#0d631b] bg-[#e8f5e9] px-2 py-0.5 rounded-full">${a.subject}</span>
+          <span class="text-xs text-[#40493d]/50">⏱ ${a.readTime}</span>
+        </div>
+        <h3 class="font-headline font-bold text-[#131e17] mb-1">${a.title}</h3>
+        <p class="text-sm text-[#40493d] line-clamp-2">${a.desc}</p>
+      </div>
+      <span class="material-symbols-outlined text-[#0d631b] shrink-0 self-center">arrow_forward</span>
+    </a>
+  `).join('');
+}
+
+function renderDiscoveries(){
+  document.getElementById('discoveries-grid').innerHTML=discoveries.map(d=>`
+    <div class="bg-white rounded-2xl border border-[#e4f1e5] p-6">
+      <span class="text-4xl block mb-3">${d.emoji}</span>
+      <span class="text-xs font-bold text-[#0d631b] bg-[#e8f5e9] px-2 py-0.5 rounded-full mb-3 inline-block">${d.subject}</span>
+      <h3 class="font-headline font-bold text-[#131e17] mb-2">${d.title}</h3>
+      <p class="text-sm text-[#40493d] leading-relaxed mb-4">${d.desc}</p>
+      <div class="flex flex-wrap gap-1.5">
+        ${d.tags.map(t=>`<span class="bg-[#f0fdf1] text-[#0d631b] text-xs px-2 py-0.5 rounded-full border border-[#a3f69c]/30">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function completeMission(id,emoji,title,reward){
+  const user=getUser();if(!user)return;
+  if(!user.missions)user.missions={};
+  if(user.missions[id])return;
+  user.missions[id]=true;
+  user.ecoCoins=(user.ecoCoins||420)+reward;
+  const users=JSON.parse(localStorage.getItem('pn_users')||'[]');
+  const idx=users.findIndex(u=>u.username===user.username);
+  if(idx>=0)users[idx]=user;
+  localStorage.setItem('pn_users',JSON.stringify(users));
+  localStorage.setItem('pn_current_user',JSON.stringify(user));
+  document.getElementById('modal-emoji').textContent=emoji;
+  document.getElementById('modal-title').textContent=title+' — орындалды!';
+  document.getElementById('modal-desc').textContent='Жарайсың! Тапсырманы сәтті аяқтадыңыз.';
+  document.getElementById('modal-reward').textContent='+'+reward+' тиын';
+  document.getElementById('mission-modal').classList.remove('hidden');
+  renderMissions();
+}
+function closeMissionModal(e){
+  if(!e||e.target===document.getElementById('mission-modal'))
+    document.getElementById('mission-modal').classList.add('hidden');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.remove('hidden');t.classList.add('toast');
+  setTimeout(()=>{t.classList.add('hidden');t.classList.remove('toast');},3200);
+}
+
+renderMissions();renderArticles();renderDiscoveries();
+</script>
+</body>
+</html>

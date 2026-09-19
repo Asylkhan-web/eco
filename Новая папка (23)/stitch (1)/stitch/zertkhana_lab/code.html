@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Зертхана</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config={darkMode:"class",theme:{extend:{
+    colors:{
+      "primary":"#0d631b","on-primary":"#ffffff","primary-fixed":"#a3f69c","primary-container":"#2e7d32",
+      "surface":"#f0fdf1","on-surface":"#131e17","on-surface-variant":"#40493d",
+      "outline-variant":"#bfcaba","surface-container":"#e4f1e5","surface-container-low":"#eaf7eb",
+      "surface-container-lowest":"#ffffff","tertiary":"#734e00","tertiary-fixed":"#ffdeac",
+      "tertiary-fixed-dim":"#ffba38","inverse-surface":"#28332b","inverse-on-surface":"#e7f4e8"
+    },
+    fontFamily:{"headline":["Space Grotesk"],"body":["Inter"]}
+  }}}
+</script>
+<style>
+  body{font-family:'Inter',sans-serif;}
+  .font-headline{font-family:'Space Grotesk',sans-serif;}
+  .sim-card{transition:transform 0.2s ease,box-shadow 0.2s ease;}
+  .sim-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(13,99,27,0.12);}
+  .toast{animation:slideIn 0.3s ease,fadeOut 0.5s ease 2.5s forwards;}
+  @keyframes slideIn{from{transform:translateY(100px) translateX(-50%);opacity:0}to{transform:translateY(0) translateX(-50%);opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  .category-pill.active{background:#0d631b;color:white;}
+</style>
+</head>
+<body class="bg-[#f0fdf1] font-body text-on-surface">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-[0_1px_0_rgba(19,30,23,0.08)]">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter font-headline">PhysiNature</a>
+    <div class="hidden md:flex items-center space-x-8 font-headline font-medium text-sm">
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html">Курстар</a>
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1" href="#">Зертхана</a>
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 bg-[#e8f5e9] px-4 py-1.5 rounded-full">
+        <span class="material-symbols-outlined text-[#734e00] text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        <span class="text-sm font-bold text-[#0d631b]" id="coin-bal">420 Эко-тиын</span>
+      </div>
+      <a href="../user_dashboard_progress/code.html">
+        <div class="w-9 h-9 rounded-full bg-[#0d631b] flex items-center justify-center shadow">
+          <span class="material-symbols-outlined text-white text-base" style="font-variation-settings:'FILL' 1;">person</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="bg-gradient-to-br from-[#0d631b] to-[#1b6d24] text-white">
+  <div class="max-w-5xl mx-auto px-6 lg:px-8 py-10 lg:py-14">
+    <div class="flex items-center gap-2 mb-4 text-white/60 text-sm">
+      <a href="../user_dashboard_progress/code.html" class="hover:text-white transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>Басқару тақтасы
+      </a>
+      <span>/</span><span class="text-white font-medium">Зертхана</span>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-white/15 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">science</span>
+          Интерактивті зертхана
+        </div>
+        <h1 class="text-4xl lg:text-5xl font-headline font-extrabold tracking-tighter mb-3">Физика зертханасы</h1>
+        <p class="text-white/70 max-w-lg text-sm lg:text-base leading-relaxed">8 интерактивті симулятор — молекулалардан кванттарға дейін. Нұқыңыз, зерттеңіз, ашыңыз.</p>
+      </div>
+      <div class="grid grid-cols-3 gap-3 min-w-[240px]">
+        <div class="bg-white/10 rounded-xl p-3 text-center border border-white/10">
+          <div class="text-2xl font-headline font-bold">8</div>
+          <div class="text-xs text-white/60 mt-0.5">Симулятор</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 text-center border border-white/10">
+          <div class="text-2xl font-headline font-bold">4</div>
+          <div class="text-xs text-white/60 mt-0.5">Пән</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 text-center border border-white/10">
+          <div class="text-2xl font-headline font-bold" id="done-count">0</div>
+          <div class="text-xs text-white/60 mt-0.5">Аяқталды</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-5xl mx-auto px-6 lg:px-8 py-10">
+
+  <!-- Filter pills -->
+  <div class="flex flex-wrap gap-2 mb-8">
+    <button onclick="filterSims('all')" id="pill-all" class="category-pill active px-4 py-2 rounded-full text-sm font-bold border border-[#bfcaba] transition-all">Барлығы</button>
+    <button onclick="filterSims('mechanics')" id="pill-mechanics" class="category-pill px-4 py-2 rounded-full text-sm font-bold border border-[#bfcaba] text-[#40493d] bg-white transition-all">🚗 Механика</button>
+    <button onclick="filterSims('molecular')" id="pill-molecular" class="category-pill px-4 py-2 rounded-full text-sm font-bold border border-[#bfcaba] text-[#40493d] bg-white transition-all">🔬 Молекулалық</button>
+    <button onclick="filterSims('electro')" id="pill-electro" class="category-pill px-4 py-2 rounded-full text-sm font-bold border border-[#bfcaba] text-[#40493d] bg-white transition-all">⚡ Электростатика</button>
+    <button onclick="filterSims('quantum')" id="pill-quantum" class="category-pill px-4 py-2 rounded-full text-sm font-bold border border-[#bfcaba] text-[#40493d] bg-white transition-all">✨ Кванттық</button>
+  </div>
+
+  <!-- Simulators grid -->
+  <div id="sim-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  </div>
+
+  <!-- Lab tips -->
+  <div class="mt-12 bg-white rounded-2xl p-6 border border-[#e4f1e5] shadow-sm">
+    <h3 class="font-headline font-bold text-lg mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#734e00]" style="font-variation-settings:'FILL' 1;">lightbulb</span>
+      Зертхана кеңестері
+    </h3>
+    <div class="grid md:grid-cols-3 gap-4 text-sm text-[#40493d]">
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#e8f5e9] flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[#0d631b] text-sm" style="font-variation-settings:'FILL' 1;">touch_app</span>
+        </div>
+        <p>Слайдерлерді жылжытып нақты уақыт нәтижесін бақылаңыз</p>
+      </div>
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#e8f5e9] flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[#0d631b] text-sm" style="font-variation-settings:'FILL' 1;">repeat</span>
+        </div>
+        <p>Болжам жасаңыз, тексеріңіз — ғылыми ойлауды дамытыңыз</p>
+      </div>
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#e8f5e9] flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[#0d631b] text-sm" style="font-variation-settings:'FILL' 1;">note_alt</span>
+        </div>
+        <p>Нәтижелерді жазып алып зертхана сұрақтарына жауап беріңіз</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-[#131e17] mt-auto">
+  <div class="max-w-screen-2xl mx-auto py-8 px-8 flex justify-between items-center gap-4">
+    <span class="text-base font-headline text-white font-bold">PhysiNature</span>
+    <div class="text-xs text-white/40">© 2024 PhysiNature.</div>
+  </div>
+</footer>
+
+<div id="toast" class="hidden fixed bottom-6 left-1/2 bg-[#131e17] text-white px-5 py-3 rounded-full font-medium text-sm shadow-2xl z-[100] flex items-center gap-2" style="transform:translateX(-50%)">
+  <span class="material-symbols-outlined text-[#a3f69c] text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const sims = [
+  {
+    id:'car', category:'mechanics',
+    icon:'directions_car', iconBg:'#e8f5e9', iconColor:'#0d631b',
+    title:'Машина қозғалысы',
+    desc:'Жылдамдық, үдеу, бұрыш — кинематиканы интерактивті симуляциямен меңгеріңіз.',
+    tags:['Кинематика','v=v₀+at'],
+    href:'../lesson_kinematics_in_nature/code.html',
+    difficulty:'Оңай', diffColor:'#0d631b', diffBg:'#e8f5e9'
+  },
+  {
+    id:'phase', category:'mechanics',
+    icon:'device_thermostat', iconBg:'#e8f5e9', iconColor:'#0d631b',
+    title:'Фазалық өтулер',
+    desc:'Қатты → Сұйық → Газ. Молекулалар қозғалысын температура арқылы басқарыңыз.',
+    tags:['Термодинамика','0°C · 100°C'],
+    href:'../lesson_kinematics_in_nature/code.html',
+    difficulty:'Орташа', diffColor:'#734e00', diffBg:'#fff3e0'
+  },
+  {
+    id:'circuit', category:'electro',
+    icon:'bolt', iconBg:'#fff3e0', iconColor:'#e65100',
+    title:'Электр тізбегі',
+    desc:'Тізбектей / параллель схема. ЭҚК, кедергі, ток, кернеу — нақты уақытта.',
+    tags:['Ом заңы','I=U/R'],
+    href:'../section3_electrostatics/code.html',
+    difficulty:'Орташа', diffColor:'#734e00', diffBg:'#fff3e0'
+  },
+  {
+    id:'magnet', category:'electro',
+    icon:'magnet', iconBg:'#fff3e0', iconColor:'#e65100',
+    title:'Магнит өрісі',
+    desc:'Тарту / тебу режимдері. Өріс сызықтарын, Кулон күшін бақылаңыз.',
+    tags:['Магнетизм','F=qvB·sinα'],
+    href:'../section3_electrostatics/code.html',
+    difficulty:'Орташа', diffColor:'#734e00', diffBg:'#fff3e0'
+  },
+  {
+    id:'diffusion', category:'molecular',
+    icon:'blur_circular', iconBg:'#f3e8ff', iconColor:'#7c3aed',
+    title:'Диффузия',
+    desc:'Молекулалардың таралуы — температура мен тығыздық әсерін тікелей бақылаңыз.',
+    tags:['Молекулалық физика','Броундық қозғалыс'],
+    href:'../chlorophyll_physics/code.html',
+    difficulty:'Оңай', diffColor:'#0d631b', diffBg:'#e8f5e9'
+  },
+  {
+    id:'optics', category:'quantum',
+    icon:'flare', iconBg:'#eef2ff', iconColor:'#4f46e5',
+    title:'Жарық сынуы',
+    desc:'Снеллиус заңы — шыны/су/алмаз арқылы жарық жолын зерттеңіз.',
+    tags:['Оптика','n₁sinα=n₂sinβ'],
+    href:'../chlorophyll_physics/code.html',
+    difficulty:'Орташа', diffColor:'#734e00', diffBg:'#fff3e0'
+  },
+  {
+    id:'photo', category:'quantum',
+    icon:'wb_sunny', iconBg:'#eef2ff', iconColor:'#4f46e5',
+    title:'Фотоэлектрлік эффект',
+    desc:'Толқын ұзындығы мен металл жұмыс функциясы — Эйнштейн теориясы.',
+    tags:['Кванттық','E=hν'],
+    href:'../chlorophyll_physics/code.html',
+    difficulty:'Күрделі', diffColor:'#ba1a1a', diffBg:'#ffdad6'
+  },
+  {
+    id:'bohr', category:'quantum',
+    icon:'atom', iconBg:'#eef2ff', iconColor:'#4f46e5',
+    title:'Бор атомы',
+    desc:'5 энергетикалық деңгей, электрон орбиталары, жарық шығару — Бор моделі.',
+    tags:['Кванттық','Eₙ=-13.6/n² эВ'],
+    href:'../chlorophyll_physics/code.html',
+    difficulty:'Күрделі', diffColor:'#ba1a1a', diffBg:'#ffdad6'
+  }
+];
+
+let activeFilter='all';
+
+function filterSims(cat){
+  activeFilter=cat;
+  document.querySelectorAll('.category-pill').forEach(el=>{
+    el.classList.remove('active');el.style.background='white';el.style.color='#40493d';
+  });
+  const pill=document.getElementById('pill-'+cat);
+  pill.classList.add('active');pill.style.background='#0d631b';pill.style.color='white';
+  renderSims();
+}
+
+function renderSims(){
+  const filtered=activeFilter==='all'?sims:sims.filter(s=>s.category===activeFilter);
+  const user=JSON.parse(localStorage.getItem('pn_current_user')||'null');
+  const done=(user&&user.labDone)||{};
+
+  document.getElementById('sim-grid').innerHTML=filtered.map(s=>`
+    <div class="sim-card bg-white rounded-2xl border border-[#e4f1e5] overflow-hidden cursor-pointer"
+      onclick="launchSim('${s.href}','${s.id}')">
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:${s.iconBg}">
+            <span class="material-symbols-outlined text-xl" style="color:${s.iconColor};font-variation-settings:'FILL' 1;">${s.icon}</span>
+          </div>
+          ${done[s.id]
+            ?'<span class="bg-[#e8f5e9] text-[#0d631b] text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><span class="material-symbols-outlined text-xs" style="font-variation-settings:\'FILL\' 1;">check_circle</span>Аяқталды</span>'
+            :'<span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:'+s.diffBg+';color:'+s.diffColor+'">'+s.difficulty+'</span>'
+          }
+        </div>
+        <h3 class="font-headline font-bold text-[#131e17] mb-1.5">${s.title}</h3>
+        <p class="text-sm text-[#40493d] leading-relaxed mb-4">${s.desc}</p>
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          ${s.tags.map(t=>`<span class="bg-[#f0fdf1] text-[#0d631b] text-xs font-medium px-2 py-0.5 rounded-full border border-[#a3f69c]/40">${t}</span>`).join('')}
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-[#40493d]/50">${s.category==='mechanics'?'🚗 Механика':s.category==='molecular'?'🔬 Молекулалық':s.category==='electro'?'⚡ Электростатика':'✨ Кванттық'}</span>
+          <span class="inline-flex items-center gap-1 text-xs font-bold text-[#0d631b]">Іске қосу <span class="material-symbols-outlined text-sm">arrow_forward</span></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function launchSim(href,id){
+  const user=JSON.parse(localStorage.getItem('pn_current_user')||'null');
+  if(user){
+    if(!user.labDone)user.labDone={};
+    user.labDone[id]=true;
+    const users=JSON.parse(localStorage.getItem('pn_users')||'[]');
+    const idx=users.findIndex(u=>u.username===user.username);
+    if(idx>=0)users[idx]=user;
+    localStorage.setItem('pn_users',JSON.stringify(users));
+    localStorage.setItem('pn_current_user',JSON.stringify(user));
+  }
+  window.location.href=href;
+}
+
+function updateDoneCount(){
+  const user=JSON.parse(localStorage.getItem('pn_current_user')||'null');
+  const done=(user&&user.labDone)||{};
+  document.getElementById('done-count').textContent=Object.keys(done).length;
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.remove('hidden');t.classList.add('toast');
+  setTimeout(()=>{t.classList.add('hidden');t.classList.remove('toast');},3200);
+}
+
+renderSims();
+updateDoneCount();
+</script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Жас Физик Дипломы</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1a0a3a, #0d1f0d, #1a0a3a); min-height: 100vh; }
+  .diploma-font { font-family: 'Cinzel', serif; }
+  .headline-font { font-family: 'Space Grotesk', sans-serif; }
+
+  /* Stars */
+  .star-field { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle linear infinite; }
+  @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+
+  /* Diploma */
+  .diploma-container {
+    background: linear-gradient(145deg, #1a0a00, #2d1500, #1a0a00);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+  .diploma-container::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700, #FF8C00, #FFD700);
+    z-index: -1;
+    animation: borderGlow 3s ease-in-out infinite;
+  }
+  @keyframes borderGlow {
+    0%,100% { opacity: 0.8; }
+    50% { opacity: 1; filter: brightness(1.3); }
+  }
+
+  .diploma-inner {
+    border: 2px solid rgba(255,215,0,0.3);
+    border-radius: 16px;
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 60px; height: 60px;
+    border: 3px solid rgba(255,215,0,0.5);
+  }
+  .corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+  .corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+  .corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+  .corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+
+  /* Medal */
+  .medal {
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at 35% 35%, #FFE57F, #FFD700, #B8860B);
+    border-radius: 50%;
+    border: 4px solid #FFD700;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 30px rgba(255,215,0,0.6), inset 0 0 20px rgba(255,255,200,0.2);
+    animation: medalPulse 2s ease-in-out infinite;
+  }
+  @keyframes medalPulse { 0%,100%{box-shadow:0 0 30px rgba(255,215,0,0.6)} 50%{box-shadow:0 0 60px rgba(255,215,0,0.9)} }
+
+  /* Confetti */
+  .confetto {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    z-index: 100;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Shine */
+  .shine-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    position: relative; overflow: hidden;
+    transition: all 0.3s;
+  }
+  .shine-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 40%; height: 200%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-20deg);
+    animation: shine 3s ease-in-out infinite;
+  }
+  @keyframes shine { 0%{left:-50%} 100%{left:150%} }
+  .shine-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,165,0,0.5); }
+
+  .section-badge {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(255,215,0,0.08);
+    border: 1px solid rgba(255,215,0,0.2);
+  }
+  .section-badge .check { color: #FFD700; font-size: 18px; }
+
+  @media print {
+    nav, .no-print { display: none !important; }
+    body { background: white !important; }
+    .diploma-container { background: white !important; border: 2px solid #333; }
+    .diploma-inner { border-color: #333; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="star-field" id="stars"></div>
+
+<!-- Nav -->
+<nav class="relative z-50 px-6 py-4 flex items-center justify-between max-w-5xl mx-auto no-print">
+  <a href="../main_dashboard/code.html" class="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors">
+    <span class="material-symbols-outlined">arrow_back</span>
+    <span class="headline-font font-bold text-lg">PhysiNature</span>
+  </a>
+  <div class="flex gap-3">
+    <button onclick="printDiploma()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all no-print">
+      <span class="material-symbols-outlined text-sm">print</span> Басып шығару
+    </button>
+    <a href="../main_dashboard/code.html" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all">
+      <span class="material-symbols-outlined text-sm">home</span> Басты бет
+    </a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="relative z-10 max-w-3xl mx-auto px-4 pb-12">
+
+  <!-- Diploma -->
+  <div class="diploma-container rounded-2xl p-1 mb-8">
+    <div class="diploma-inner p-10 rounded-2xl relative">
+      <!-- Corner ornaments -->
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <div class="text-yellow-400/60 text-xs tracking-[0.3em] uppercase mb-2 headline-font">PhysiNature · Білім платформасы</div>
+        <div class="w-24 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-4"></div>
+        <h1 class="diploma-font text-3xl md:text-4xl font-bold text-yellow-400 tracking-wide mb-1">ДИПЛОМ</h1>
+        <p class="text-yellow-400/70 text-sm tracking-widest">CERTIFICATE OF ACHIEVEMENT</p>
+      </div>
+
+      <!-- Medal -->
+      <div class="flex justify-center mb-6">
+        <div class="medal">
+          <span class="text-5xl">⚛️</span>
+        </div>
+      </div>
+
+      <!-- Main text -->
+      <div class="text-center mb-6">
+        <p class="text-white/60 text-sm mb-2">Осы диплом</p>
+        <h2 id="student-name" class="diploma-font text-3xl md:text-4xl font-bold text-white mb-2">
+          Студент-Ғалым
+        </h2>
+        <p class="text-white/60 text-sm mb-6">мерейтойлы атаққа ие болды</p>
+        <div class="inline-block">
+          <div class="bg-gradient-to-r from-yellow-600/20 via-yellow-400/30 to-yellow-600/20 border border-yellow-400/40 rounded-2xl px-8 py-4">
+            <div class="diploma-font text-2xl md:text-3xl font-bold text-yellow-300">«ЖАС ФИЗИК»</div>
+            <div class="text-yellow-400/70 text-xs tracking-widest mt-1">YOUNG PHYSICIST</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievement description -->
+      <div class="text-center mb-6">
+        <p class="text-white/70 text-sm leading-relaxed max-w-md mx-auto">
+          Физиканың 4 негізгі бөлімін — <span class="text-yellow-400">Механика</span>,
+          <span class="text-blue-400">Молекулалық физика</span>,
+          <span class="text-orange-400">Электростатика</span> және
+          <span class="text-purple-400">Кванттық физика</span> — сәтті аяқтағаны үшін берілді.
+        </p>
+      </div>
+
+      <!-- Completed sections -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="section-badge">
+          <span class="check">✓</span>
+          <div>
+            <div class="text-yellow-400 text-xs font-bold headline-font">Механика және динамика</div>
+            <div class="text-white/50 text-xs">Бөлім 1 · Аяқталды</div>
+          </div>
+        </div>
+        <div class="section-badge">
+          <span class="check">✓</span>
+          <div>
+            <div class="text-blue-400 text-xs font-bold headline-font">Молекулалық физика</div>
+            <div class="text-white/50 text-xs">Бөлім 2 · Аяқталды</div>
+          </div>
+        </div>
+        <div class="section-badge">
+          <span class="check">✓</span>
+          <div>
+            <div class="text-orange-400 text-xs font-bold headline-font">Электростатика</div>
+            <div class="text-white/50 text-xs">Бөлім 3 · Аяқталды</div>
+          </div>
+        </div>
+        <div class="section-badge">
+          <span class="check">✓</span>
+          <div>
+            <div class="text-purple-400 text-xs font-bold headline-font">Кванттық физика</div>
+            <div class="text-white/50 text-xs">Бөлім 4 · Аяқталды</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date and signature -->
+      <div class="flex justify-between items-end">
+        <div class="text-center">
+          <div class="w-32 h-px bg-yellow-400/40 mb-1"></div>
+          <div id="diploma-date" class="text-white/50 text-xs">2024 жыл</div>
+          <div class="text-yellow-400/60 text-xs">Берілген күні</div>
+        </div>
+        <div class="text-center">
+          <div class="text-yellow-400/80 text-lg font-bold headline-font mb-1">PhysiNature</div>
+          <div class="w-32 h-px bg-yellow-400/40 mb-1"></div>
+          <div class="text-yellow-400/60 text-xs">Білім платформасы</div>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-full border-2 border-yellow-400/40 flex items-center justify-center mx-auto mb-1">
+            <span class="text-yellow-400 text-2xl">⚡</span>
+          </div>
+          <div class="text-white/50 text-xs">Мөр</div>
+        </div>
+      </div>
+
+      <!-- Serial number -->
+      <div class="absolute bottom-4 right-4 text-yellow-400/30 text-xs headline-font" id="cert-id"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-3 gap-4 mb-8 no-print">
+    <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center">
+      <div class="text-3xl font-bold text-yellow-400 headline-font" id="stat-sections">4</div>
+      <div class="text-white/60 text-xs mt-1">Аяқталған бөлім</div>
+    </div>
+    <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center">
+      <div class="text-3xl font-bold text-yellow-400 headline-font" id="stat-points">1000</div>
+      <div class="text-white/60 text-xs mt-1">Жиналған ұпай</div>
+    </div>
+    <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center">
+      <div class="text-3xl font-bold text-yellow-400 headline-font">100%</div>
+      <div class="text-white/60 text-xs mt-1">Жалпы прогресс</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-col sm:flex-row gap-4 no-print">
+    <button onclick="printDiploma()"
+      class="shine-btn flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl text-gray-900 font-headline font-bold text-lg">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">print</span>
+      Дипломды басып шығару
+    </button>
+    <a href="../main_dashboard/code.html"
+      class="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-headline font-bold border border-white/20 transition-all">
+      <span class="material-symbols-outlined">home</span>
+      Басты бетке оралу
+    </a>
+  </div>
+
+  <!-- Congrats message -->
+  <div class="mt-8 bg-white/5 border border-yellow-400/20 rounded-2xl p-6 text-center no-print">
+    <div class="text-4xl mb-3">🎉</div>
+    <h3 class="text-white font-headline font-bold text-xl mb-2">Мерекеңізбен!</h3>
+    <p class="text-white/60 text-sm leading-relaxed">
+      Сіз PhysiNature платформасының барлық бөлімдерін аяқтадыңыз. Физика ғылымындағы жасаған еңбегіңіз мен табандылығыңыз үшін — сізге <span class="text-yellow-400 font-bold">«Жас физик»</span> атағы берілді! Ғылым жолында одан әрі жетістік тілеймін! 🚀
+    </p>
+  </div>
+</div>
+
+<script>
+  // Load user data
+  const user = JSON.parse(localStorage.getItem('pn_current_user') || '{}');
+  const name = [user.firstname, user.lastname].filter(Boolean).join(' ') || user.username || 'Студент';
+
+  document.getElementById('student-name').textContent = name;
+
+  // Date
+  const now = new Date();
+  const months = ['қаңтар','ақпан','наурыз','сәуір','мамыр','маусым','шілде','тамыз','қыркүйек','қазан','қараша','желтоқсан'];
+  document.getElementById('diploma-date').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} жыл`;
+
+  // Certificate ID
+  const certId = 'PN-' + String(Date.now()).slice(-8);
+  document.getElementById('cert-id').textContent = certId;
+
+  // Points
+  const progress = user.progress || {};
+  let totalPct = 0;
+  [1,2,3,4].forEach(i => totalPct += (progress[`section${i}`] || 0));
+  const points = Math.round(totalPct * 2.5);
+  document.getElementById('stat-points').textContent = points;
+
+  // Create star field
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    star.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      animation-duration:${Math.random()*3+2}s;
+      animation-delay:${Math.random()*3}s;
+    `;
+    document.getElementById('stars').appendChild(star);
+  }
+
+  // Confetti
+  function launchConfetti() {
+    const colors = ['#FFD700','#FF4500','#00CED1','#FF1493','#7FFF00','#FF8C00','#DA70D6','#00FA9A'];
+    for (let i = 0; i < 80; i++) {
+      setTimeout(() => {
+        const c = document.createElement('div');
+        c.className = 'confetto';
+        c.style.cssText = `
+          left:${Math.random()*100}%;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          animation-duration:${Math.random()*2+1.5}s;
+          animation-delay:${Math.random()*0.5}s;
+          width:${Math.random()*10+4}px;
+          height:${Math.random()*10+4}px;
+        `;
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3000);
+      }, Math.random() * 2000);
+    }
+  }
+
+  launchConfetti();
+  setTimeout(launchConfetti, 3000);
+
+  function printDiploma() {
+    window.print();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Аяқтаудың куәлігі | PhysiNature</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{extend:{
+      colors:{
+        "surface-bright":"#f0fdf1","on-primary":"#ffffff","surface-container":"#e4f1e5",
+        "tertiary-container":"#926500","secondary-fixed-dim":"#e4beb2","on-tertiary":"#ffffff",
+        "on-surface-variant":"#40493d","surface-container-low":"#eaf7eb","on-tertiary-container":"#ffefda",
+        "surface":"#f0fdf1","primary-fixed-dim":"#88d982","background":"#f0fdf1",
+        "on-primary-fixed-variant":"#005312","on-secondary-container":"#795c51","primary":"#0d631b",
+        "on-tertiary-fixed":"#281900","on-secondary-fixed":"#2b160f","surface-container-lowest":"#ffffff",
+        "on-secondary":"#ffffff","surface-variant":"#d9e6da","outline":"#707a6c",
+        "surface-container-highest":"#d9e6da","surface-container-high":"#dfece0","secondary":"#75584d",
+        "on-tertiary-fixed-variant":"#604100","primary-fixed":"#a3f69c","inverse-on-surface":"#e7f4e8",
+        "inverse-primary":"#88d982","on-primary-container":"#cbffc2","tertiary":"#734e00","error":"#ba1a1a",
+        "on-error-container":"#93000a","outline-variant":"#bfcaba","inverse-surface":"#28332b",
+        "on-surface":"#131e17","on-error":"#ffffff","on-secondary-fixed-variant":"#5b4137",
+        "secondary-container":"#fed7ca","tertiary-fixed-dim":"#ffba38","on-primary-fixed":"#002204",
+        "surface-dim":"#d0ddd2","secondary-fixed":"#ffdbce","error-container":"#ffdad6",
+        "surface-tint":"#1b6d24","tertiary-fixed":"#ffdeac","primary-container":"#2e7d32","on-background":"#131e17"
+      },
+      borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+      fontFamily:{"headline":["Space Grotesk"],"body":["Inter"],"label":["Inter"]}
+    }}
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-headline { font-family: 'Space Grotesk', sans-serif; }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+  .toast { animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards; }
+  @keyframes slideIn { from{transform:translateY(100px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes fadeOut { from{opacity:1} to{opacity:0} }
+  @media print {
+    #actions-sidebar, header, footer, #toast, .no-print { display: none !important; }
+    .cert-modal { position: static !important; background: white !important; box-shadow: none !important; border-radius: 0 !important; }
+    #cert-panel { flex-direction: column !important; }
+    #cert-preview { width: 100% !important; }
+    body { background: white !important; }
+  }
+  .cert-border-inner {
+    border: 3px solid #0d631b;
+    box-shadow: inset 0 0 0 8px rgba(163,246,156,0.2), 0 0 0 1px #a3f69c;
+  }
+  .confetti-particle {
+    position: fixed; width: 10px; height: 10px; border-radius: 2px;
+    animation: confettiFall linear forwards; pointer-events: none; z-index: 9999;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  .share-btn { transition: all 0.2s ease; }
+  .share-btn:hover { transform: translateY(-2px); }
+  .share-btn:active { transform: scale(0.96); }
+</style>
+</head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col">
+
+<!-- Жоғарғы навигация -->
+<header class="bg-[#f0fdf1]/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(19,30,23,0.05)] sticky top-0 z-50 no-print">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter font-headline">PhysiNature</a>
+    <nav class="hidden md:flex items-center space-x-8 font-headline font-medium text-sm tracking-tight">
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html">Курстар</a>
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html#cta">Біз туралы</a>
+    </nav>
+    <div class="flex items-center space-x-4">
+      <div class="hidden sm:flex items-center space-x-2 bg-primary-container/10 px-4 py-1.5 rounded-full border border-primary/10">
+        <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">generating_tokens</span>
+        <span class="text-primary font-semibold text-sm">$420 Эко-тиын</span>
+      </div>
+      <button onclick="showToast('Жаңа хабарландырулар жоқ')" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+      <a href="../user_dashboard_progress/code.html">
+        <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container/20 hover:border-primary transition-colors">
+          <div class="w-full h-full flex items-center justify-center bg-primary">
+            <span class="material-symbols-outlined text-white text-xl" style="font-variation-settings:'FILL' 1;">person</span>
+          </div>
+        </div>
+      </a>
+      <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-on-surface">menu</button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-outline-variant/20 px-8 py-4 space-y-3">
+    <a href="../home_discover_nature_s_physics/code.html" class="block py-2 font-medium text-on-surface-variant font-headline">Курстар</a>
+    <a href="../user_dashboard_progress/code.html" class="block py-2 font-medium text-on-surface-variant font-headline">Басқару тақтасы</a>
+  </div>
+</header>
+
+<main class="flex-grow relative flex items-center justify-center p-4 lg:p-12">
+  <div class="absolute inset-0 z-0 opacity-20 pointer-events-none filter blur-sm">
+    <div class="max-w-screen-xl mx-auto p-8 grid grid-cols-12 gap-6">
+      <div class="col-span-8 space-y-6">
+        <div class="h-64 bg-surface-container rounded-3xl"></div>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="h-32 bg-surface-container-high rounded-2xl"></div>
+          <div class="h-32 bg-surface-container-high rounded-2xl"></div>
+        </div>
+      </div>
+      <div class="col-span-4 h-full bg-surface-container-low rounded-3xl"></div>
+    </div>
+  </div>
+
+  <!-- Куәлік модалы -->
+  <div class="cert-modal relative z-10 bg-surface-container-lowest w-full max-w-5xl rounded-[2.5rem] shadow-[0_40px_100px_rgba(19,30,23,0.15)] overflow-hidden">
+    <div id="cert-panel" class="flex flex-col lg:flex-row">
+
+      <!-- Сол жақ: куәлік алдын-ала қарау -->
+      <div id="cert-preview" class="lg:w-2/3 p-6 lg:p-10 bg-white flex flex-col items-center justify-center relative">
+        <div class="no-print w-full mb-4 flex gap-2 flex-wrap">
+          <button onclick="switchCert('mechanics')" id="tab-mechanics" class="px-4 py-2 rounded-full text-xs font-bold bg-primary text-white transition-colors">Классикалық механика</button>
+          <button onclick="switchCert('photosynthesis')" id="tab-photosynthesis" class="px-4 py-2 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-primary hover:text-white transition-colors">Кванттық фотосинтез</button>
+          <button onclick="switchCert('bio')" id="tab-bio" class="px-4 py-2 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-primary hover:text-white transition-colors">Биомеханикалық қозғалыс</button>
+        </div>
+
+        <div id="printable-cert" class="cert-border-inner w-full bg-white flex flex-col items-center justify-center text-center p-8 relative overflow-hidden rounded-2xl">
+          <div class="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
+            <span class="material-symbols-outlined" style="font-size:20rem;font-variation-settings:'FILL' 1;">eco</span>
+          </div>
+          <div class="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-lg"></div>
+          <div class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-lg"></div>
+          <div class="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-lg"></div>
+          <div class="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-lg"></div>
+
+          <div class="flex items-center space-x-2 mb-6 relative z-10">
+            <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">eco</span>
+            <span class="font-headline font-bold text-xl tracking-tighter text-primary">PhysiNature Академиясы</span>
+          </div>
+
+          <div class="space-y-3 relative z-10">
+            <p class="font-label text-xs uppercase tracking-[0.3em] text-outline">Ресми мойындау</p>
+            <h1 class="font-headline text-3xl md:text-4xl font-bold text-on-surface">Аяқтаудың куәлігі</h1>
+            <p class="font-body text-outline italic">бұл сертификатпен куәландырады</p>
+            <h2 id="cert-name" class="font-headline text-4xl md:text-5xl font-extrabold text-primary py-4 underline underline-offset-8 decoration-1 decoration-primary/20">Алекс Ривера</h2>
+            <p class="font-body text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed" id="cert-desc">
+              биомеханика, органикалық жүйелер және табиғи қозғалыс принциптерін жоғары деңгейлі оқу жоспары арқылы сәтті меңгергені үшін
+            </p>
+            <h3 id="cert-title" class="font-headline text-xl font-bold text-on-surface">Механика шебері</h3>
+          </div>
+
+          <div class="mt-10 w-full flex justify-between items-end px-2 relative z-10">
+            <div class="text-left space-y-1">
+              <div class="h-[1px] w-32 bg-outline-variant mb-2"></div>
+              <p class="text-[10px] uppercase tracking-widest text-outline">Жетістік күні</p>
+              <p id="cert-date" class="font-bold text-sm">24 қазан 2024</p>
+            </div>
+            <div class="relative flex items-center justify-center">
+              <div class="absolute w-20 h-20 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
+              <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg transform rotate-12">
+                <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings:'FILL' 1;">verified</span>
+              </div>
+            </div>
+            <div class="text-right space-y-1">
+              <div class="h-[1px] w-32 bg-outline-variant mb-2"></div>
+              <p class="text-[10px] uppercase tracking-widest text-outline">Тексерілген оқытушы</p>
+              <p class="font-bold text-sm">Д-р Елена Торн</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Оң жақ: әрекеттер панелі -->
+      <div id="actions-sidebar" class="lg:w-1/3 bg-surface-container-low p-6 lg:p-10 flex flex-col justify-between">
+        <div>
+          <div class="mb-8">
+            <h4 class="font-headline text-2xl font-bold mb-2">Сіз жасадыңыз! 🎉</h4>
+            <p class="text-on-surface-variant text-sm">Сіздің шеберлігіңіз ресми түрде мойындалды. Жетістігіңізді желіде бөлісіңіз.</p>
+          </div>
+
+          <div class="space-y-3 mb-8">
+            <button onclick="downloadPDF()" class="share-btn w-full bg-primary text-white py-4 px-6 rounded-xl font-headline font-bold flex items-center justify-center space-x-3 hover:brightness-110 shadow-md">
+              <span class="material-symbols-outlined">download</span>
+              <span>PDF жүктеу</span>
+            </button>
+            <button onclick="shareLinkedIn()" class="share-btn w-full bg-[#0077b5] text-white py-4 px-6 rounded-xl font-headline font-bold flex items-center justify-center space-x-3 hover:brightness-110">
+              <span class="material-symbols-outlined">share</span>
+              <span>LinkedIn-де бөлісу</span>
+            </button>
+            <button onclick="copyLink()" class="share-btn w-full bg-surface-container-lowest text-on-surface py-4 px-6 rounded-xl font-headline font-bold flex items-center justify-center space-x-3 hover:bg-surface-container border border-outline-variant/20 transition-colors">
+              <span class="material-symbols-outlined">link</span>
+              <span id="copy-btn-text">Куәлік сілтемесін көшіру</span>
+            </button>
+          </div>
+
+          <div class="pt-6 border-t border-outline-variant/30">
+            <p class="text-[10px] uppercase tracking-widest text-outline mb-4 text-center">Әлеуметтік желіде бөлісу</p>
+            <div class="flex justify-center space-x-3">
+              <button onclick="shareToTwitter()" class="share-btn w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary-fixed transition-colors" title="Twitter/X">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.263 5.634zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </button>
+              <button onclick="shareToFacebook()" class="share-btn w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary-fixed transition-colors" title="Facebook">
+                <span class="material-symbols-outlined">groups</span>
+              </button>
+              <button onclick="shareToWhatsApp()" class="share-btn w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary-fixed transition-colors" title="WhatsApp">
+                <span class="material-symbols-outlined">hub</span>
+              </button>
+              <button onclick="shareEmail()" class="share-btn w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary-fixed transition-colors" title="Email">
+                <span class="material-symbols-outlined">mail</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-outline-variant/20 space-y-3">
+          <a href="../user_dashboard_progress/code.html" class="flex items-center space-x-2 text-sm font-medium text-outline hover:text-on-surface transition-colors">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            <span>Басқару тақтасына оралу</span>
+          </a>
+          <a href="../learning_map_the_skill_tree/code.html" class="flex items-center space-x-2 text-sm font-medium text-primary hover:underline transition-colors">
+            <span class="material-symbols-outlined text-base">account_tree</span>
+            <span>Дағды ағашын қарау</span>
+          </a>
+          <a href="../lesson_kinematics_in_nature/code.html" class="flex items-center space-x-2 text-sm font-medium text-primary hover:underline transition-colors">
+            <span class="material-symbols-outlined text-base">play_arrow</span>
+            <span>Оқуды жалғастыру</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Футер -->
+<footer class="bg-[#131e17] w-full mt-auto no-print">
+  <div class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
+    <div class="text-lg font-headline text-white">PhysiNature</div>
+    <div class="text-xs uppercase tracking-widest text-white/60">© 2024 PhysiNature. Қозғалыс заңдарын тіршілік логикасымен біріктіреміз.</div>
+    <div class="flex space-x-6">
+      <a class="text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="../home_discover_nature_s_physics/code.html#cta">Эко-миссия</a>
+      <a class="text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#" onclick="showToast('Қолдау жақында!')">Қолдау қызметі</a>
+      <a class="text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#">Құпиялылық саясаты</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Тост -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-inverse-on-surface px-6 py-3 rounded-full font-medium text-sm shadow-xl z-[100] flex items-center gap-2">
+  <span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  const certs = {
+    mechanics: {
+      name: 'Алекс Ривера',
+      title: 'Механика шебері',
+      desc: 'биомеханика, органикалық жүйелер және табиғи қозғалыс принциптерін жоғары деңгейлі оқу жоспары арқылы сәтті меңгергені үшін',
+      date: '24 қазан 2024'
+    },
+    photosynthesis: {
+      name: 'Алекс Ривера',
+      title: 'Кванттық фотосинтез маманы',
+      desc: 'кванттық биологиялық процестер мен жарықпен жұмыс жасайтын энергетикалық жүйелердің физикасын ерекше дәрежеде меңгергені үшін',
+      date: '15 наурыз 2024'
+    },
+    bio: {
+      name: 'Алекс Ривера',
+      title: 'Биомеханикалық қозғалыс сарапшысы',
+      desc: 'биомеханикалық қозғалыс, локомоция физикасы және биологиялық күш жүйелерін сәтті аяқтап, үздік нәтиже көрсеткені үшін',
+      date: '8 қаңтар 2024'
+    }
+  };
+
+  function switchCert(type) {
+    const cert = certs[type];
+    document.getElementById('cert-name').textContent = cert.name;
+    document.getElementById('cert-title').textContent = cert.title;
+    document.getElementById('cert-desc').textContent = cert.desc;
+    document.getElementById('cert-date').textContent = cert.date;
+    Object.keys(certs).forEach(k => {
+      const tab = document.getElementById(`tab-${k}`);
+      if (k === type) {
+        tab.className = 'px-4 py-2 rounded-full text-xs font-bold bg-primary text-white transition-colors';
+      } else {
+        tab.className = 'px-4 py-2 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-primary hover:text-white transition-colors';
+      }
+    });
+  }
+
+  function downloadPDF() {
+    showToast('Куәлік жүктеуге дайындалуда...');
+    setTimeout(() => { window.print(); }, 500);
+  }
+
+  function shareLinkedIn() {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('Мен PhysiNature Академиясынан куәлік алдым! 🌿');
+    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank', 'width=600,height=500');
+    showToast('LinkedIn бөлісуі ашылуда...');
+  }
+
+  function copyLink() {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        document.getElementById('copy-btn-text').textContent = 'Сілтеме көшірілді!';
+        showToast('Куәлік сілтемесі алмасу буферіне көшірілді!');
+        setTimeout(() => { document.getElementById('copy-btn-text').textContent = 'Куәлік сілтемесін көшіру'; }, 2000);
+      });
+    } else {
+      showToast('Көшіру: ' + url);
+    }
+  }
+
+  function shareToTwitter() {
+    const text = encodeURIComponent('Мен PhysiNature Академиясынан физика бойынша куәлік алдым! 🌿⚗️ #PhysiNature #Физика #ТабиғиҒылым');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400');
+    showToast('Twitter бөлісуі ашылуда...');
+  }
+
+  function shareToFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+    showToast('Facebook бөлісуі ашылуда...');
+  }
+
+  function shareToWhatsApp() {
+    const text = encodeURIComponent('Мен PhysiNature Академиясынан куәлік алдым! Қараңыз: ' + window.location.href);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+    showToast('WhatsApp бөлісуі ашылуда...');
+  }
+
+  function shareEmail() {
+    const subject = encodeURIComponent('Мен PhysiNature Академиясының куәлігін алдым!');
+    const body = encodeURIComponent('Сәлем!\n\nМен PhysiNature Академиясынан аяқтаудың куәлігін алдым.\n\nМына жерден қараңыз: ' + window.location.href + '\n\nҚұрметпен,\nАлекс Ривера');
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    showToast('Электрондық пошта клиенті ашылуда...');
+  }
+
+  function toggleMobileMenu() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.remove('hidden');
+    t.classList.add('toast');
+    setTimeout(() => { t.classList.add('hidden'); t.classList.remove('toast'); }, 3200);
+  }
+
+  function launchConfetti() {
+    const colors = ['#0d631b', '#a3f69c', '#ffba38', '#2e7d32', '#cbffc2', '#ffdeac'];
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-particle';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.top = '-20px';
+        el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        el.style.width = (Math.random() * 10 + 6) + 'px';
+        el.style.height = (Math.random() * 10 + 6) + 'px';
+        el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        el.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+      }, i * 30);
+    }
+  }
+
+  window.addEventListener('load', () => {
+    setTimeout(launchConfetti, 300);
+    setTimeout(() => showToast('Жетістігіңізбен құттықтаймыз! 🎉'), 800);
+  });
+</script>
+</body>
+</html>

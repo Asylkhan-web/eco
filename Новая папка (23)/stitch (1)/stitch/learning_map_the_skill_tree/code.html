@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Дағды ағашы</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{extend:{
+      colors:{
+        "surface-bright":"#f0fdf1","on-primary":"#ffffff","surface-container":"#e4f1e5",
+        "tertiary-container":"#926500","on-tertiary":"#ffffff","on-surface-variant":"#40493d",
+        "surface-container-low":"#eaf7eb","surface":"#f0fdf1","primary-fixed-dim":"#88d982",
+        "background":"#f0fdf1","on-primary-fixed-variant":"#005312","primary":"#0d631b",
+        "surface-container-lowest":"#ffffff","on-secondary":"#ffffff","surface-variant":"#d9e6da",
+        "outline":"#707a6c","surface-container-highest":"#d9e6da","surface-container-high":"#dfece0",
+        "secondary":"#75584d","primary-fixed":"#a3f69c","inverse-on-surface":"#e7f4e8",
+        "inverse-primary":"#88d982","on-primary-container":"#cbffc2","tertiary":"#734e00",
+        "error":"#ba1a1a","outline-variant":"#bfcaba","inverse-surface":"#28332b",
+        "on-surface":"#131e17","on-error":"#ffffff","secondary-container":"#fed7ca",
+        "tertiary-fixed-dim":"#ffba38","on-primary-fixed":"#002204","surface-dim":"#d0ddd2",
+        "tertiary-fixed":"#ffdeac","primary-container":"#2e7d32","on-background":"#131e17"
+      },
+      borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+      fontFamily:{"headline":["Space Grotesk"],"body":["Inter"],"label":["Inter"]}
+    }}
+  }
+</script>
+<style>
+  body{font-family:'Inter',sans-serif;}
+  .font-headline{font-family:'Space Grotesk',sans-serif;}
+
+  /* MAP AREA */
+  .map-area{
+    background:
+      radial-gradient(ellipse at 30% 80%, rgba(5,46,10,0.9) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 20%, rgba(10,40,15,0.8) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(8,50,12,0.6) 0%, transparent 70%),
+      linear-gradient(160deg, #071a0a 0%, #0a2410 30%, #0d2e12 60%, #091f0c 100%);
+    position:relative; overflow:hidden;
+  }
+
+  /* Subtle texture overlay */
+  .map-area::before{
+    content:'';position:absolute;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events:none; z-index:1;
+  }
+
+  /* Node buttons */
+  .node-btn{
+    position:absolute; transform:translate(-50%,-50%);
+    display:flex; flex-direction:column; align-items:center;
+    cursor:pointer; z-index:10;
+    transition:filter 0.2s ease;
+  }
+  .node-btn:hover{filter:brightness(1.2);}
+  .node-btn:hover .node-circle{transform:scale(1.08);}
+  .node-circle{transition:transform 0.25s cubic-bezier(.34,1.56,.64,1);}
+
+  /* Active node pulse */
+  @keyframes ring-pulse{
+    0%,100%{transform:scale(1);opacity:0.6;}
+    50%{transform:scale(1.35);opacity:0;}
+  }
+  .active-ring{
+    position:absolute;inset:-8px;border-radius:9999px;
+    border:3px solid rgba(163,246,156,0.5);
+    animation:ring-pulse 2.4s ease-in-out infinite;
+  }
+  .active-ring-2{
+    position:absolute;inset:-16px;border-radius:9999px;
+    border:2px solid rgba(163,246,156,0.25);
+    animation:ring-pulse 2.4s ease-in-out 0.8s infinite;
+  }
+
+  /* Badge bounce */
+  @keyframes float-up{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-5px);}
+  }
+  .float-badge{animation:float-up 2.2s ease-in-out infinite;}
+
+  /* Path glow animation */
+  @keyframes dash-move{
+    to{stroke-dashoffset:-40;}
+  }
+  .path-animated{animation:dash-move 2s linear infinite;}
+
+  /* Path reveal */
+  @keyframes path-draw{
+    from{stroke-dashoffset:1200;}
+    to{stroke-dashoffset:0;}
+  }
+  .path-draw{animation:path-draw 1.5s ease-out forwards;}
+
+  /* Glass label */
+  .node-label{
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.18);
+    margin-top:10px; padding:5px 14px; border-radius:999px;
+    white-space:nowrap;
+  }
+
+  /* Toast */
+  .toast{animation:slideIn 0.3s ease,fadeOut 0.5s ease 2.5s forwards;}
+  @keyframes slideIn{from{transform:translateY(60px) translateX(-50%);opacity:0;}to{transform:translateY(0) translateX(-50%);opacity:1;}}
+  @keyframes fadeOut{from{opacity:1;}to{opacity:0;}}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:#0a1f0d;}
+  ::-webkit-scrollbar-thumb{background:#1b5e20;border-radius:3px;}
+</style>
+</head>
+<body class="bg-[#f0fdf1] font-body text-on-surface">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<!-- Nav -->
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-[0_1px_0_rgba(0,0,0,0.07)]">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter font-headline">PhysiNature</a>
+    <div class="hidden md:flex items-center space-x-8 font-headline font-medium text-sm tracking-tight">
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html">Курстар</a>
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1" href="#">Дағды ағашы</a>
+      <a class="text-[#131e17]/60 hover:text-[#0d631b] transition-colors" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <div class="hidden sm:flex items-center space-x-2 bg-primary-container/10 px-4 py-1.5 rounded-full border border-primary/10">
+        <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        <span class="text-sm font-bold text-primary tracking-tight">420 Эко-тиын</span>
+      </div>
+      <button onclick="showToast('Жаңа хабарландырулар жоқ')" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+      <a href="../user_dashboard_progress/code.html">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow hover:ring-2 hover:ring-primary/30 transition-all">
+          <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">person</span>
+        </div>
+      </a>
+      <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-on-surface">menu</button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-outline-variant/20 px-8 py-4 space-y-3">
+    <a href="../home_discover_nature_s_physics/code.html" class="block py-2 font-medium text-on-surface-variant font-headline">Курстар</a>
+    <a href="#" class="block py-2 font-bold text-primary font-headline">Дағды ағашы</a>
+    <a href="../user_dashboard_progress/code.html" class="block py-2 font-medium text-on-surface-variant font-headline">Басқару тақтасы</a>
+  </div>
+</nav>
+
+<main class="flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-[73px] bg-[#eaf7eb] p-6 space-y-8 z-40 overflow-y-auto">
+  <div class="space-y-4">
+    <div class="flex items-center space-x-3 p-2">
+      <div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">school</span>
+      </div>
+      <div>
+        <h3 class="font-bold text-sm text-on-surface">Студент-ғалым</h3>
+        <p class="text-xs text-on-surface/60">12-деңгейлі физик</p>
+      </div>
+    </div>
+    <div class="w-full bg-primary/10 rounded-xl px-4 py-2.5 text-sm font-bold text-primary text-center border border-primary/20">
+      📍 Дағды ағашында
+    </div>
+  </div>
+  <nav class="flex-grow space-y-2 font-body text-sm">
+    <a class="flex items-center space-x-3 px-4 py-3 bg-white text-[#0d631b] rounded-xl shadow-sm font-bold" href="#">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">account_tree</span>
+      <span>Дағды ағашы</span>
+    </a>
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="../home_discover_nature_s_physics/code.html">
+      <span class="material-symbols-outlined">menu_book</span>
+      <span>Модульдер</span>
+    </a>
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="../zertteu_research/code.html">
+      <span class="material-symbols-outlined">biotech</span>
+      <span>Зерттеу</span>
+    </a>
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="../zertkhana_lab/code.html">
+      <span class="material-symbols-outlined">science</span>
+      <span>Зертхана</span>
+    </a>
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="../eco_dukan_shop/code.html">
+      <span class="material-symbols-outlined">psychology</span>
+      <span>Эко-дүкен</span>
+    </a>
+  </nav>
+  <div class="pt-6 border-t border-primary/10 space-y-2">
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="#" onclick="showToast('Параметрлер панелі жақында!')">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Параметрлер</span>
+    </a>
+    <a class="flex items-center space-x-3 px-4 py-3 text-[#131e17]/60 hover:bg-white/50 transition-all rounded-xl" href="#" onclick="showToast('Қолдау чаты ашылуда...')">
+      <span class="material-symbols-outlined">help</span>
+      <span>Қолдау</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main content -->
+<section class="flex-1 lg:ml-64 flex flex-col">
+
+  <!-- Page header -->
+  <div class="bg-white border-b border-outline-variant/20 px-8 lg:px-12 py-6">
+    <div class="flex items-center gap-2 mb-3 text-sm text-on-surface-variant">
+      <a href="../user_dashboard_progress/code.html" class="flex items-center gap-1 hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Басқару тақтасы
+      </a>
+      <span class="text-outline-variant">/</span>
+      <span class="text-primary font-medium">Дағды ағашы</span>
+    </div>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h1 class="text-3xl lg:text-4xl font-headline font-extrabold text-[#131e17] tracking-tighter">Эко-физика жолы</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Табиғат заңдылықтарын меңгере отырып жолыңызды жалғастырыңыз</p>
+      </div>
+      <div class="flex items-center gap-4 text-sm">
+        <div class="flex items-center gap-1.5">
+          <div class="w-3 h-3 rounded-full bg-[#0d631b]"></div>
+          <span class="text-on-surface-variant">Аяқталды</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <div class="w-3 h-3 rounded-full bg-[#a3f69c] border-2 border-[#0d631b]"></div>
+          <span class="text-on-surface-variant">Белсенді</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <div class="w-3 h-3 rounded-full bg-white border-2 border-[#bfcaba]"></div>
+          <span class="text-on-surface-variant">Қолжетімді</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP AREA -->
+  <div class="map-area flex-1 relative" style="min-height:680px;">
+
+    <!-- SVG: paths + decorative elements (preserveAspectRatio=none → maps 1:1 to % positions) -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 680" preserveAspectRatio="none" style="z-index:2;">
+      <defs>
+        <!-- Glow filter -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glow-strong" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Path gradients -->
+        <linearGradient id="grad-complete" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse"
+          x1="500" y1="620" x2="185" y2="450">
+          <stop offset="0%" stop-color="#0d631b"/>
+          <stop offset="100%" stop-color="#4caf50"/>
+        </linearGradient>
+        <linearGradient id="grad-avail" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4caf50" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#81c784" stop-opacity="0.3"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Decorative background elements -->
+      <!-- Forest silhouettes -->
+      <g opacity="0.08">
+        <path d="M20,680 L20,580 L5,580 L30,530 L15,530 L45,470 L75,530 L60,530 L85,580 L70,580 L70,680 Z" fill="#4caf50"/>
+        <path d="M100,680 L100,600 L88,600 L108,555 L96,555 L120,510 L144,555 L132,555 L152,600 L140,600 L140,680 Z" fill="#4caf50"/>
+        <path d="M900,680 L900,590 L888,590 L910,540 L898,540 L922,490 L946,540 L934,540 L956,590 L944,590 L944,680 Z" fill="#4caf50"/>
+        <path d="M960,680 L960,610 L950,610 L968,568 L958,568 L978,528 L998,568 L988,568 L1005,610 L995,610 L995,680 Z" fill="#4caf50"/>
+        <path d="M840,680 L840,620 L832,620 L848,584 L840,584 L856,548 L872,584 L864,584 L880,620 L872,620 L872,680 Z" fill="#4caf50"/>
+      </g>
+
+      <!-- Subtle topographic rings around key points -->
+      <circle cx="500" cy="620" r="80" fill="none" stroke="rgba(163,246,156,0.04)" stroke-width="1"/>
+      <circle cx="500" cy="620" r="130" fill="none" stroke="rgba(163,246,156,0.03)" stroke-width="1"/>
+      <circle cx="185" cy="450" r="60" fill="none" stroke="rgba(163,246,156,0.04)" stroke-width="1"/>
+      <circle cx="185" cy="450" r="100" fill="none" stroke="rgba(163,246,156,0.03)" stroke-width="1"/>
+
+      <!-- Ground glow spots under nodes -->
+      <radialGradient id="spot1" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#0d631b" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#0d631b" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="spot2" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#4caf50" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#4caf50" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="spot3" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffba38" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#ffba38" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="spot4" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#9c27b0" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#9c27b0" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="spot5" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#3f51b5" stop-opacity="0"/>
+      </radialGradient>
+      <ellipse cx="500" cy="630" rx="90" ry="30" fill="url(#spot1)"/>
+      <ellipse cx="185" cy="462" rx="75" ry="25" fill="url(#spot2)"/>
+      <ellipse cx="650" cy="318" rx="65" ry="22" fill="url(#spot3)"/>
+      <ellipse cx="325" cy="172" rx="60" ry="20" fill="url(#spot4)"/>
+      <ellipse cx="700" cy="72" rx="60" ry="20" fill="url(#spot5)"/>
+
+      <!-- PATH 1→2: Mechanics to Molecular (COMPLETED - solid glow) -->
+      <path d="M500,620 C490,545 210,535 185,455"
+        stroke="rgba(0,34,4,0.6)" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <path d="M500,620 C490,545 210,535 185,455"
+        stroke="#0d631b" stroke-width="4" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+      <path d="M500,620 C490,545 210,535 185,455"
+        stroke="#a3f69c" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+      <!-- PATH 2→3: Molecular to Electrostatics -->
+      <path d="M185,450 C185,375 635,395 650,315"
+        stroke="rgba(255,255,255,0.05)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M185,450 C185,375 635,395 650,315"
+        stroke="#4caf50" stroke-width="2.5" fill="none" stroke-linecap="round"
+        stroke-dasharray="12 8" opacity="0.55" filter="url(#glow)"/>
+      <path class="path-animated" d="M185,450 C185,375 635,395 650,315"
+        stroke="rgba(163,246,156,0.4)" stroke-width="1.5" fill="none"
+        stroke-dasharray="6 20" stroke-linecap="round"/>
+
+      <!-- PATH 3→4: Electrostatics to Optics -->
+      <path d="M650,315 C650,238 345,255 325,170"
+        stroke="rgba(255,255,255,0.04)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M650,315 C650,238 345,255 325,170"
+        stroke="#ffba38" stroke-width="2" fill="none" stroke-linecap="round"
+        stroke-dasharray="10 10" opacity="0.4" filter="url(#glow)"/>
+      <path class="path-animated" d="M650,315 C650,238 345,255 325,170"
+        stroke="rgba(255,186,56,0.3)" stroke-width="1.5" fill="none"
+        stroke-dasharray="5 22" stroke-linecap="round"/>
+
+      <!-- PATH 4→5: Optics to Quantum -->
+      <path d="M325,170 C325,95 680,100 700,70"
+        stroke="rgba(255,255,255,0.04)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M325,170 C325,95 680,100 700,70"
+        stroke="#7c3aed" stroke-width="2" fill="none" stroke-linecap="round"
+        stroke-dasharray="8 12" opacity="0.4" filter="url(#glow)"/>
+      <path class="path-animated" d="M325,170 C325,95 680,100 700,70"
+        stroke="rgba(124,58,237,0.35)" stroke-width="1.5" fill="none"
+        stroke-dasharray="4 24" stroke-linecap="round"/>
+
+      <!-- Star particles scattered on map -->
+      <g opacity="0.35">
+        <circle cx="350" cy="520" r="1.2" fill="#a3f69c"/>
+        <circle cx="420" cy="490" r="0.8" fill="#a3f69c"/>
+        <circle cx="290" cy="380" r="1" fill="#a3f69c"/>
+        <circle cx="550" cy="410" r="0.9" fill="#88d982"/>
+        <circle cx="480" cy="350" r="1.1" fill="#a3f69c"/>
+        <circle cx="600" cy="220" r="0.9" fill="#ffba38" opacity="0.5"/>
+        <circle cx="440" cy="260" r="1" fill="#a3f69c"/>
+        <circle cx="520" cy="140" r="0.8" fill="#7c3aed" opacity="0.6"/>
+        <circle cx="760" cy="180" r="1" fill="#7c3aed" opacity="0.5"/>
+        <circle cx="200" cy="300" r="0.8" fill="#a3f69c"/>
+        <circle cx="150" cy="550" r="1" fill="#a3f69c"/>
+        <circle cx="730" cy="350" r="0.9" fill="#ffba38" opacity="0.4"/>
+        <circle cx="800" cy="430" r="1.1" fill="#a3f69c" opacity="0.3"/>
+        <circle cx="120" cy="200" r="0.9" fill="#a3f69c" opacity="0.3"/>
+        <circle cx="860" cy="260" r="0.8" fill="#a3f69c" opacity="0.25"/>
+      </g>
+    </svg>
+
+    <!-- NODE 1: Mechanics (Completed) → left:50% top:91.2% of 680 -->
+    <button class="node-btn" style="left:50%;top:91.2%;" onclick="openNodePanel('mechanics')">
+      <div class="relative">
+        <div class="node-circle w-[72px] h-[72px] rounded-full bg-[#0d631b] flex items-center justify-center shadow-[0_0_30px_rgba(13,99,27,0.6)] border-4 border-[#a3f69c]">
+          <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        </div>
+        <!-- SVG progress ring 100% -->
+        <svg class="absolute inset-[-6px] w-[84px] h-[84px] -rotate-90" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="38" fill="none" stroke="rgba(163,246,156,0.2)" stroke-width="3"/>
+          <circle cx="42" cy="42" r="38" fill="none" stroke="#a3f69c" stroke-width="3"
+            stroke-dasharray="238.8" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="node-label">
+        <span class="text-sm font-headline font-bold text-white">Механика</span>
+      </div>
+      <div class="text-[11px] text-[#a3f69c] font-bold mt-1">✓ Аяқталды</div>
+    </button>
+
+    <!-- NODE 2: Molecular (Active) → left:18.5% top:66.2% of 680 -->
+    <button class="node-btn" style="left:18.5%;top:66.2%;" onclick="openNodePanel('molecular')">
+      <div class="relative">
+        <div class="active-ring"></div>
+        <div class="active-ring-2"></div>
+        <div class="node-circle w-[72px] h-[72px] rounded-full bg-white flex items-center justify-center shadow-[0_0_35px_rgba(13,99,27,0.5)] border-4 border-[#0d631b]">
+          <span class="material-symbols-outlined text-[#0d631b] text-3xl">hub</span>
+        </div>
+        <!-- SVG progress ring 45% -->
+        <svg class="absolute inset-[-6px] w-[84px] h-[84px] -rotate-90" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="38" fill="none" stroke="rgba(163,246,156,0.15)" stroke-width="3"/>
+          <circle cx="42" cy="42" r="38" fill="none" stroke="#0d631b" stroke-width="3"
+            stroke-dasharray="238.8" stroke-dashoffset="131.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="float-badge absolute -top-9 left-1/2 -translate-x-1/2">
+        <span class="bg-[#0d631b] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap flex items-center gap-1">
+          <span class="w-1.5 h-1.5 bg-[#a3f69c] rounded-full animate-pulse"></span>
+          Белсенді модуль
+        </span>
+      </div>
+      <div class="node-label">
+        <span class="text-sm font-headline font-bold text-white">Молекулалық физика</span>
+      </div>
+      <div class="text-[11px] text-[#88d982] font-medium mt-1">45% • Жалғастыру ▶</div>
+    </button>
+
+    <!-- NODE 3: Electrostatics → left:65% top:46.3% of 680 -->
+    <button class="node-btn" style="left:65%;top:46.3%;" onclick="openNodePanel('electrostatics')">
+      <div class="relative">
+        <div class="node-circle w-[68px] h-[68px] rounded-full bg-[#1a0e00] flex items-center justify-center shadow-[0_0_25px_rgba(115,78,0,0.5)] border-4 border-[#ffba38]">
+          <span class="material-symbols-outlined text-[#ffba38] text-2xl" style="font-variation-settings:'FILL' 1;">bolt</span>
+        </div>
+        <!-- SVG progress ring 20% -->
+        <svg class="absolute inset-[-6px] w-[80px] h-[80px] -rotate-90" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,186,56,0.15)" stroke-width="3"/>
+          <circle cx="40" cy="40" r="36" fill="none" stroke="#ffba38" stroke-width="3"
+            stroke-dasharray="226.2" stroke-dashoffset="181" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="node-label">
+        <span class="text-xs font-headline font-bold text-white">Электростатика</span>
+      </div>
+      <div class="text-[10px] text-[#ffba38] font-medium mt-1">▶ Қолжетімді</div>
+    </button>
+
+    <!-- NODE 4: Optics → left:32.5% top:25% of 680 -->
+    <button class="node-btn" style="left:32.5%;top:25%;" onclick="openNodePanel('optics')">
+      <div class="relative">
+        <div class="node-circle w-[64px] h-[64px] rounded-full bg-[#120822] flex items-center justify-center shadow-[0_0_22px_rgba(124,58,237,0.5)] border-4 border-[#a78bfa]">
+          <span class="material-symbols-outlined text-[#a78bfa] text-xl" style="font-variation-settings:'FILL' 1;">flare</span>
+        </div>
+        <!-- SVG progress ring 10% -->
+        <svg class="absolute inset-[-6px] w-[76px] h-[76px] -rotate-90" viewBox="0 0 76 76">
+          <circle cx="38" cy="38" r="34" fill="none" stroke="rgba(167,139,250,0.15)" stroke-width="3"/>
+          <circle cx="38" cy="38" r="34" fill="none" stroke="#a78bfa" stroke-width="3"
+            stroke-dasharray="213.6" stroke-dashoffset="192.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="node-label">
+        <span class="text-xs font-headline font-bold text-white">Оптика</span>
+      </div>
+      <div class="text-[10px] text-[#a78bfa] font-medium mt-1">▶ Қолжетімді</div>
+    </button>
+
+    <!-- NODE 5: Quantum Biology → left:70% top:10.3% of 680 -->
+    <button class="node-btn" style="left:70%;top:10.3%;" onclick="openNodePanel('quantum')">
+      <div class="relative">
+        <div class="node-circle w-[64px] h-[64px] rounded-full bg-[#08081e] flex items-center justify-center shadow-[0_0_22px_rgba(99,102,241,0.5)] border-4 border-[#818cf8]">
+          <span class="material-symbols-outlined text-[#818cf8] text-xl" style="font-variation-settings:'FILL' 1;">blur_on</span>
+        </div>
+        <!-- SVG progress ring 5% -->
+        <svg class="absolute inset-[-6px] w-[76px] h-[76px] -rotate-90" viewBox="0 0 76 76">
+          <circle cx="38" cy="38" r="34" fill="none" stroke="rgba(129,140,248,0.15)" stroke-width="3"/>
+          <circle cx="38" cy="38" r="34" fill="none" stroke="#818cf8" stroke-width="3"
+            stroke-dasharray="213.6" stroke-dashoffset="202.9" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="node-label">
+        <span class="text-xs font-headline font-bold text-white">Кванттық биология</span>
+      </div>
+      <div class="text-[10px] text-[#818cf8] font-medium mt-1">▶ Қолжетімді</div>
+    </button>
+
+    <!-- Progress card (top-right) -->
+    <div class="absolute top-6 right-6 z-20 space-y-3" style="z-index:15;">
+      <div class="bg-black/40 backdrop-blur-md rounded-2xl p-4 w-52 border border-white/10 shadow-xl">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Жалпы прогресс</span>
+          <span class="text-xs font-bold text-[#a3f69c]">28%</span>
+        </div>
+        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-[#0d631b] to-[#4caf50] rounded-full" style="width:28%"></div>
+        </div>
+        <div class="mt-3 space-y-1.5">
+          <div class="flex items-center gap-2 text-[11px] text-white/50">
+            <div class="w-2 h-2 rounded-full bg-[#0d631b]"></div>
+            <span class="text-white/70">Механика</span>
+            <span class="ml-auto text-[#a3f69c] font-bold">100%</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-white/50">
+            <div class="w-2 h-2 rounded-full bg-[#4caf50]"></div>
+            <span class="text-white/70">Молекулалық</span>
+            <span class="ml-auto text-[#88d982] font-bold">45%</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-white/50">
+            <div class="w-2 h-2 rounded-full bg-[#ffba38]"></div>
+            <span class="text-white/50">Электростатика</span>
+            <span class="ml-auto font-bold">20%</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-white/50">
+            <div class="w-2 h-2 rounded-full bg-[#a78bfa]"></div>
+            <span class="text-white/50">Оптика</span>
+            <span class="ml-auto font-bold">10%</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-white/50">
+            <div class="w-2 h-2 rounded-full bg-[#818cf8]"></div>
+            <span class="text-white/50">Кванттық</span>
+            <span class="ml-auto font-bold">5%</span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-black/40 backdrop-blur-md rounded-2xl p-4 w-52 border border-white/10 shadow-xl">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-[#ffba38] text-sm" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+          <span class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Жетістік</span>
+        </div>
+        <p class="text-xs font-bold text-white">Кинетикалық Данышпан</p>
+        <p class="text-[10px] text-white/40 mt-0.5">Механиканы аяқтадыңыз</p>
+        <button onclick="window.location='../your_achievement_certificate/code.html'"
+          class="mt-3 text-[11px] font-bold text-[#a3f69c] hover:underline w-full text-left">
+          Куәлікті қарау →
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /map-area -->
+
+</section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#131e17] lg:ml-64">
+  <div class="max-w-screen-2xl mx-auto py-8 px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <span class="text-base font-headline text-white font-bold">PhysiNature</span>
+      <p class="text-xs text-white/40 mt-0.5">© 2024 PhysiNature. Қозғалыс заңдарын тіршілік логикасымен біріктіреміз.</p>
+    </div>
+    <div class="flex gap-8 text-xs uppercase tracking-widest text-white/40">
+      <a class="hover:text-white/70 transition-colors" href="../home_discover_nature_s_physics/code.html#cta">Эко-миссия</a>
+      <a class="hover:text-white/70 transition-colors" href="#" onclick="showToast('Қолдау қызметі жақында хабарласады!')">Қолдау</a>
+      <a class="hover:text-white/70 transition-colors" href="#">Құпиялылық</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Node detail panel -->
+<div id="node-panel" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+  onclick="closeNodePanel(event)">
+  <div class="bg-white rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+    onclick="event.stopPropagation()" id="node-panel-content"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 bg-[#131e17] text-white px-5 py-3 rounded-full font-medium text-sm shadow-2xl z-[100] flex items-center gap-2 whitespace-nowrap"
+  style="transform:translateX(-50%)">
+  <span class="material-symbols-outlined text-[#a3f69c] text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const nodes = {
+  mechanics:{
+    title:'Классикалық механика', icon:'check_circle',
+    iconBg:'#a3f69c', iconColor:'#0d631b',
+    status:'completed',
+    desc:'Сіз классикалық механиканың негіздерін — табиғи жүйелердегі күштерді, қозғалысты, энергияны және импульсті меңгердіңіз. Жануарлар қозғалысынан планеталар орбитасына дейін.',
+    progress:100, chapters:12, earned:420,
+    actions:[
+      {label:'Сабақтарды қайталау', href:'../lesson_kinematics_in_nature/code.html', style:'primary'},
+      {label:'Куәлікті қарау', href:'../your_achievement_certificate/code.html', style:'secondary'}
+    ]
+  },
+  molecular:{
+    title:'Молекулалық физика', icon:'hub',
+    iconBg:'#e8f5e9', iconColor:'#0d631b',
+    status:'active',
+    desc:'Белсенді модуль! Диффузия, фазалық өтулер, хлорофилл және жарық физикасы. Молекулалар қозғалысын тікелей симуляциямен бақылаңыз.',
+    progress:45, chapters:10, earned:0,
+    actions:[
+      {label:'Оқуды жалғастыру', href:'../chlorophyll_physics/code.html', style:'primary'},
+      {label:'Жабу', href:null, style:'close'}
+    ]
+  },
+  electrostatics:{
+    title:'Электростатика', icon:'bolt',
+    iconBg:'#fff3e0', iconColor:'#e65100',
+    status:'available',
+    desc:'Табиғаттағы электр күштері — магнит өрісі, параллель және тізбекті тізбектер, Кулон заңы. Интерактивті симуляторлармен оқыңыз.',
+    progress:20, chapters:8, earned:0,
+    actions:[
+      {label:'Сабаққа өту', href:'../section3_electrostatics/code.html', style:'primary'},
+      {label:'Жабу', href:null, style:'close'}
+    ]
+  },
+  optics:{
+    title:'Оптика және Фотофизика', icon:'flare',
+    iconBg:'#f3e8ff', iconColor:'#7c3aed',
+    status:'available',
+    desc:'Жарықтың сынуы (Снеллиус заңы), фотоэлектрлік эффект, Бор атомы. Кванттық физика негіздерін интерактивті симуляция арқылы меңгеріңіз.',
+    progress:10, chapters:9, earned:0,
+    actions:[
+      {label:'Сабаққа өту', href:'../section4_quantum/code.html', style:'primary'},
+      {label:'Жабу', href:null, style:'close'}
+    ]
+  },
+  quantum:{
+    title:'Кванттық биология', icon:'blur_on',
+    iconBg:'#eef2ff', iconColor:'#4f46e5',
+    status:'available',
+    desc:'Биологиялық физиканың алдыңғы шебі. Кванттық оптика, фотосинтез кванты, молекулалық машиналар. Барлық симуляциялар: фотоэффект, Бор атомы, кванттық оптика.',
+    progress:5, chapters:11, earned:0,
+    actions:[
+      {label:'Сабаққа өту', href:'../section4_quantum/code.html', style:'primary'},
+      {label:'Жабу', href:null, style:'close'}
+    ]
+  }
+};
+
+function openNodePanel(id){
+  const n = nodes[id];
+  const isCompleted = n.status==='completed';
+  const isActive = n.status==='active';
+  const badge = isCompleted
+    ? `<span class="bg-[#a3f69c] text-[#002204] text-xs font-bold px-2.5 py-0.5 rounded-full">✓ Аяқталды</span>`
+    : isActive
+    ? `<span class="bg-[#0d631b] text-white text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 w-fit"><span class="w-1.5 h-1.5 bg-[#a3f69c] rounded-full animate-pulse"></span>Белсенді</span>`
+    : `<span class="bg-[#e8f5e9] text-[#0d631b] text-xs font-bold px-2.5 py-0.5 rounded-full">▶ Қолжетімді</span>`;
+
+  document.getElementById('node-panel-content').innerHTML = `
+    <div class="flex items-start justify-between mb-5">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm" style="background:${n.iconBg}">
+          <span class="material-symbols-outlined text-2xl" style="color:${n.iconColor};font-variation-settings:'FILL' 1;">${n.icon}</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-black font-headline text-[#131e17]">${n.title}</h3>
+          <div class="mt-1">${badge}</div>
+        </div>
+      </div>
+      <button onclick="closeNodePanel()" class="material-symbols-outlined text-[#40493d] hover:text-[#131e17] flex-shrink-0 ml-3">close</button>
+    </div>
+    <p class="text-[#40493d] text-sm leading-relaxed mb-5">${n.desc}</p>
+    <div class="bg-[#f5faf6] rounded-xl p-4 mb-5">
+      <div class="flex justify-between text-sm font-medium mb-2">
+        <span class="text-[#40493d]/70">Прогресс</span>
+        <span class="font-bold" style="color:${n.iconColor}">${n.progress}%</span>
+      </div>
+      <div class="h-2.5 bg-[#e4f1e5] rounded-full overflow-hidden">
+        <div class="h-full rounded-full" style="width:${n.progress}%;background:${n.iconColor}"></div>
+      </div>
+      <div class="mt-3 flex gap-5 text-sm text-[#40493d]/60">
+        <span><strong class="text-[#131e17]">${n.chapters}</strong> тарау</span>
+        ${n.earned ? `<span><strong class="text-[#734e00]">${n.earned}</strong> тиын жиналды</span>` : ''}
+      </div>
+    </div>
+    <div class="flex gap-3">
+      ${n.actions.map(a => {
+        if(a.style==='primary') return `<a href="${a.href}" class="flex-1 bg-[#0d631b] text-white py-3 rounded-xl font-bold text-sm text-center hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-1.5">${a.label}<span class="material-symbols-outlined text-sm">arrow_forward</span></a>`;
+        if(a.style==='close') return `<button onclick="closeNodePanel()" class="flex-1 border border-[#bfcaba] py-3 rounded-xl font-medium text-sm text-[#40493d] hover:bg-[#f5faf6] transition-colors">${a.label}</button>`;
+        return `<a href="${a.href}" class="flex-1 border border-[#bfcaba] py-3 rounded-xl font-medium text-sm text-center text-[#40493d] hover:bg-[#f5faf6] transition-colors">${a.label}</a>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('node-panel').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+
+function closeNodePanel(e){
+  if(!e || e.target===document.getElementById('node-panel')){
+    document.getElementById('node-panel').classList.add('hidden');
+    document.body.style.overflow='';
+  }
+}
+
+function toggleMobileMenu(){
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.remove('hidden');
+  t.classList.add('toast');
+  setTimeout(()=>{t.classList.add('hidden');t.classList.remove('toast');},3200);
+}
+</script>
+</body>
+</html>

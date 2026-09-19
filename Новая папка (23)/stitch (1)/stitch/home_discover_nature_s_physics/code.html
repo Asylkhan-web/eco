@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Табиғат физикасын ашыңыз</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-bright": "#f0fdf1","on-primary": "#ffffff","surface-container": "#e4f1e5",
+          "tertiary-container": "#926500","secondary-fixed-dim": "#e4beb2","on-tertiary": "#ffffff",
+          "on-surface-variant": "#40493d","surface-container-low": "#eaf7eb","on-tertiary-container": "#ffefda",
+          "surface": "#f0fdf1","primary-fixed-dim": "#88d982","background": "#f0fdf1",
+          "on-primary-fixed-variant": "#005312","on-secondary-container": "#795c51","primary": "#0d631b",
+          "on-tertiary-fixed": "#281900","on-secondary-fixed": "#2b160f","surface-container-lowest": "#ffffff",
+          "on-secondary": "#ffffff","surface-variant": "#d9e6da","outline": "#707a6c",
+          "surface-container-highest": "#d9e6da","surface-container-high": "#dfece0","secondary": "#75584d",
+          "on-tertiary-fixed-variant": "#604100","primary-fixed": "#a3f69c","inverse-on-surface": "#e7f4e8",
+          "inverse-primary": "#88d982","on-primary-container": "#cbffc2","tertiary": "#734e00","error": "#ba1a1a",
+          "on-error-container": "#93000a","outline-variant": "#bfcaba","inverse-surface": "#28332b",
+          "on-surface": "#131e17","on-error": "#ffffff","on-secondary-fixed-variant": "#5b4137",
+          "secondary-container": "#fed7ca","tertiary-fixed-dim": "#ffba38","on-primary-fixed": "#002204",
+          "surface-dim": "#d0ddd2","secondary-fixed": "#ffdbce","error-container": "#ffdad6",
+          "surface-tint": "#1b6d24","tertiary-fixed": "#ffdeac","primary-container": "#2e7d32","on-background": "#131e17"
+        },
+        borderRadius: { "DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px" },
+        fontFamily: { "headline": ["Space Grotesk"],"body": ["Inter"],"label": ["Inter"] }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-headline { font-family: 'Space Grotesk', sans-serif; }
+  .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  #mobile-menu { transition: all 0.3s ease; }
+  .toast { animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards; }
+  @keyframes slideIn { from { transform: translateY(100px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  @keyframes fadeOut { from { opacity:1; } to { opacity:0; pointer-events:none; } }
+  .notification-panel { animation: slideDown 0.2s ease; }
+  @keyframes slideDown { from { transform: translateY(-10px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+</style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<!-- Жоғарғы навигация -->
+<nav class="bg-[#f0fdf1]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_20px_40px_rgba(19,30,23,0.05)]">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter font-headline">PhysiNature</a>
+    <div class="hidden md:flex items-center gap-8 font-headline font-medium text-sm tracking-tight">
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1 hover:text-[#0d631b] transition-colors duration-300" href="code.html">Курстар</a>
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors duration-300" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors duration-300" href="#cta">Біз туралы</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-2 bg-primary-container px-4 py-2 rounded-xl text-on-primary-container text-xs font-bold tracking-tight">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        $420 Эко-тиын
+      </div>
+      <div class="relative">
+        <button id="notif-btn" onclick="toggleNotifications()" class="material-symbols-outlined text-primary hover:text-primary-container transition-colors">notifications</button>
+        <div id="notif-panel" class="hidden notification-panel absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-outline-variant/20 z-50 overflow-hidden">
+          <div class="p-4 border-b border-outline-variant/20 flex justify-between items-center">
+            <h3 class="font-headline font-bold text-sm">Хабарландырулар</h3>
+            <button onclick="markAllRead()" class="text-xs text-primary font-medium">Барлығын оқылды деп белгілеу</button>
+          </div>
+          <div class="divide-y divide-outline-variant/10">
+            <div class="p-4 flex gap-3 bg-primary-fixed/10">
+              <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings:'FILL' 1;">stars</span>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Сіз 50 Эко-тиын таптыңыз!</p>
+                <p class="text-xs text-on-surface-variant">Кинематика бойынша тест аяқталды</p>
+                <p class="text-[10px] text-outline mt-1">2 сағат бұрын</p>
+              </div>
+            </div>
+            <div class="p-4 flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Жаңа белгі ашылды</p>
+                <p class="text-xs text-on-surface-variant">«Кинетикалық Данышпан» жетістігі</p>
+                <p class="text-[10px] text-outline mt-1">Кеше</p>
+              </div>
+            </div>
+            <div class="p-4 flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-on-surface-variant text-sm">school</span>
+              </div>
+              <div>
+                <p class="text-sm font-semibold">Молекулалық физика ашылды</p>
+                <p class="text-xs text-on-surface-variant">Дағды ағашын жалғастырыңыз</p>
+                <p class="text-[10px] text-outline mt-1">3 күн бұрын</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 text-center">
+            <a href="../user_dashboard_progress/code.html" class="text-xs font-bold text-primary">Басқару тақтасын қарау →</a>
+          </div>
+        </div>
+      </div>
+      <div class="relative group">
+        <a href="../user_dashboard_progress/code.html">
+          <div class="w-10 h-10 rounded-full border-2 border-surface-container-high shadow-sm cursor-pointer hover:border-primary transition-colors bg-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">person</span>
+          </div>
+        </a>
+        <div class="hidden group-hover:block absolute right-0 top-12 w-48 bg-white rounded-2xl shadow-xl border border-outline-variant/20 z-50 overflow-hidden">
+          <a href="../user_dashboard_progress/code.html" class="flex items-center gap-3 px-4 py-3 text-sm hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-primary text-sm">dashboard</span> Басқару тақтасы
+          </a>
+          <a href="../learning_map_the_skill_tree/code.html" class="flex items-center gap-3 px-4 py-3 text-sm hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-primary text-sm">account_tree</span> Дағды ағашы
+          </a>
+          <div class="h-px bg-outline-variant/20 mx-4"></div>
+          <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-error hover:bg-error-container/30 transition-colors">
+            <span class="material-symbols-outlined text-error text-sm">logout</span> Шығу
+          </button>
+        </div>
+      </div>
+      <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-on-surface">menu</button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-outline-variant/20 px-8 py-4 space-y-3">
+    <a href="code.html" class="block py-2 font-medium text-primary font-headline">Курстар</a>
+    <a href="../user_dashboard_progress/code.html" class="block py-2 font-medium text-on-surface-variant hover:text-primary font-headline">Басқару тақтасы</a>
+    <a href="#cta" class="block py-2 font-medium text-on-surface-variant hover:text-primary font-headline">Біз туралы</a>
+    <div class="pt-2 border-t border-outline-variant/20">
+      <div class="flex items-center gap-2 text-sm font-bold text-tertiary">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        $420 Эко-тиын
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+<!-- Басты бөлім -->
+<section class="relative min-h-[870px] flex items-center overflow-hidden pt-12 pb-24 px-8 max-w-screen-2xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div class="z-10">
+      <span class="inline-block px-4 py-1.5 mb-6 bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-widest rounded-full">Биологиялық физика шеберлігі</span>
+      <h1 class="text-6xl md:text-8xl font-black font-headline text-on-surface leading-[0.95] mb-8 tracking-tighter">
+        Табиғаттың <span class="text-primary">Физикасын</span> ашыңыз.
+      </h1>
+      <p class="text-lg text-on-surface-variant max-w-lg mb-10 leading-relaxed">
+        Математикалық дәлдік тіршіліктің сұлу грациясымен кездесетін саяхатқа шығыңыз. Өмір логикасын бақылай отырып, қозғалыс заңдарын меңгеріңіз.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="../lesson_kinematics_in_nature/code.html" class="bg-primary text-on-primary px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/10">
+          Тегін оқуды бастаңыз
+        </a>
+        <a href="#courses" class="px-8 py-4 rounded-xl font-bold text-lg text-primary border-2 border-primary/10 hover:bg-surface-container-low transition-all">
+          Оқу жоспарын зерттеу
+        </a>
+      </div>
+    </div>
+    <div class="relative group">
+      <div class="absolute -inset-4 bg-gradient-to-tr from-primary-fixed to-surface-container rounded-[3rem] blur-3xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+      <div class="relative bg-surface-container-lowest rounded-[3rem] overflow-hidden aspect-square shadow-2xl">
+        <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(135deg,#eaf7eb,#a3f69c,#2e7d32)">
+          <canvas id="heroCanvas" width="500" height="500" style="width:100%;height:100%;opacity:0.9;"></canvas>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/40 to-transparent"></div>
+        <div class="absolute bottom-8 left-8 right-8 glass p-6 rounded-2xl border border-white/40 shadow-xl">
+          <div class="flex justify-between items-end">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-widest text-primary mb-1">Ағымдағы тақырып</p>
+              <h3 class="font-headline font-bold text-xl">Ұшудың механикасы</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-2xl font-black font-headline text-primary">84%</span>
+            </div>
+          </div>
+          <div class="mt-4 h-2 w-full bg-primary-fixed/30 rounded-full overflow-hidden">
+            <div class="h-full bg-primary w-[84%] rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Қалай жұмыс істейді -->
+<section class="bg-surface-container-low py-24 px-8">
+  <div class="max-w-screen-2xl mx-auto">
+    <div class="text-center mb-20">
+      <h2 class="text-4xl font-black font-headline tracking-tight mb-4">Қалай жұмыс істейді</h2>
+      <p class="text-on-surface-variant">Бақылаушыдан ғалымға дейінгі жол үш табиғи кезеңде.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-surface-container-lowest p-10 rounded-[2rem] transition-all hover:-translate-y-2 group cursor-pointer" onclick="window.location='../lesson_kinematics_in_nature/code.html'">
+        <div class="w-16 h-16 bg-primary-fixed flex items-center justify-center rounded-2xl mb-8 group-hover:rotate-6 transition-transform">
+          <span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+        </div>
+        <h3 class="text-2xl font-bold font-headline mb-4">1. Негіздерді үйреніңіз</h3>
+        <p class="text-on-surface-variant leading-relaxed mb-6">Биологиялық жүйелердегі термодинамиканы, гидродинамиканы және классикалық механиканы зерттейтін интерактивті модульдерге енуіңіз.</p>
+        <div class="flex items-center gap-2 text-primary font-bold text-sm group-hover:gap-4 transition-all">
+          Модульдерді шолу <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest p-10 rounded-[2rem] transition-all hover:-translate-y-2 group cursor-pointer" onclick="window.location='../user_dashboard_progress/code.html'">
+        <div class="w-16 h-16 bg-tertiary-fixed flex items-center justify-center rounded-2xl mb-8 group-hover:rotate-6 transition-transform">
+          <span class="material-symbols-outlined text-tertiary text-3xl">payments</span>
+        </div>
+        <h3 class="text-2xl font-bold font-headline mb-4">2. Ұпай жинаңыз</h3>
+        <p class="text-on-surface-variant leading-relaxed mb-6">Эко-тиын жинау үшін экожүйе тапсырмаларын және физика жаттығуларын орындаңыз — біздің экологиялық валютамыз.</p>
+        <div class="flex items-center gap-2 text-tertiary font-bold text-sm group-hover:gap-4 transition-all">
+          Сыйақылар туралы біліңіз <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest p-10 rounded-[2rem] transition-all hover:-translate-y-2 group cursor-pointer" onclick="window.location='../learning_map_the_skill_tree/code.html'">
+        <div class="w-16 h-16 bg-primary-container flex items-center justify-center rounded-2xl mb-8 group-hover:rotate-6 transition-transform">
+          <span class="material-symbols-outlined text-on-primary-container text-3xl">lock_open</span>
+        </div>
+        <h3 class="text-2xl font-bold font-headline mb-4">3. Жоғары деңгейді ашыңыз</h3>
+        <p class="text-on-surface-variant leading-relaxed mb-6">Жоғары деңгейлі зертхана симуляциялары мен кванттық биология зерттеулеріне қол жеткізу үшін тиіндеріңізді жұмсаңыз.</p>
+        <div class="flex items-center gap-2 text-primary-container font-bold text-sm group-hover:gap-4 transition-all">
+          Жабық мазмұнды қарау <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Курстар карусели -->
+<section id="courses" class="py-32 px-8 max-w-screen-2xl mx-auto overflow-hidden">
+  <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+    <div class="max-w-2xl">
+      <h2 class="text-5xl font-black font-headline tracking-tighter leading-tight mb-6">Экожүйе модульдері</h2>
+      <p class="text-lg text-on-surface-variant">Біздің оқу жоспарымыз табиғи әлем құбылыстары бойынша — атомдық масштабтан жаһандық климатқа дейін.</p>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="carouselPrev()" class="w-14 h-14 rounded-full border-2 border-surface-container-high flex items-center justify-center hover:bg-surface-container transition-colors active:scale-95">
+        <span class="material-symbols-outlined">west</span>
+      </button>
+      <button onclick="carouselNext()" class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-primary-container transition-colors active:scale-95">
+        <span class="material-symbols-outlined">east</span>
+      </button>
+    </div>
+  </div>
+  <div id="carousel" class="flex gap-8 overflow-x-auto pb-12 snap-x no-scrollbar scroll-smooth">
+    <!-- Курс 1 -->
+    <div class="min-w-[320px] md:min-w-[420px] snap-start cursor-pointer group" onclick="window.location='../lesson_kinematics_in_nature/code.html'">
+      <div class="relative h-80 rounded-[2.5rem] overflow-hidden mb-6">
+        <div class="w-full h-full flex flex-col items-center justify-center transition-transform duration-700 group-hover:scale-110" style="background:linear-gradient(135deg,#1a2e1a,#2e5c2e,#1a3a1a)">
+          <span class="material-symbols-outlined text-8xl text-green-300 mb-3" style="font-variation-settings:'FILL' 1;">directions_car</span>
+          <span class="text-green-200 font-bold text-lg">Механика</span>
+        </div>
+        <div class="absolute top-6 left-6">
+          <span class="bg-primary-fixed text-on-primary-fixed px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">Тегін</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span class="text-white font-bold text-lg bg-primary/80 px-6 py-2 rounded-full">Курсты бастаңыз →</span>
+        </div>
+      </div>
+      <div class="px-2">
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="text-2xl font-black font-headline">Классикалық механика</h3>
+          <div class="flex items-center text-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+            <span class="text-sm font-bold ml-1">4.9</span>
+          </div>
+        </div>
+        <p class="text-on-surface-variant mb-6 text-sm">Жыртқыштардың күштері, қозғалысы және кинетикалық энергиясы.</p>
+        <div class="flex gap-4">
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">12 тарау</span>
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">42 тапсырма</span>
+        </div>
+      </div>
+    </div>
+    <!-- Курс 2 -->
+    <div class="min-w-[320px] md:min-w-[420px] snap-start cursor-pointer group" onclick="window.location='../chlorophyll_physics/code.html'">
+      <div class="relative h-80 rounded-[2.5rem] overflow-hidden mb-6">
+        <div class="w-full h-full flex flex-col items-center justify-center transition-transform duration-700 group-hover:scale-110" style="background:linear-gradient(135deg,#0a1a3a,#1a3a7a,#0a2a5a)">
+          <span class="material-symbols-outlined text-8xl text-blue-300 mb-3" style="font-variation-settings:'FILL' 1;">bubble_chart</span>
+          <span class="text-blue-200 font-bold text-lg">Молекулалық физика</span>
+        </div>
+        <div class="absolute top-6 left-6">
+          <span class="bg-primary-fixed text-on-primary-fixed px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">Тегін</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span class="text-white font-bold text-lg bg-primary/80 px-6 py-2 rounded-full">Курсты бастаңыз →</span>
+        </div>
+      </div>
+      <div class="px-2">
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="text-2xl font-black font-headline">Оптика және толқындар</h3>
+          <div class="flex items-center text-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+            <span class="text-sm font-bold ml-1">5.0</span>
+          </div>
+        </div>
+        <p class="text-on-surface-variant mb-6 text-sm">Көру, шағылысу және фотосинтездің жарық ғылымы.</p>
+        <div class="flex gap-4">
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">8 тарау</span>
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">15 зертхана</span>
+        </div>
+      </div>
+    </div>
+    <!-- Курс 3 -->
+    <div class="min-w-[320px] md:min-w-[420px] snap-start cursor-pointer group" onclick="window.location='../section3_electrostatics/code.html'">
+      <div class="relative h-80 rounded-[2.5rem] overflow-hidden mb-6">
+        <div class="w-full h-full flex flex-col items-center justify-center transition-transform duration-700 group-hover:scale-110" style="background:linear-gradient(135deg,#3a1a00,#7a3a00,#5a2a00)">
+          <span class="material-symbols-outlined text-8xl text-orange-300 mb-3" style="font-variation-settings:'FILL' 1;">bolt</span>
+          <span class="text-orange-200 font-bold text-lg">Электростатика</span>
+        </div>
+        <div class="absolute top-6 left-6">
+          <span class="bg-primary-fixed text-on-primary-fixed px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">Тегін</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span class="text-white font-bold text-lg bg-primary/80 px-6 py-2 rounded-full">Курсты бастаңыз →</span>
+        </div>
+      </div>
+      <div class="px-2">
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="text-2xl font-black font-headline">Термодинамика</h3>
+          <div class="flex items-center text-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+            <span class="text-sm font-bold ml-1">4.8</span>
+          </div>
+        </div>
+        <p class="text-on-surface-variant mb-6 text-sm">Энергия алмасуы, жылу және тіршіліктің метаболизмі.</p>
+        <div class="flex gap-4">
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">15 тарау</span>
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">30 тест</span>
+        </div>
+      </div>
+    </div>
+    <!-- Курс 4 -->
+    <div class="min-w-[320px] md:min-w-[420px] snap-start cursor-pointer group" onclick="window.location='../section4_quantum/code.html'">
+      <div class="relative h-80 rounded-[2.5rem] overflow-hidden mb-6">
+        <div class="w-full h-full flex flex-col items-center justify-center transition-transform duration-700 group-hover:scale-110" style="background:linear-gradient(135deg,#1a0a3a,#3a1a7a,#2a0a5a)">
+          <span class="material-symbols-outlined text-8xl text-purple-300 mb-3" style="font-variation-settings:'FILL' 1;">flare</span>
+          <span class="text-purple-200 font-bold text-lg">Кванттық физика</span>
+        </div>
+        <div class="absolute top-6 left-6">
+          <span class="bg-primary-fixed text-on-primary-fixed px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">Тегін</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span class="text-white font-bold text-lg bg-primary/80 px-6 py-2 rounded-full">Курсты бастаңыз →</span>
+        </div>
+      </div>
+      <div class="px-2">
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="text-2xl font-black font-headline">Кванттық биология</h3>
+          <div class="flex items-center text-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+            <span class="text-sm font-bold ml-1">4.7</span>
+          </div>
+        </div>
+        <p class="text-on-surface-variant mb-6 text-sm">Жасушалық деңгейде тіршілікті қуаттандыратын кванттық эффектілерді зерттеңіз.</p>
+        <div class="flex gap-4">
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">10 тарау</span>
+          <span class="text-xs font-bold px-3 py-1 bg-surface-container rounded-lg text-on-surface-variant">20 зертхана</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA бөлімі -->
+<section id="cta" class="px-8 pb-32 max-w-screen-2xl mx-auto">
+  <div class="bg-primary-container rounded-[4rem] p-12 md:p-24 relative overflow-hidden flex flex-col md:flex-row items-center gap-16">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-[100px] opacity-40 translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary-fixed-dim rounded-full blur-[80px] opacity-30 -translate-x-1/2 translate-y-1/2"></div>
+    <div class="relative z-10 flex-1">
+      <h2 class="text-4xl md:text-6xl font-black font-headline text-on-primary-container mb-8 leading-tight">Қозғалысты логикамен біріктіруге дайынсыз ба?</h2>
+      <p class="text-on-primary-container/80 text-lg max-w-xl mb-12">Табиғи әлемді қуаттандыратын физиканы зерттейтін 42 000-нан астам студент-ғалымға қосылыңыз. Бүгін бірінші модуліңізді бастаңыз.</p>
+      <div class="flex flex-wrap gap-4">
+        <button onclick="showSignupModal()" class="bg-primary text-on-primary px-10 py-5 rounded-2xl font-bold text-xl hover:brightness-110 transition-all active:scale-95 shadow-2xl">
+          Тегін тіркелгі жасаңыз
+        </button>
+        <a href="../lesson_kinematics_in_nature/code.html" class="bg-white/20 text-on-primary-container px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/30 transition-all active:scale-95">
+          Тегін сабақ бастаңыз
+        </a>
+      </div>
+    </div>
+    <div class="relative z-10 w-full md:w-1/3">
+      <div class="glass p-8 rounded-[2rem] border border-white/20">
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-primary-container">science</span>
+            </div>
+            <div class="text-on-primary-container">
+              <p class="text-xs uppercase font-bold tracking-widest opacity-60">Бүгінгі факт</p>
+              <p class="font-bold">Аралар гүлдерден тозаң тарту үшін электростатикалық күштерді пайдаланады.</p>
+            </div>
+          </div>
+          <div class="h-px bg-white/10"></div>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-primary-container">monitoring</span>
+            </div>
+            <div class="text-on-primary-container">
+              <p class="text-xs uppercase font-bold tracking-widest opacity-60">Жаһандық әсер</p>
+              <p class="font-bold">Осы айда 2,4 млн Эко-тиын ағаш екуге бағытталды.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- Футер -->
+<footer class="bg-[#131e17] w-full mt-auto">
+  <div class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
+    <div class="flex flex-col items-center md:items-start gap-4">
+      <div class="text-lg font-headline text-white">PhysiNature</div>
+      <p class="font-body text-xs uppercase tracking-widest text-white/60">© 2024 PhysiNature. Қозғалыс заңдарын тіршілік логикасымен біріктіреміз.</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-8">
+      <a class="font-body text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#cta">Эко-миссия</a>
+      <a class="font-body text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#" onclick="showToast('Қолдау қызметі жақында хабарласады!')">Қолдау қызметі</a>
+      <a class="font-body text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#">Құпиялылық саясаты</a>
+      <a class="font-body text-xs uppercase tracking-widest text-white/40 hover:text-[#2e7d32] transition-colors" href="#">Қызмет шарттары</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Жабық курс модалы -->
+<div id="locked-modal" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeLockedModal(event)">
+  <div class="bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl text-center" onclick="event.stopPropagation()">
+    <div class="w-20 h-20 rounded-full bg-tertiary-fixed flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-tertiary text-3xl">lock</span>
+    </div>
+    <h3 class="text-2xl font-black font-headline mb-3" id="modal-course-title">Курс жабық</h3>
+    <p class="text-on-surface-variant mb-2">Бұл курс үшін қажет</p>
+    <div class="text-4xl font-black font-headline text-tertiary my-4"><span id="modal-coins">500</span> Эко-тиын</div>
+    <p class="text-on-surface-variant text-sm mb-8">Сізде қазір <strong class="text-primary">$420 Эко-тиын</strong> бар. Тиін жинау үшін сабақтарды жалғастырыңыз!</p>
+    <div class="flex gap-3">
+      <a href="../lesson_kinematics_in_nature/code.html" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:brightness-110 transition-all active:scale-95">
+        Тиін жинаңыз
+      </a>
+      <button onclick="closeLockedModal()" class="flex-1 border border-outline-variant py-3 rounded-xl font-medium text-on-surface-variant hover:bg-surface-container transition-colors">
+        Кейінірек
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Тіркелу модалы -->
+<div id="signup-modal" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeSignupModal(event)">
+  <div class="bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl" onclick="event.stopPropagation()">
+    <div class="text-center mb-8">
+      <div class="text-2xl font-bold text-primary font-headline mb-2">PhysiNature-ға қосылыңыз</div>
+      <p class="text-on-surface-variant text-sm">Тегін тіркелгі жасаңыз және бүгін оқуды бастаңыз</p>
+    </div>
+    <form onsubmit="handleSignup(event)" class="space-y-4">
+      <input type="text" placeholder="Толық атыңыз" required class="w-full px-5 py-3.5 bg-surface-container rounded-full border-0 outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"/>
+      <input type="email" placeholder="Электрондық пошта" required class="w-full px-5 py-3.5 bg-surface-container rounded-full border-0 outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"/>
+      <input type="password" placeholder="Құпия сөз жасаңыз" required class="w-full px-5 py-3.5 bg-surface-container rounded-full border-0 outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"/>
+      <button type="submit" class="w-full bg-primary text-white py-4 rounded-full font-bold text-lg hover:brightness-110 transition-all active:scale-95 mt-2">
+        Тегін тіркелгі жасаңыз
+      </button>
+    </form>
+    <p class="text-center text-sm text-on-surface-variant mt-6">
+      Тіркелгіңіз бар ма? <a href="../user_dashboard_progress/code.html" class="text-primary font-semibold">Кіріңіз</a>
+    </p>
+    <button onclick="closeSignupModal()" class="absolute top-4 right-4 material-symbols-outlined text-on-surface-variant hover:text-on-surface">close</button>
+  </div>
+</div>
+
+<!-- Хабарландыру тосты -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-inverse-on-surface px-6 py-3 rounded-full font-medium text-sm shadow-xl z-50 flex items-center gap-2">
+  <span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  function carouselNext() {
+    const c = document.getElementById('carousel');
+    c.scrollBy({ left: 440, behavior: 'smooth' });
+  }
+  function carouselPrev() {
+    const c = document.getElementById('carousel');
+    c.scrollBy({ left: -440, behavior: 'smooth' });
+  }
+  function toggleMobileMenu() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  }
+  function toggleNotifications() {
+    document.getElementById('notif-panel').classList.toggle('hidden');
+  }
+  function markAllRead() {
+    document.querySelectorAll('#notif-panel .bg-primary-fixed\\/10').forEach(el => {
+      el.classList.remove('bg-primary-fixed/10');
+    });
+    showToast('Барлық хабарландырулар оқылды деп белгіленді');
+    document.getElementById('notif-panel').classList.add('hidden');
+  }
+  document.addEventListener('click', function(e) {
+    const panel = document.getElementById('notif-panel');
+    const btn = document.getElementById('notif-btn');
+    if (!panel.contains(e.target) && e.target !== btn) {
+      panel.classList.add('hidden');
+    }
+  });
+  function showLockedModal(title, coins) {
+    document.getElementById('modal-course-title').textContent = title;
+    document.getElementById('modal-coins').textContent = coins;
+    document.getElementById('locked-modal').classList.remove('hidden');
+  }
+  function closeLockedModal(e) {
+    if (!e || e.target === document.getElementById('locked-modal')) {
+      document.getElementById('locked-modal').classList.add('hidden');
+    }
+  }
+  function showSignupModal() {
+    document.getElementById('signup-modal').classList.remove('hidden');
+  }
+  function closeSignupModal(e) {
+    if (!e || e.target === document.getElementById('signup-modal')) {
+      document.getElementById('signup-modal').classList.add('hidden');
+    }
+  }
+  function handleSignup(e) {
+    e.preventDefault();
+    document.getElementById('signup-modal').classList.add('hidden');
+    showToast('Тіркелгі жасалды! PhysiNature-ге қош келдіңіз 🌿');
+    setTimeout(() => { window.location.href = '../user_dashboard_progress/code.html'; }, 1500);
+  }
+  function logout() {
+    localStorage.removeItem('pn_current_user');
+    location.replace('../login_register/code.html');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.remove('hidden');
+    t.classList.add('toast');
+    setTimeout(() => { t.classList.add('hidden'); t.classList.remove('toast'); }, 3200);
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  // Hero Canvas animation — physics particles
+  (function() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const particles = [];
+    const icons = ['⚛️','🌿','⚡','🔭','🧲','💡','🌊','🔬'];
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random()*W, y: Math.random()*H,
+        r: Math.random()*8+3,
+        vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.8,
+        color: ['rgba(13,99,27,0.6)','rgba(46,125,50,0.5)','rgba(163,246,156,0.7)','rgba(255,222,172,0.4)','rgba(115,78,0,0.4)'][Math.floor(Math.random()*5)],
+        alpha: Math.random()*0.6+0.2
+      });
+    }
+
+    // Lines connecting nearby particles
+    let angle = 0;
+    function frame() {
+      ctx.fillStyle = 'rgba(26,42,26,0.15)';
+      ctx.fillRect(0,0,W,H);
+
+      // Draw connections
+      particles.forEach((p,i) => {
+        particles.forEach((q,j) => {
+          if (j<=i) return;
+          const d = Math.hypot(p.x-q.x, p.y-q.y);
+          if (d < 80) {
+            ctx.strokeStyle = `rgba(163,246,156,${0.3*(1-d/80)})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+          }
+        });
+      });
+
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = '#a3f69c';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x<0||p.x>W) p.vx*=-1;
+        if (p.y<0||p.y>H) p.vy*=-1;
+      });
+
+      // Rotating atom
+      const cx=W/2, cy=H/2;
+      angle += 0.008;
+      [0,1,2].forEach(i => {
+        const a = angle + i*Math.PI*2/3;
+        const ex = cx + 100*Math.cos(a);
+        const ey = cy + 60*Math.sin(a);
+        ctx.beginPath(); ctx.arc(ex,ey,7,0,Math.PI*2);
+        ctx.fillStyle='rgba(163,246,156,0.9)';
+        ctx.shadowColor='#a3f69c'; ctx.shadowBlur=12;
+        ctx.fill(); ctx.shadowBlur=0;
+      });
+      // Nucleus
+      ctx.beginPath(); ctx.arc(cx,cy,18,0,Math.PI*2);
+      const grad = ctx.createRadialGradient(cx-4,cy-4,2,cx,cy,18);
+      grad.addColorStop(0,'rgba(163,246,156,0.9)');
+      grad.addColorStop(1,'rgba(13,99,27,0.7)');
+      ctx.fillStyle=grad; ctx.shadowColor='#a3f69c'; ctx.shadowBlur=15;
+      ctx.fill(); ctx.shadowBlur=0;
+
+      // Orbit ellipses
+      ctx.save(); ctx.translate(cx,cy);
+      [0,60,120].forEach(rot => {
+        ctx.save(); ctx.rotate(rot*Math.PI/180);
+        ctx.beginPath(); ctx.ellipse(0,0,100,60,0,0,Math.PI*2);
+        ctx.strokeStyle='rgba(163,246,156,0.2)'; ctx.lineWidth=1; ctx.stroke();
+        ctx.restore();
+      });
+      ctx.restore();
+
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+</script>
+</body>
+</html>

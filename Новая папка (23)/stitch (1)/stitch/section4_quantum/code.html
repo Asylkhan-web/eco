@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Кванттық физика</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config={theme:{extend:{
+    colors:{
+      "primary":"#0d631b","on-primary":"#ffffff","primary-fixed":"#a3f69c",
+      "surface":"#f0fdf1","on-surface":"#131e17","on-surface-variant":"#40493d",
+      "outline-variant":"#bfcaba","surface-container":"#e4f1e5","surface-container-low":"#eaf7eb",
+      "tertiary":"#734e00","tertiary-fixed":"#ffdeac","error":"#ba1a1a","error-container":"#ffdad6"
+    },
+    fontFamily:{"headline":["Space Grotesk"],"body":["Inter"]}
+  }}}
+</script>
+<style>
+  body{font-family:'Inter',sans-serif;}
+  .font-headline{font-family:'Space Grotesk',sans-serif;}
+  canvas{border-radius:12px;display:block;}
+  .tab-btn{transition:all 0.2s;}
+  .tab-btn.active{background:#6A1B9A;color:#fff;}
+  .quiz-opt{transition:all 0.2s;cursor:pointer;border:2px solid #bfcaba;}
+  .quiz-opt:hover{border-color:#6A1B9A;background:#F3E5F5;}
+  .quiz-opt.correct{border-color:#0d631b !important;background:#a3f69c !important;}
+  .quiz-opt.wrong{border-color:#ba1a1a !important;background:#ffdad6 !important;}
+  .photon{animation:photonPulse 1s ease-in-out infinite;}
+  @keyframes photonPulse{0%,100%{opacity:0.8;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm border-b border-outline-variant/20">
+  <div class="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="font-headline font-bold text-purple-700 text-lg">PhysiNature</a>
+    <div class="hidden md:flex items-center gap-2">
+      <a href="../home_discover_nature_s_physics/code.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors px-3 py-1">Курстар</a>
+      <a href="../user_dashboard_progress/code.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors px-3 py-1">Басқару тақтасы</a>
+      <a href="../learning_map_the_skill_tree/code.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors px-3 py-1">Дағды ағашы</a>
+    </div>
+    <div class="bg-purple-50 px-4 py-1.5 rounded-full text-sm font-bold text-purple-600">Кванттық физика</div>
+  </div>
+</nav>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Сабақтар навигациясы -->
+  <div class="flex flex-wrap gap-2 mb-6 p-3 bg-surface-container-low rounded-2xl">
+    <span class="text-xs font-bold text-on-surface-variant self-center mr-2 uppercase tracking-widest">Сабақтар:</span>
+    <a href="../lesson_kinematics_in_nature/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">🚗 Механика</a>
+    <a href="../chlorophyll_physics/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">🔬 Молекулалық физика</a>
+    <a href="../section3_electrostatics/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">⚡ Электростатика</a>
+    <a href="../section4_quantum/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-purple-600 text-white">✨ Кванттық физика</a>
+  </div>
+  <div class="flex items-center gap-4 mb-6">
+    <div class="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center shadow">
+      <span class="material-symbols-outlined text-purple-600 text-3xl" style="font-variation-settings:'FILL' 1;">flare</span>
+    </div>
+    <div>
+      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">Бөлім 4 (Соңғы)</div>
+      <h1 class="text-2xl font-headline font-bold text-on-surface">Кванттық физика және Оптика</h1>
+    </div>
+    <div class="ml-auto text-right">
+      <div class="text-xs text-on-surface-variant">Прогресс</div>
+      <div id="section-pct" class="text-xl font-headline font-bold text-purple-600">0%</div>
+    </div>
+  </div>
+
+  <div class="flex gap-2 mb-6 bg-purple-50 p-1.5 rounded-xl">
+    <button onclick="showTab('theory')" id="tab-theory" class="tab-btn active flex-1 py-2.5 rounded-lg text-sm font-headline font-bold">Теория</button>
+    <button onclick="showTab('optics')" id="tab-optics" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Оптика</button>
+    <button onclick="showTab('quantum')" id="tab-quantum" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Кванттар</button>
+    <button onclick="showTab('lab')" id="tab-lab" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Зертхана</button>
+  </div>
+
+  <!-- THEORY -->
+  <div id="panel-theory" class="space-y-4">
+    <div class="bg-white rounded-2xl p-6 border border-purple-100 shadow-sm">
+      <h2 class="text-xl font-headline font-bold mb-4">Геометриялық оптика</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Шағылу заңы</h3>
+          <p class="text-sm text-on-surface-variant mb-2">Жарық сәулесінің шағылу бұрышы түсу бұрышына тең:</p>
+          <div class="text-center font-headline font-bold text-purple-800 text-xl">α = α'</div>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Сыну заңы (Снеллиус)</h3>
+          <div class="text-center font-headline font-bold text-purple-800 text-xl my-1">n₁sinα = n₂sinβ</div>
+          <p class="text-xs text-on-surface-variant">n — сыну көрсеткіші, α — түсу бұрышы, β — сыну бұрышы</p>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Толық ішкі шағылу</h3>
+          <p class="text-sm text-on-surface-variant">Жарық тығыз ортадан сирек ортаға өткенде критикалық бұрыштан артық болса, толығымен шағылады.</p>
+          <div class="text-center font-bold text-purple-800 mt-2">sinα_кр = n₂/n₁</div>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Жұқа линза формуласы</h3>
+          <div class="text-center font-headline font-bold text-purple-800 text-xl my-1">1/f = 1/d + 1/d'</div>
+          <p class="text-xs text-on-surface-variant">f — фокусты қашықтық, d — затқа, d' — кескінге дейінгі қашықтық</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 border border-purple-100 shadow-sm">
+      <h2 class="text-xl font-headline font-bold mb-4">Кванттық физика</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Жарық кванттары (фотондар)</h3>
+          <div class="text-center font-bold text-purple-800 text-lg my-1">E = hν = hc/λ</div>
+          <p class="text-xs text-on-surface-variant">h = 6.626×10⁻³⁴ Дж·с — Планк тұрақтысы, ν — жиілік, λ — толқын ұзындығы</p>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Фотоэлектрлік эффект</h3>
+          <div class="text-center font-bold text-purple-800 text-lg my-1">hν = A + mv²/2</div>
+          <p class="text-xs text-on-surface-variant">A — шығу жұмысы, mv²/2 — электронның кинетикалық энергиясы (Эйнштейн теңдеуі)</p>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Бор постулаттары</h3>
+          <ul class="text-xs text-on-surface-variant space-y-1 list-disc list-inside">
+            <li>Электрон стационар орбитада сәуле шығармайды</li>
+            <li>Орбиталар квантталған: mvr = nℏ</li>
+            <li>Сәуле ұшырғанда: hν = E₂ - E₁</li>
+          </ul>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-purple-700 mb-2">Атом ядросы</h3>
+          <p class="text-sm text-on-surface-variant">Ядро протондар (Z) мен нейтрондардан (N) тұрады. Масса саны A = Z + N. Байланыс энергиясы: ΔE = Δmc²</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 border border-purple-100 shadow-sm mt-4 mb-4">
+      <h2 class="text-xl font-headline font-bold mb-4">Бейнематериал: Өсімдіктер қалай қоректенеді? (Кванттық биология)</h2>
+      <div class="aspect-video bg-black rounded-xl overflow-hidden relative w-full flex items-center justify-center">
+        <iframe class="w-full h-full aspect-video" src="https://www.youtube.com/embed/r4yUOKwsb1A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+    <button onclick="showTab('optics'); markProgress(25)"
+      class="w-full bg-purple-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Оптика симуляциясына өту →
+    </button>
+  </div>
+
+  <!-- OPTICS SIM -->
+  <div id="panel-optics" class="hidden">
+    <div class="bg-gray-900 rounded-2xl p-5 mb-5">
+      <h2 class="text-white font-headline font-bold mb-4">Жарықтың шағылу және сыну симуляциясы</h2>
+      <canvas id="opticsCanvas" width="760" height="360" style="width:100%;background:#0a0a1a;border-radius:12px;"></canvas>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-5">
+      <div class="bg-white rounded-2xl p-4 border border-purple-100 shadow-sm">
+        <label class="block text-sm font-medium text-on-surface-variant mb-2">Түсу бұрышы (α)</label>
+        <input type="range" id="angle-in" min="5" max="85" value="45" oninput="drawOptics()"
+          class="w-full accent-purple-600 mb-1"/>
+        <div class="flex justify-between text-sm">
+          <span class="text-on-surface-variant">5°</span>
+          <span id="angle-in-val" class="font-bold text-purple-600">45°</span>
+          <span class="text-on-surface-variant">85°</span>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-purple-100 shadow-sm">
+        <label class="block text-sm font-medium text-on-surface-variant mb-2">Орта (n₂)</label>
+        <select id="medium-select" onchange="drawOptics()" class="w-full border border-purple-200 rounded-xl p-2 text-sm font-medium focus:outline-none focus:border-purple-500">
+          <option value="1.5">Шыны (n=1.5)</option>
+          <option value="1.33">Су (n=1.33)</option>
+          <option value="2.42">Алмаз (n=2.42)</option>
+          <option value="1.0003">Ауа (n=1.0003)</option>
+        </select>
+        <div class="mt-2 text-xs text-on-surface-variant">n₁ = 1.0 (ауа)</div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-purple-100 shadow-sm">
+        <h3 class="font-medium text-on-surface-variant text-sm mb-2">Есептеулер</h3>
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Шағылу (α'):</span>
+            <span id="reflect-angle" class="font-bold text-purple-600">45°</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Сыну (β):</span>
+            <span id="refract-angle" class="font-bold text-purple-600">28.1°</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Сыну к-ші:</span>
+            <span id="n-ratio" class="font-bold text-purple-600">1.50</span>
+          </div>
+          <div id="tir-label" class="hidden text-xs font-bold text-red-500 mt-1">⚠️ Толық ішкі шағылу!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-5">
+      <div class="bg-purple-50 rounded-2xl p-4">
+        <div class="flex gap-3 mb-3">
+          <div class="w-4 h-4 rounded bg-yellow-400 mt-0.5 shrink-0"></div>
+          <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">Түскен сәуле</strong> — ауадан бетке бағытталады</div>
+        </div>
+        <div class="flex gap-3 mb-3">
+          <div class="w-4 h-4 rounded bg-blue-400 mt-0.5 shrink-0"></div>
+          <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">Шағылған сәуле</strong> — бірдей бұрышта кері бағытта</div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-4 h-4 rounded bg-green-400 mt-0.5 shrink-0"></div>
+          <div class="text-sm text-on-surface-variant"><strong class="text-on-surface">Сынған сәуле</strong> — ортаға енгенде бұрышы өзгереді</div>
+        </div>
+      </div>
+      <div class="bg-purple-50 rounded-2xl p-4 text-sm">
+        <p class="font-headline font-bold text-purple-700 mb-2">Снеллиус заңы:</p>
+        <p class="font-mono text-center text-lg font-bold text-purple-800 mb-2">n₁·sin(α) = n₂·sin(β)</p>
+        <p class="text-on-surface-variant">Жарық тығызырақ ортаға өткенде нормальға қарай иіледі (β &lt; α). Сирек ортаға өткенде нормальдан алыстайды.</p>
+      </div>
+    </div>
+
+    <button onclick="showTab('quantum'); markProgress(50)"
+      class="w-full bg-purple-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Кванттық физика симуляциясына өту →
+    </button>
+  </div>
+
+  <!-- QUANTUM SIM -->
+  <div id="panel-quantum" class="hidden">
+    <div class="bg-gray-900 rounded-2xl p-5 mb-5">
+      <h2 class="text-white font-headline font-bold mb-4">Фотоэлектрлік эффект симуляциясы</h2>
+      <canvas id="quantumCanvas" width="760" height="320" style="width:100%;background:#0a0a1a;border-radius:12px;"></canvas>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-5">
+      <div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-sm">
+        <h3 class="font-headline font-bold mb-4">Фотон параметрлері</h3>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <label class="text-on-surface-variant">Жарық жиілігі</label>
+              <span id="freq-val" class="font-bold text-purple-600">5×10¹⁴ Гц</span>
+            </div>
+            <input type="range" id="freq-slider" min="1" max="10" value="5" oninput="updateQuantum()"
+              class="w-full accent-purple-600"/>
+            <div class="flex justify-between text-xs text-on-surface-variant">
+              <span>Инфрақызыл</span>
+              <span>Көрінетін</span>
+              <span>УК-сәуле</span>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <label class="text-on-surface-variant">Метал (жұмыс функциясы)</label>
+              <span id="work-val" class="font-bold text-purple-600">Цезий (2.0 эВ)</span>
+            </div>
+            <select id="metal-select" onchange="updateQuantum()" class="w-full border border-purple-200 rounded-xl p-2 text-sm focus:outline-none focus:border-purple-500">
+              <option value="2.0">Цезий (2.0 эВ)</option>
+              <option value="3.7">Мыс (3.7 эВ)</option>
+              <option value="4.5">Күміс (4.5 эВ)</option>
+              <option value="5.1">Алтын (5.1 эВ)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-sm">
+        <h3 class="font-headline font-bold mb-4">Нәтижелер</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between p-2 bg-purple-50 rounded-lg text-sm">
+            <span class="text-on-surface-variant">Фотон энергиясы</span>
+            <span id="photon-e" class="font-bold text-purple-600">2.07 эВ</span>
+          </div>
+          <div class="flex justify-between p-2 bg-purple-50 rounded-lg text-sm">
+            <span class="text-on-surface-variant">Шығу жұмысы (A)</span>
+            <span id="work-e" class="font-bold text-purple-600">2.0 эВ</span>
+          </div>
+          <div class="flex justify-between p-2 bg-purple-50 rounded-lg text-sm">
+            <span class="text-on-surface-variant">Кин. энергия</span>
+            <span id="kinetic-e" class="font-bold text-purple-600">0.07 эВ</span>
+          </div>
+          <div id="effect-status" class="p-3 rounded-xl text-center text-sm font-bold bg-green-50 text-green-700">
+            ⚡ Фотоэффект жүреді!
+          </div>
+        </div>
+        <div class="mt-3 p-3 bg-purple-50 rounded-xl text-xs text-on-surface-variant">
+          <strong>Эйнштейн теңдеуі:</strong> hν = A + Eкин<br/>
+          Фотон энергиясы шығу жұмысынан артса, фотоэффект жүреді.
+        </div>
+      </div>
+    </div>
+
+    <!-- Atom Bohr model -->
+    <div class="bg-gray-900 rounded-2xl p-5 mb-5">
+      <h3 class="text-white font-headline font-bold mb-4">Бор атом моделі — сутегі</h3>
+      <canvas id="atomCanvas" width="760" height="250" style="width:100%;background:#0a0a1a;border-radius:12px;"></canvas>
+    </div>
+
+    <button onclick="showTab('lab'); markProgress(75)"
+      class="w-full bg-purple-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Зертхана жұмысына өту →
+    </button>
+  </div>
+
+  <!-- LAB -->
+  <div id="panel-lab" class="hidden">
+    <div class="bg-white rounded-2xl p-6 border border-purple-100 shadow-sm">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-purple-600" style="font-variation-settings:'FILL' 1;">science</span>
+        </div>
+        <div>
+          <h2 class="font-headline font-bold">Зертханалық жұмыс №4 (Соңғы)</h2>
+          <p class="text-sm text-on-surface-variant">Кванттық физика және оптика</p>
+        </div>
+        <div class="ml-auto text-sm font-bold text-purple-600" id="lab-score">0 / 5</div>
+      </div>
+      <div id="quiz-container" class="space-y-5"></div>
+      <div id="lab-result" class="hidden mt-5 p-4 rounded-xl text-center"></div>
+      <button id="lab-submit-btn" onclick="submitLab()"
+        class="mt-5 w-full bg-purple-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+        Тексеру
+      </button>
+    </div>
+  </div>
+
+  <!-- Модуль тараулары -->
+  <div class="mt-8 bg-white rounded-2xl p-6 border border-purple-100 shadow-sm">
+    <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Модуль тараулары</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="flex items-center gap-2 p-3 bg-purple-50 rounded-xl">
+        <span class="material-symbols-outlined text-purple-600 text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        <span class="text-sm font-medium text-purple-600">1-тарау · Жарық оптикасы</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-purple-50 transition-colors" onclick="showCoinModal('2-тарау · Фотоэффект', 100)">
+        <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+        <span class="text-sm">2-тарау · Фотоэффект</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-purple-50 transition-colors" onclick="showPremiumModal('3-тарау · Атом моделі')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">3-тарау · Атом моделі</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-purple-50 transition-colors" onclick="showPremiumModal('4-тарау · Кванттық есептеу')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">4-тарау · Кванттық есептеу</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function getUser(){return JSON.parse(localStorage.getItem('pn_current_user')||'null');}
+function markProgress(pct){
+  const user=getUser();if(!user)return;
+  if(!user.progress)user.progress={};
+  user.progress.section4=Math.max(user.progress.section4||0,pct);
+  const users=JSON.parse(localStorage.getItem('pn_users')||'[]');
+  const idx=users.findIndex(u=>u.username===user.username);
+  if(idx>=0)users[idx]=user;
+  localStorage.setItem('pn_users',JSON.stringify(users));
+  localStorage.setItem('pn_current_user',JSON.stringify(user));
+  document.getElementById('section-pct').textContent=(user.progress.section4||0)+'%';
+}
+const user=getUser();
+if(user&&user.progress)document.getElementById('section-pct').textContent=(user.progress.section4||0)+'%';
+
+function showTab(name){
+  ['theory','optics','quantum','lab'].forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('hidden',t!==name);
+    const btn=document.getElementById('tab-'+t);
+    btn.classList.toggle('active',t===name);
+    btn.classList.toggle('text-on-surface-variant',t!==name);
+  });
+  if(name==='optics')drawOptics();
+  if(name==='quantum'){updateQuantum();animateAtom();}
+}
+
+// ======== OPTICS ========
+const oCanvas=document.getElementById('opticsCanvas');
+const oCtx=oCanvas.getContext('2d');
+
+function drawOptics(){
+  const W=oCanvas.width,H=oCanvas.height;
+  oCtx.fillStyle='#0a0a1a';oCtx.fillRect(0,0,W,H);
+
+  const angleIn=+document.getElementById('angle-in').value;
+  const n2=+document.getElementById('medium-select').value;
+  const n1=1.0;
+  document.getElementById('angle-in-val').textContent=angleIn+'°';
+  document.getElementById('reflect-angle').textContent=angleIn+'°';
+  document.getElementById('n-ratio').textContent=n2.toFixed(2);
+
+  // Interface line
+  const midY=H/2;
+  oCtx.strokeStyle='rgba(255,255,255,0.3)';oCtx.lineWidth=2;oCtx.setLineDash([10,5]);
+  oCtx.beginPath();oCtx.moveTo(0,midY);oCtx.lineTo(W,midY);oCtx.stroke();
+  oCtx.setLineDash([]);
+
+  // Medium label
+  oCtx.fillStyle='rgba(255,255,255,0.3)';oCtx.font='14px Inter';
+  oCtx.fillText('n₁ = 1.0 (ауа)',20,midY-15);
+
+  const medName=['Шыны (n=1.5)','Су (n=1.33)','Алмаз (n=2.42)','Ауа (n=1.0003)'];
+  const medSel=document.getElementById('medium-select');
+  oCtx.fillText(medSel.options[medSel.selectedIndex].text,20,midY+25);
+
+  // Normal line (dashed)
+  const cx=W/2;
+  oCtx.strokeStyle='rgba(255,255,255,0.2)';oCtx.lineWidth=1;oCtx.setLineDash([8,4]);
+  oCtx.beginPath();oCtx.moveTo(cx,0);oCtx.lineTo(cx,H);oCtx.stroke();
+  oCtx.setLineDash([]);
+
+  const aRad=angleIn*Math.PI/180;
+  const rayLen=200;
+
+  // Incident ray (from top-left, coming down to interface)
+  const incX=cx-rayLen*Math.sin(aRad);
+  const incY=midY-rayLen*Math.cos(aRad);
+  drawRay(oCtx,incX,incY,cx,midY,'#FFEB3B',3,true,cx,midY);
+
+  // Reflected ray (same angle, upward-right)
+  const refX=cx+rayLen*Math.sin(aRad);
+  const refY=midY-rayLen*Math.cos(aRad);
+  drawRay(oCtx,cx,midY,refX,refY,'#42A5F5',2,true,refX,refY);
+
+  // Refracted ray (Snell's law)
+  const sinBeta=(n1/n2)*Math.sin(aRad);
+  const tirLabel=document.getElementById('tir-label');
+
+  if(Math.abs(sinBeta)>1){
+    // Total internal reflection
+    tirLabel.classList.remove('hidden');
+    document.getElementById('refract-angle').textContent='— (ТІШ)';
+  }else{
+    tirLabel.classList.add('hidden');
+    const betaRad=Math.asin(sinBeta);
+    const betaDeg=(betaRad*180/Math.PI).toFixed(1);
+    document.getElementById('refract-angle').textContent=betaDeg+'°';
+    const refracX=cx+rayLen*Math.sin(betaRad);
+    const refracY=midY+rayLen*Math.cos(betaRad);
+    drawRay(oCtx,cx,midY,refracX,refracY,'#66BB6A',2.5,true,refracX,refracY);
+    // Angle label β
+    oCtx.fillStyle='rgba(102,187,106,0.9)';oCtx.font='bold 12px Space Grotesk';
+    oCtx.fillText('β='+betaDeg+'°',cx+10,midY+50);
+  }
+
+  // Angle label α
+  oCtx.fillStyle='rgba(255,235,59,0.9)';oCtx.font='bold 12px Space Grotesk';
+  oCtx.fillText('α='+angleIn+'°',cx-80,midY-20);
+  oCtx.fillStyle='rgba(66,165,245,0.9)';
+  oCtx.fillText("α'="+angleIn+'°',cx+10,midY-20);
+
+  // Legend
+  const items=[['#FFEB3B','Түскен сәуле'],['#42A5F5','Шағылған сәуле'],['#66BB6A','Сынған сәуле']];
+  items.forEach((item,i)=>{
+    oCtx.fillStyle=item[0];
+    oCtx.fillRect(W-200,20+i*22,16,3);
+    oCtx.fillStyle='rgba(255,255,255,0.8)';oCtx.font='12px Inter';
+    oCtx.fillText(item[1],W-178,25+i*22);
+  });
+}
+
+function drawRay(ctx,x1,y1,x2,y2,color,width,arrow,ax,ay){
+  ctx.strokeStyle=color;ctx.lineWidth=width;
+  // Glow
+  ctx.shadowColor=color;ctx.shadowBlur=8;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.shadowBlur=0;
+  if(arrow){
+    const ang=Math.atan2(y2-y1,x2-x1);
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-12*Math.cos(ang-0.4),y2-12*Math.sin(ang-0.4));
+    ctx.lineTo(x2-12*Math.cos(ang+0.4),y2-12*Math.sin(ang+0.4));
+    ctx.closePath();ctx.fill();
+  }
+}
+
+// ======== QUANTUM ========
+const qCanvas=document.getElementById('quantumCanvas');
+const qCtx=qCanvas.getContext('2d');
+let photons=[];
+let electrons_emit=[];
+let quantumAnimId=null;
+
+function updateQuantum(){
+  const freq=+document.getElementById('freq-slider').value;
+  const metalSel=document.getElementById('metal-select');
+  const workFunc=+metalSel.value;
+  const freqHz=freq*1e14;
+  const h=4.136e-15; // eV·s
+  const photonE=h*freqHz;
+
+  document.getElementById('freq-val').textContent=freq+'×10¹⁴ Гц';
+  document.getElementById('work-val').textContent=metalSel.options[metalSel.selectedIndex].text;
+  document.getElementById('photon-e').textContent=photonE.toFixed(2)+' эВ';
+  document.getElementById('work-e').textContent=workFunc+' эВ';
+  const kinE=photonE-workFunc;
+  document.getElementById('kinetic-e').textContent=(kinE>0?'+':'')+kinE.toFixed(2)+' эВ';
+  const statusEl=document.getElementById('effect-status');
+  if(kinE>0){
+    statusEl.className='p-3 rounded-xl text-center text-sm font-bold bg-green-50 text-green-700';
+    statusEl.textContent='⚡ Фотоэффект жүреді!';
+  }else{
+    statusEl.className='p-3 rounded-xl text-center text-sm font-bold bg-red-50 text-red-700';
+    statusEl.textContent='✗ Фотоэффект жүрмейді (энергия жеткіліксіз)';
+  }
+
+  drawQuantum(freq,kinE>0);
+}
+
+function drawQuantum(freq,effectOccurs){
+  const W=qCanvas.width,H=qCanvas.height;
+  qCtx.fillStyle='#0a0a1a';qCtx.fillRect(0,0,W,H);
+
+  // Metal plate
+  const plateX=250,plateY=60,plateW=30,plateH=H-120;
+  const platGrad=qCtx.createLinearGradient(plateX,0,plateX+plateW,0);
+  platGrad.addColorStop(0,'#616161');platGrad.addColorStop(1,'#9E9E9E');
+  qCtx.fillStyle=platGrad;
+  qCtx.fillRect(plateX,plateY,plateW,plateH);
+  qCtx.strokeStyle='rgba(255,255,255,0.3)';qCtx.lineWidth=1;
+  qCtx.strokeRect(plateX,plateY,plateW,plateH);
+  qCtx.fillStyle='rgba(255,255,255,0.7)';qCtx.font='bold 12px Space Grotesk';qCtx.textAlign='center';
+  qCtx.fillText('Метал',plateX+plateW/2,plateY-10);qCtx.textAlign='left';
+
+  // Light source
+  const lx=50,ly=H/2;
+  qCtx.fillStyle='rgba(255,235,59,0.9)';
+  qCtx.beginPath();qCtx.arc(lx,ly,20,0,Math.PI*2);qCtx.fill();
+  qCtx.fillStyle='rgba(255,235,59,0.3)';
+  qCtx.beginPath();qCtx.arc(lx,ly,30,0,Math.PI*2);qCtx.fill();
+
+  // Light color based on frequency
+  const colors=['#FF0000','#FF7700','#FFFF00','#00FF00','#0000FF','#8B00FF','#FF00FF','#FFFFFF','#D0D0FF','#A0A0FF'];
+  const lightColor=colors[Math.min(freq-1,9)];
+
+  // Photon beams
+  for(let i=0;i<5;i++){
+    const y=H/2-60+i*30;
+    qCtx.strokeStyle=lightColor;qCtx.lineWidth=2;
+    qCtx.shadowColor=lightColor;qCtx.shadowBlur=6;
+    qCtx.setLineDash([15,8]);
+    qCtx.beginPath();qCtx.moveTo(lx+20,y);qCtx.lineTo(plateX,y);qCtx.stroke();
+    qCtx.setLineDash([]);qCtx.shadowBlur=0;
+  }
+
+  // Electrons (if effect occurs)
+  if(effectOccurs){
+    electrons_emit.forEach((e,i)=>{
+      e.x+=e.vx;e.y+=e.vy;e.vy+=0.1;e.alpha-=0.008;
+      if(e.alpha<=0||e.x>W-20){electrons_emit.splice(i,1);}
+      else{
+        qCtx.beginPath();qCtx.arc(e.x,e.y,4,0,Math.PI*2);
+        qCtx.fillStyle=`rgba(255,235,59,${e.alpha})`;qCtx.fill();
+        qCtx.fillStyle=`rgba(255,255,100,${e.alpha*0.5})`;
+        qCtx.beginPath();qCtx.arc(e.x,e.y,8,0,Math.PI*2);qCtx.fill();
+      }
+    });
+    if(Math.random()<0.15){
+      const ey=plateY+20+Math.random()*(plateH-40);
+      electrons_emit.push({x:plateX+plateW,y:ey,vx:1+Math.random()*3,vy:(Math.random()-0.5)*3,alpha:1});
+    }
+
+    qCtx.fillStyle='rgba(255,235,59,0.9)';qCtx.font='bold 14px Space Grotesk';
+    qCtx.fillText('← Электрондар шығарылды',plateX+plateW+20,H/2+5);
+  }else{
+    qCtx.fillStyle='rgba(255,100,100,0.8)';qCtx.font='bold 14px Space Grotesk';
+    qCtx.fillText('Электрон шықпайды',plateX+plateW+20,H/2);
+  }
+
+  qCtx.fillStyle='rgba(255,255,255,0.5)';qCtx.font='12px Inter';
+  qCtx.fillText('Жарық көзі',lx-25,ly+35);
+
+  // Frequency label
+  const specColors=[['Инфрақызыл','#FF0000'],['Қызыл','#FF4444'],['Сарғыш','#FF8800'],['Сары','#FFFF00'],['Жасыл','#00FF00'],['Көкжасыл','#00FFAA'],['Көк','#0088FF'],['Күлгін','#8800FF'],['Ультракүлгін','#DD00FF'],['ҰК-сәуле','#EE88FF']];
+  const sc=specColors[Math.min(freq-1,9)];
+  qCtx.fillStyle=sc[0]==='FFFF00'?'#888':sc[1];
+  qCtx.font='bold 13px Space Grotesk';
+  qCtx.fillText(sc[0]+' жарық',lx-25,ly-35);
+}
+
+// Atom animation
+const aCanvas=document.getElementById('atomCanvas');
+const aCtx=aCanvas.getContext('2d');
+let atomAnimId=null;
+let atomAngle=[0,0,0];
+let atomLevel=1;
+
+function animateAtom(){
+  if(atomAnimId)return;
+  function frame(){
+    const W=aCanvas.width,H=aCanvas.height;
+    aCtx.fillStyle='#0a0a1a';aCtx.fillRect(0,0,W,H);
+
+    // Nucleus
+    const cx=W/2,cy=H/2;
+    aCtx.beginPath();aCtx.arc(cx,cy,20,0,Math.PI*2);
+    const nucGrad=aCtx.createRadialGradient(cx-5,cy-5,2,cx,cy,20);
+    nucGrad.addColorStop(0,'#FF8F00');nucGrad.addColorStop(1,'#E65100');
+    aCtx.fillStyle=nucGrad;aCtx.fill();
+    aCtx.fillStyle='white';aCtx.font='bold 10px Inter';aCtx.textAlign='center';
+    aCtx.fillText('H',cx,cy+4);aCtx.textAlign='left';
+
+    // Orbits and electrons (3 levels for H-like display)
+    const orbitR=[60,110,160];
+    const speeds=[0.03,0.02,0.015];
+    const colors=['#42A5F5','#AB47BC','#EF5350'];
+
+    orbitR.forEach((r,i)=>{
+      // Orbit
+      aCtx.beginPath();aCtx.arc(cx,cy,r,0,Math.PI*2);
+      aCtx.strokeStyle=`rgba(255,255,255,0.1)`;aCtx.lineWidth=1;aCtx.stroke();
+      // Level label
+      aCtx.fillStyle='rgba(255,255,255,0.4)';aCtx.font='11px Inter';
+      aCtx.fillText('n='+(i+1),cx+r+3,cy-5);
+      // Electron
+      if(i===0){ // Only n=1 for hydrogen ground state
+        atomAngle[i]+=speeds[i];
+        const ex=cx+r*Math.cos(atomAngle[i]);
+        const ey=cy+r*Math.sin(atomAngle[i]);
+        aCtx.beginPath();aCtx.arc(ex,ey,6,0,Math.PI*2);
+        aCtx.fillStyle=colors[i];aCtx.fill();
+        aCtx.shadowColor=colors[i];aCtx.shadowBlur=10;aCtx.fill();aCtx.shadowBlur=0;
+        // Trail
+        for(let t=1;t<=5;t++){
+          const ta=atomAngle[i]-t*0.12;
+          const tx=cx+r*Math.cos(ta),ty=cy+r*Math.sin(ta);
+          aCtx.beginPath();aCtx.arc(tx,ty,6-t,0,Math.PI*2);
+          aCtx.fillStyle=`rgba(66,165,245,${0.15-t*0.02})`;aCtx.fill();
+        }
+      }
+    });
+
+    // Energy levels on right side
+    const levels=[['n=1 E=-13.6 эВ','#42A5F5',180],['n=2 E=-3.4 эВ','#AB47BC',130],['n=3 E=-1.5 эВ','#EF5350',100]];
+    aCtx.font='bold 11px Space Grotesk';
+    levels.forEach(([label,color,y])=>{
+      aCtx.strokeStyle=color;aCtx.lineWidth=1.5;aCtx.setLineDash([]);
+      aCtx.beginPath();aCtx.moveTo(W-220,y);aCtx.lineTo(W-40,y);aCtx.stroke();
+      aCtx.fillStyle=color;aCtx.fillText(label,W-215,y-5);
+    });
+    aCtx.fillStyle='rgba(255,255,255,0.5)';aCtx.font='12px Inter';
+    aCtx.fillText('Энергия деңгейлері',W-215,50);
+
+    atomAngle[0]+=speeds[0];
+    atomAnimId=requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ======== QUIZ ========
+const questions=[
+  {q:'Жарықтың шағылу заңы нені бейнелейді?',opts:['Шағылу бұрышы=сыну бұрышы','Шағылу бұрышы=түсу бұрышы','Шағылу бұрышы=90°','Барлығы тең'],ans:1,exp:'Шағылу бұрышы түсу бұрышына тең: α = α\''},
+  {q:'Снеллиус заңы (сыну заңы):',opts:['sinα/sinβ=const','n₁sinα=n₂sinβ','n₁/n₂=sinβ/sinα','Барлығы дұрыс'],ans:1,exp:'n₁·sinα = n₂·sinβ — Снеллиус заңы'},
+  {q:'Планк тұрақтысы h мәні:',opts:['6.626×10⁻³⁴ Дж·с','9.109×10⁻³¹ кг','3×10⁸ м/с','1.6×10⁻¹⁹ Кл'],ans:0,exp:'h = 6.626×10⁻³⁴ Дж·с — Планк тұрақтысы'},
+  {q:'Фотоэффект дегеніміз не?',opts:['Жарықтың шағылуы','Жарық әсерінен металдан электрон шығуы','Жарықтың сынуы','Атомның жарылуы'],ans:1,exp:'Фотоэффект — жарық фотондарының металдан электрондарды шығаруы (Эйнштейн теориясы)'},
+  {q:'Сутегі атомының негізгі күйіндегі энергиясы:',opts:['-1.5 эВ','-3.4 эВ','-13.6 эВ','0 эВ'],ans:2,exp:'Сутегі атомы n=1 деңгейінде E₁ = -13.6 эВ энергияда болады'}
+];
+
+let labAnswers={},labSubmitted=false;
+
+function buildQuiz(){
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=questions.map((q,qi)=>`
+    <div class="bg-purple-50 rounded-xl p-5">
+      <p class="font-headline font-bold mb-3 text-sm">${qi+1}. ${q.q}</p>
+      <div class="space-y-2">
+        ${q.opts.map((o,oi)=>`
+          <div class="quiz-opt rounded-xl p-3 text-sm font-medium flex items-center gap-3 bg-white"
+            id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="w-6 h-6 rounded-full border-2 border-purple-200 flex items-center justify-center shrink-0 text-xs font-bold text-purple-600"
+              id="opt-circle-${qi}-${oi}">${String.fromCharCode(65+oi)}</div>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div id="exp-${qi}" class="hidden mt-3 p-3 bg-white rounded-lg text-xs text-on-surface-variant border-l-4 border-purple-500"></div>
+    </div>`).join('');
+}
+
+function selectOpt(qi,oi){
+  if(labSubmitted)return;
+  labAnswers[qi]=oi;
+  questions[qi].opts.forEach((_,i)=>{
+    const el=document.getElementById(`opt-${qi}-${i}`);
+    el.style.borderColor='';el.style.background='white';
+    document.getElementById(`opt-circle-${qi}-${i}`).style.background='';
+    document.getElementById(`opt-circle-${qi}-${i}`).style.color='';
+  });
+  document.getElementById(`opt-${qi}-${oi}`).style.borderColor='#6A1B9A';
+  document.getElementById(`opt-${qi}-${oi}`).style.background='#F3E5F5';
+  document.getElementById(`opt-circle-${qi}-${oi}`).style.background='#6A1B9A';
+  document.getElementById(`opt-circle-${qi}-${oi}`).style.color='white';
+}
+
+function submitLab(){
+  if(labSubmitted)return;labSubmitted=true;
+  let score=0;
+  questions.forEach((q,qi)=>{
+    const correct=labAnswers[qi]===q.ans;if(correct)score++;
+    questions[qi].opts.forEach((_,oi)=>{
+      const el=document.getElementById(`opt-${qi}-${oi}`);
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===labAnswers[qi]&&!correct)el.classList.add('wrong');
+    });
+    const expEl=document.getElementById(`exp-${qi}`);expEl.textContent=q.exp;expEl.classList.remove('hidden');
+  });
+  document.getElementById('lab-score').textContent=`${score} / ${questions.length}`;
+  document.getElementById('lab-submit-btn').textContent='✓ Аяқталды';
+  document.getElementById('lab-submit-btn').disabled=true;
+  const pct=score>=3?100:75;
+  markProgress(pct);
+  const r=document.getElementById('lab-result');r.classList.remove('hidden');
+  if(score>=3){
+    r.className='mt-5 p-4 rounded-xl text-center bg-gradient-to-r from-purple-100 to-yellow-50 border border-purple-200';
+    r.innerHTML=`<div class="text-5xl mb-3">🎓</div><div class="font-headline font-bold text-xl text-purple-700 mb-1">Бағдарламаны аяқтадыңыз!</div><div class="text-sm text-on-surface-variant mb-3">${score}/5 дұрыс. Барлық 4 бөлімді аяқтадыңыз!</div><a href="../diploma_young_physicist/code.html" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-xl font-headline font-bold hover:brightness-110 transition-all">🏆 Дипломды алу →</a>`;
+  }else{
+    r.className='mt-5 p-4 rounded-xl text-center bg-purple-50 border border-purple-200';
+    r.innerHTML=`<div class="text-4xl mb-2">📚</div><div class="font-headline font-bold text-lg text-purple-700">${score}/5 дұрыс</div><div class="text-sm text-on-surface-variant mt-1">Жақсы! Дипломды алуға болады!</div><br/><a href="../diploma_young_physicist/code.html" class="inline-block bg-purple-600 text-white px-6 py-2.5 rounded-xl font-headline font-bold hover:brightness-110 transition-all">Дипломды алу →</a>`;
+  }
+}
+
+buildQuiz();
+drawOptics();
+updateQuantum();
+
+let qCoinsEarned = 0;
+function showToast(msg) {
+  let t = document.getElementById('q-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'q-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#131e17;color:#f0fdf1;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+function showCoinModal(chapterName, required) {
+    let u = JSON.parse(localStorage.getItem('pn_current_user')) || { ecoCoins: 420, unlockedChapters: [] };
+    u.unlockedChapters = u.unlockedChapters || [];
+    const isUnlocked = u.unlockedChapters.includes(chapterName);
+    
+    document.getElementById('chapter-modal-icon').textContent = isUnlocked ? 'lock_open' : 'stars';
+    document.getElementById('chapter-modal-icon').style.color = isUnlocked ? '#6A1B9A' : '#734e00';
+    document.getElementById('chapter-modal-title').textContent = chapterName;
+    
+    const modalBtn = document.querySelector('#chapter-modal button');
+    
+    if (isUnlocked) {
+      document.getElementById('chapter-modal-body').textContent = 'Тарау ашылды! Жаңа контентке қош келдіңіз.';
+      document.getElementById('modal-coins-display').textContent = 'АШЫҚ';
+      if(modalBtn) { modalBtn.textContent = 'Кіру'; modalBtn.onclick = function() { document.getElementById('chapter-modal').classList.add('hidden'); }; }
+    } else {
+      const currentCoins = u.ecoCoins || 420;
+      const remaining = Math.max(0, required - currentCoins);
+      if (remaining > 0) {
+        document.getElementById('chapter-modal-body').textContent = `Бұл тарауды ашу үшін тағы ${remaining} Эко-тиын жетіспейді. Сабақтарды орындап тиын жинаңыз!`;
+        document.getElementById('modal-coins-display').textContent = currentCoins + ' / ' + required + ' Эко-тиын';
+        if(modalBtn) { modalBtn.textContent = 'Жабық'; modalBtn.onclick = function() { document.getElementById('chapter-modal').classList.add('hidden'); }; }
+      } else {
+        document.getElementById('chapter-modal-body').textContent = `Сізде жеткілікті тиын бар. Тарауды ашу үшін ${required} Эко-тиын жұмсалады.`;
+        document.getElementById('modal-coins-display').textContent = 'Құны: ' + required + ' Эко-тиын';
+        if(modalBtn) {
+          modalBtn.textContent = 'Ашу (Тиын жұмсау)';
+          modalBtn.onclick = function() {
+            u.ecoCoins -= required; u.unlockedChapters.push(chapterName);
+            const users = JSON.parse(localStorage.getItem('pn_users') || "[]");
+            const idx = users.findIndex(v => v && u && v.email === u.email);
+            if (idx !== -1) { users[idx] = u; localStorage.setItem('pn_users', JSON.stringify(users)); }
+            localStorage.setItem('pn_current_user', JSON.stringify(u));
+            const td = document.getElementById('total-coins'); if(td) td.textContent = u.ecoCoins;
+            showCoinModal(chapterName, required);
+          };
+        }
+      }
+    }
+    document.getElementById('chapter-modal').classList.remove('hidden');
+  }
+function showPremiumModal(chapterName) {
+  document.getElementById('premium-modal-title').textContent = chapterName;
+  document.getElementById('premium-modal').classList.remove('hidden');
+}
+</script>
+
+<!-- Coin unlock modal -->
+<div id="chapter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <span id="chapter-modal-icon" class="material-symbols-outlined text-5xl" style="font-variation-settings:'FILL' 1;color:#734e00;">stars</span>
+    </div>
+    <h3 id="chapter-modal-title" class="text-lg font-headline font-bold text-on-surface text-center mb-3"></h3>
+    <p id="chapter-modal-body" class="text-sm text-on-surface-variant text-center mb-6"></p>
+    <div class="bg-[#ffdeac]/40 rounded-2xl p-4 mb-6 text-center">
+      <div class="text-xs text-on-surface-variant mb-1">Ағымдағы жинақ</div>
+      <div class="text-2xl font-headline font-bold text-[#734e00]" id="modal-coins-display">0 Эко-тиын</div>
+    </div>
+    <button onclick="document.getElementById('chapter-modal').classList.add('hidden')"
+      class="w-full bg-purple-600 text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">Жарайды</button>
+  </div>
+</div>
+
+<!-- Premium modal -->
+<div id="premium-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 bg-gradient-to-br from-[#734e00] to-[#ffba38] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+      </div>
+    </div>
+    <h3 class="text-xl font-headline font-bold text-on-surface text-center mb-2">Premium тарау</h3>
+    <h4 id="premium-modal-title" class="text-sm text-purple-600 font-medium text-center mb-4"></h4>
+    <p class="text-sm text-on-surface-variant text-center mb-6">Бұл тарауға қол жеткізу үшін PhysiNature Premium мүшелігін сатып алыңыз немесе жеткілікті Эко-тиын жинаңыз.</p>
+    <div class="space-y-3">
+      <button class="w-full bg-gradient-to-r from-[#734e00] to-[#ffba38] text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all"
+        onclick="showToast('Premium мүшелік жақын арада қосылады!'); document.getElementById('premium-modal').classList.add('hidden')">Premium сатып алу</button>
+      <button onclick="document.getElementById('premium-modal').classList.add('hidden')"
+        class="w-full border border-outline-variant text-on-surface-variant py-3 rounded-xl font-headline font-bold text-sm hover:bg-surface-container transition-all">Артқа</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

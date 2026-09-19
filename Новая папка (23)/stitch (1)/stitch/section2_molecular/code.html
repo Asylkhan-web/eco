@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Молекулалық физика</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "primary":"#0d631b","on-primary":"#ffffff","primary-fixed":"#a3f69c",
+          "surface":"#f0fdf1","on-surface":"#131e17","on-surface-variant":"#40493d",
+          "outline-variant":"#bfcaba","surface-container":"#e4f1e5","surface-container-low":"#eaf7eb",
+          "tertiary":"#734e00","tertiary-fixed":"#ffdeac","error":"#ba1a1a","error-container":"#ffdad6"
+        },
+        fontFamily:{"headline":["Space Grotesk"],"body":["Inter"]}
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family:'Inter',sans-serif; }
+  .font-headline { font-family:'Space Grotesk',sans-serif; }
+  canvas { border-radius:12px; display:block; }
+  .tab-btn { transition:all 0.2s; }
+  .tab-btn.active { background:#1565C0; color:#fff; }
+  .quiz-opt { transition:all 0.2s; cursor:pointer; border:2px solid #bfcaba; }
+  .quiz-opt:hover { border-color:#1565C0; background:#EFF6FF; }
+  .quiz-opt.correct { border-color:#0d631b !important; background:#a3f69c !important; }
+  .quiz-opt.wrong { border-color:#ba1a1a !important; background:#ffdad6 !important; }
+  .phase-btn { transition:all 0.2s; }
+  .phase-btn.selected { background:#1565C0; color:white; }
+  .thermometer { transition: height 0.5s ease; }
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm border-b border-outline-variant/20">
+  <div class="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+    <a href="../main_dashboard/code.html" class="flex items-center gap-2 text-on-surface-variant hover:text-blue-600 transition-colors">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span class="font-headline font-bold text-blue-600 text-lg">PhysiNature</span>
+    </a>
+    <div class="bg-blue-50 px-4 py-1.5 rounded-full text-sm font-bold text-blue-600">2 / 4 бөлім</div>
+  </div>
+</nav>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+  <div class="flex items-center gap-4 mb-6">
+    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center shadow">
+      <span class="material-symbols-outlined text-blue-600 text-3xl" style="font-variation-settings:'FILL' 1;">bubble_chart</span>
+    </div>
+    <div>
+      <div class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Бөлім 2</div>
+      <h1 class="text-2xl font-headline font-bold text-on-surface">Молекулалық физика</h1>
+    </div>
+    <div class="ml-auto text-right">
+      <div class="text-xs text-on-surface-variant">Прогресс</div>
+      <div id="section-pct" class="text-xl font-headline font-bold text-blue-600">0%</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-6 bg-blue-50 p-1.5 rounded-xl">
+    <button onclick="showTab('theory')" id="tab-theory" class="tab-btn active flex-1 py-2.5 rounded-lg text-sm font-headline font-bold">Теория</button>
+    <button onclick="showTab('diffusion')" id="tab-diffusion" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Диффузия</button>
+    <button onclick="showTab('phase')" id="tab-phase" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Фазалық ауысу</button>
+    <button onclick="showTab('lab')" id="tab-lab" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">Зертхана</button>
+  </div>
+
+  <!-- THEORY -->
+  <div id="panel-theory" class="space-y-4">
+    <div class="bg-white rounded-2xl p-6 border border-blue-100 shadow-sm">
+      <h2 class="text-xl font-headline font-bold text-on-surface mb-4">Молекулалық-кинетикалық теория</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-blue-700 mb-2">МКТ негізгі тезистері</h3>
+          <ul class="text-sm text-on-surface-variant space-y-1 list-disc list-inside">
+            <li>Барлық заттар молекулалардан тұрады</li>
+            <li>Молекулалар үздіксіз қозғалыста болады</li>
+            <li>Молекулалар бір-бірімен өзара әрекеттеседі</li>
+          </ul>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-blue-700 mb-2">Диффузия</h3>
+          <p class="text-sm text-on-surface-variant">Молекулалардың өздігінен жоғары концентрация аймағынан төмен концентрация аймағына тарауы. Tемпература жоғарылаған сайын диффузия жылдамдығы артады.</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-blue-700 mb-2">Идеал газ теңдеуі</h3>
+          <div class="text-center font-headline font-bold text-blue-800 text-lg my-2">pV = νRT</div>
+          <p class="text-xs text-on-surface-variant">p — қысым (Па), V — көлем (м³), ν — мол саны, R = 8.314 Дж/(моль·К), T — температура (К)</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h3 class="font-headline font-bold text-blue-700 mb-2">Заттың агрегаттық күйлері</h3>
+          <div class="flex gap-2 mt-2">
+            <div class="flex-1 text-center p-2 bg-blue-100 rounded-lg">
+              <div class="text-xl">🧊</div>
+              <div class="text-xs font-bold text-blue-700">Қатты</div>
+            </div>
+            <div class="flex-1 text-center p-2 bg-blue-100 rounded-lg">
+              <div class="text-xl">💧</div>
+              <div class="text-xs font-bold text-blue-700">Сұйық</div>
+            </div>
+            <div class="flex-1 text-center p-2 bg-blue-100 rounded-lg">
+              <div class="text-xl">💨</div>
+              <div class="text-xs font-bold text-blue-700">Газ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-4 mb-4">
+        <h3 class="font-headline font-bold text-blue-700 mb-3">Газ заңдары</h3>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-white rounded-xl p-3">
+            <div class="font-headline font-bold text-blue-600">Бойль-Мариотт</div>
+            <div class="text-lg font-bold my-1">pV = const</div>
+            <div class="text-xs text-on-surface-variant">T = const кезінде</div>
+          </div>
+          <div class="bg-white rounded-xl p-3">
+            <div class="font-headline font-bold text-blue-600">Гей-Люссак</div>
+            <div class="text-lg font-bold my-1">p/T = const</div>
+            <div class="text-xs text-on-surface-variant">V = const кезінде</div>
+          </div>
+          <div class="bg-white rounded-xl p-3">
+            <div class="font-headline font-bold text-blue-600">Шарль</div>
+            <div class="text-lg font-bold my-1">V/T = const</div>
+            <div class="text-xs text-on-surface-variant">p = const кезінде</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button onclick="showTab('diffusion'); markProgress(25)"
+      class="w-full bg-blue-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Диффузия симуляциясына өту →
+    </button>
+  </div>
+
+  <!-- DIFFUSION SIM -->
+  <div id="panel-diffusion" class="hidden">
+    <div class="bg-gray-900 rounded-2xl p-5 mb-5">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <h2 class="text-white font-headline font-bold flex-1">Диффузия симуляциясы</h2>
+        <div class="flex gap-3 text-sm">
+          <span class="px-3 py-1 rounded-full font-bold" style="background:#1565C020;color:#42A5F5">🔵 Молекула A</span>
+          <span class="px-3 py-1 rounded-full font-bold" style="background:#c6282820;color:#EF5350">🔴 Молекула B</span>
+        </div>
+      </div>
+      <canvas id="diffCanvas" width="760" height="280" style="width:100%;background:#111;border-radius:12px;"></canvas>
+    </div>
+    <div class="grid md:grid-cols-3 gap-4 mb-5">
+      <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm">
+        <label class="block text-sm font-medium text-on-surface-variant mb-2">Температура</label>
+        <input type="range" id="temp-slider" min="1" max="10" value="3" oninput="updateDiffusion()"
+          class="w-full accent-blue-600 mb-1"/>
+        <div class="flex justify-between text-xs">
+          <span class="text-on-surface-variant">Төмен</span>
+          <span id="temp-val" class="font-bold text-blue-600">300 К</span>
+          <span class="text-on-surface-variant">Жоғары</span>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm text-center">
+        <div class="text-sm text-on-surface-variant mb-1">Аралас деңгей</div>
+        <div id="mix-pct" class="text-3xl font-headline font-bold text-blue-600">0%</div>
+        <div class="text-xs text-on-surface-variant mt-1">молекулалар</div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm">
+        <div class="space-y-2">
+          <button onclick="startDiffusion()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">▶ Диффузия бастау</button>
+          <button onclick="resetDiffusion()" class="w-full border-2 border-blue-200 text-blue-600 py-2.5 rounded-xl font-headline font-bold text-sm hover:bg-blue-50 transition-all">↺ Қайта</button>
+        </div>
+      </div>
+    </div>
+    <div class="bg-blue-50 rounded-2xl p-4 mb-5 text-sm text-on-surface-variant">
+      <strong class="text-blue-700">Байқаңыз:</strong> Температура жоғарылаған сайын молекулалардың қозғалыс жылдамдығы артып, диффузия тезірек жүреді. Бастапқыда синий молекулалар сол жақта, қызыл — оң жақта орналасқан.
+    </div>
+    <button onclick="showTab('phase'); markProgress(50)"
+      class="w-full bg-blue-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Фазалық ауысуға өту →
+    </button>
+  </div>
+
+  <!-- PHASE TRANSITION SIM -->
+  <div id="panel-phase" class="hidden">
+    <div class="bg-gray-900 rounded-2xl p-5 mb-5">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <h2 class="text-white font-headline font-bold flex-1">Фазалық ауысу симуляциясы</h2>
+        <div id="phase-label" class="px-4 py-1.5 rounded-full font-bold text-sm" style="background:#1565C030;color:#90CAF9">
+          🧊 Қатты күй
+        </div>
+      </div>
+      <canvas id="phaseCanvas" width="760" height="280" style="width:100%;background:#111;border-radius:12px;"></canvas>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-5">
+      <div class="bg-white rounded-2xl p-5 border border-blue-100 shadow-sm">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Жылу беру</h3>
+        <div class="flex items-center gap-4 mb-4">
+          <!-- Thermometer visual -->
+          <div class="flex flex-col items-center">
+            <div class="w-6 bg-gray-200 rounded-t-full relative overflow-hidden" style="height:120px">
+              <div id="thermo-fill" class="thermometer absolute bottom-0 w-full bg-red-500 rounded-t-full" style="height:10%"></div>
+            </div>
+            <div class="w-8 h-8 bg-red-500 rounded-full mt-1 flex items-center justify-center">
+              <span class="text-white text-xs font-bold">°</span>
+            </div>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-on-surface-variant">Температура</span>
+              <span id="phase-temp-val" class="font-bold text-blue-600">-50°C</span>
+            </div>
+            <input type="range" id="phase-temp" min="0" max="100" value="0" oninput="updatePhase()"
+              class="w-full accent-red-500"/>
+            <div class="flex justify-between text-xs text-on-surface-variant mt-1">
+              <span>-50°C</span>
+              <span>0°C балқу</span>
+              <span>100°C қайнау</span>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <button onclick="setPhasePreset(0)" class="phase-btn border border-blue-200 rounded-xl py-2 font-bold text-blue-600 hover:bg-blue-50">🧊 Мұз</button>
+          <button onclick="setPhasePreset(50)" class="phase-btn border border-blue-200 rounded-xl py-2 font-bold text-blue-600 hover:bg-blue-50">💧 Су</button>
+          <button onclick="setPhasePreset(100)" class="phase-btn border border-blue-200 rounded-xl py-2 font-bold text-blue-600 hover:bg-blue-50">♨️ Бу</button>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-blue-100 shadow-sm">
+        <h3 class="font-headline font-bold text-on-surface mb-3">Ағымдағы күй</h3>
+        <div id="phase-info" class="space-y-2 text-sm">
+          <div class="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+            <span class="text-2xl">🧊</span>
+            <div>
+              <div class="font-bold text-blue-700">Қатты күй (мұз)</div>
+              <div class="text-on-surface-variant text-xs">Молекулалар кристалдық тордада тербеледі</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 p-3 bg-blue-50 rounded-xl text-xs text-on-surface-variant">
+          <strong>Балқу температурасы:</strong> 0°C (273 К)<br/>
+          <strong>Қайнау температурасы:</strong> 100°C (373 К)
+        </div>
+      </div>
+    </div>
+    <button onclick="showTab('lab'); markProgress(75)"
+      class="w-full bg-blue-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+      Зертхана жұмысына өту →
+    </button>
+  </div>
+
+  <!-- LAB -->
+  <div id="panel-lab" class="hidden">
+    <div class="bg-white rounded-2xl p-6 border border-blue-100 shadow-sm mb-5">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-blue-600" style="font-variation-settings:'FILL' 1;">science</span>
+        </div>
+        <div>
+          <h2 class="font-headline font-bold text-on-surface">Зертханалық жұмыс №2</h2>
+          <p class="text-sm text-on-surface-variant">Молекулалық физиканы зерттеу</p>
+        </div>
+        <div class="ml-auto text-sm font-bold text-blue-600" id="lab-score">0 / 5</div>
+      </div>
+      <div id="quiz-container" class="space-y-5"></div>
+      <div id="lab-result" class="hidden mt-5 p-4 rounded-xl text-center"></div>
+      <button id="lab-submit-btn" onclick="submitLab()"
+        class="mt-5 w-full bg-blue-600 text-white py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg">
+        Тексеру
+      </button>
+    </div>
+  </div>
+
+  <!-- Модуль тараулары -->
+  <div class="mt-8 bg-white rounded-2xl p-6 border border-blue-100 shadow-sm">
+    <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Модуль тараулары</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-xl">
+        <span class="material-symbols-outlined text-blue-600 text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        <span class="text-sm font-medium text-blue-600">1-тарау · Молекулалық теория</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-blue-50 transition-colors" onclick="showCoinModal('2-тарау · Диффузия және осмос', 100)">
+        <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+        <span class="text-sm">2-тарау · Диффузия және осмос</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-blue-50 transition-colors" onclick="showPremiumModal('3-тарау · Термодинамика')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">3-тарау · Термодинамика</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-blue-50 transition-colors" onclick="showPremiumModal('4-тарау · Фазалық ауысулар')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">4-тарау · Фазалық ауысулар</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function getUser() { return JSON.parse(localStorage.getItem('pn_current_user') || 'null'); }
+function markProgress(pct) {
+  const user = getUser();
+  if (!user) return;
+  if (!user.progress) user.progress = {};
+  user.progress.section2 = Math.max(user.progress.section2 || 0, pct);
+  const users = JSON.parse(localStorage.getItem('pn_users') || '[]');
+  const idx = users.findIndex(u => u.username === user.username);
+  if (idx >= 0) users[idx] = user;
+  localStorage.setItem('pn_users', JSON.stringify(users));
+  localStorage.setItem('pn_current_user', JSON.stringify(user));
+  document.getElementById('section-pct').textContent = (user.progress.section2 || 0) + '%';
+}
+
+const user = getUser();
+if (user && user.progress) document.getElementById('section-pct').textContent = (user.progress.section2 || 0) + '%';
+
+function showTab(name) {
+  ['theory','diffusion','phase','lab'].forEach(t => {
+    document.getElementById('panel-'+t).classList.toggle('hidden', t !== name);
+    const btn = document.getElementById('tab-'+t);
+    btn.classList.toggle('active', t === name);
+    btn.classList.toggle('text-on-surface-variant', t !== name);
+  });
+}
+
+// ======== DIFFUSION ========
+const dCanvas = document.getElementById('diffCanvas');
+const dCtx = dCanvas.getContext('2d');
+let particles = [];
+let diffRunning = false;
+let diffAnim = null;
+let mixLevel = 0;
+
+function initParticles() {
+  particles = [];
+  const W = dCanvas.width, H = dCanvas.height;
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * (W/2 - 20) + 10,
+      y: Math.random() * (H - 20) + 10,
+      vx: 0, vy: 0,
+      color: '#42A5F5', type: 'A', r: 5
+    });
+  }
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * (W/2 - 20) + W/2 + 10,
+      y: Math.random() * (H - 20) + 10,
+      vx: 0, vy: 0,
+      color: '#EF5350', type: 'B', r: 5
+    });
+  }
+  mixLevel = 0;
+  drawDiffusion();
+}
+
+function updateDiffusion() {
+  const temp = +document.getElementById('temp-slider').value;
+  document.getElementById('temp-val').textContent = (temp * 30 + 270) + ' К';
+}
+
+function drawDiffusion() {
+  const W = dCanvas.width, H = dCanvas.height;
+  dCtx.fillStyle = '#111';
+  dCtx.fillRect(0, 0, W, H);
+
+  // Divider (fades as mixing happens)
+  const alpha = Math.max(0, 0.5 - mixLevel/100);
+  dCtx.strokeStyle = `rgba(255,255,255,${alpha})`;
+  dCtx.lineWidth = 2;
+  dCtx.setLineDash([10, 5]);
+  dCtx.beginPath();
+  dCtx.moveTo(W/2, 0);
+  dCtx.lineTo(W/2, H);
+  dCtx.stroke();
+  dCtx.setLineDash([]);
+
+  particles.forEach(p => {
+    dCtx.beginPath();
+    dCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    dCtx.fillStyle = p.color;
+    dCtx.fill();
+    dCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+    dCtx.lineWidth = 0.5;
+    dCtx.stroke();
+  });
+
+  // Labels
+  dCtx.fillStyle = 'rgba(66,165,245,0.8)';
+  dCtx.font = 'bold 14px Space Grotesk';
+  dCtx.fillText('A молекулалары', 20, 25);
+  dCtx.fillStyle = 'rgba(239,83,80,0.8)';
+  dCtx.fillText('B молекулалары', W/2 + 20, 25);
+}
+
+function animateDiffusion(ts) {
+  const W = dCanvas.width, H = dCanvas.height;
+  const temp = +document.getElementById('temp-slider').value;
+  const speed = temp * 1.5;
+
+  particles.forEach(p => {
+    if (Math.random() < 0.3) {
+      p.vx += (Math.random() - 0.5) * speed;
+      p.vy += (Math.random() - 0.5) * speed;
+    }
+    p.vx *= 0.9;
+    p.vy *= 0.9;
+    const maxV = speed * 2;
+    p.vx = Math.max(-maxV, Math.min(maxV, p.vx));
+    p.vy = Math.max(-maxV, Math.min(maxV, p.vy));
+    p.x += p.vx;
+    p.y += p.vy;
+    // Bounce walls
+    if (p.x < p.r) { p.x = p.r; p.vx *= -1; }
+    if (p.x > W - p.r) { p.x = W - p.r; p.vx *= -1; }
+    if (p.y < p.r) { p.y = p.r; p.vy *= -1; }
+    if (p.y > H - p.r) { p.y = H - p.r; p.vy *= -1; }
+  });
+
+  // Calculate mixing level
+  const halfW = W / 2;
+  let aRight = 0, bLeft = 0;
+  particles.forEach(p => {
+    if (p.type === 'A' && p.x > halfW) aRight++;
+    if (p.type === 'B' && p.x < halfW) bLeft++;
+  });
+  mixLevel = Math.min(100, Math.round((aRight + bLeft) / 160 * 100 * 2));
+  document.getElementById('mix-pct').textContent = mixLevel + '%';
+
+  drawDiffusion();
+  if (diffRunning) diffAnim = requestAnimationFrame(animateDiffusion);
+}
+
+function startDiffusion() {
+  if (!diffRunning) {
+    diffRunning = true;
+    diffAnim = requestAnimationFrame(animateDiffusion);
+    markProgress(50);
+  }
+}
+
+function resetDiffusion() {
+  diffRunning = false;
+  if (diffAnim) cancelAnimationFrame(diffAnim);
+  initParticles();
+}
+
+initParticles();
+
+// ======== PHASE TRANSITION ========
+const pCanvas = document.getElementById('phaseCanvas');
+const pCtx = pCanvas.getContext('2d');
+let phaseParticles = [];
+let phaseAnimId = null;
+
+function initPhaseParticles(state) {
+  phaseParticles = [];
+  const W = pCanvas.width, H = pCanvas.height;
+  const count = 120;
+  for (let i = 0; i < count; i++) {
+    phaseParticles.push({
+      x: Math.random() * (W - 40) + 20,
+      y: Math.random() * (H - 40) + 20,
+      baseX: 0, baseY: 0,
+      vx: 0, vy: 0,
+      state: state
+    });
+  }
+  // For solid: assign grid positions
+  if (state === 'solid') {
+    const cols = 15, rows = 8;
+    phaseParticles.forEach((p, i) => {
+      p.baseX = 40 + (i % cols) * (W - 80) / cols;
+      p.baseY = 40 + Math.floor(i / cols) * (H - 80) / rows;
+      p.x = p.baseX + (Math.random() - 0.5) * 4;
+      p.y = p.baseY + (Math.random() - 0.5) * 4;
+    });
+  }
+}
+
+function animatePhase(ts) {
+  const W = pCanvas.width, H = pCanvas.height;
+  const temp = +document.getElementById('phase-temp').value;
+  const state = temp < 30 ? 'solid' : (temp < 70 ? 'liquid' : 'gas');
+
+  pCtx.fillStyle = '#111';
+  pCtx.fillRect(0, 0, W, H);
+
+  // Background glow based on temperature
+  const r = Math.floor(temp * 2.55);
+  const g = Math.floor((100 - temp) * 0.6);
+  pCtx.fillStyle = `rgba(${r},${g},150,0.05)`;
+  pCtx.fillRect(0, 0, W, H);
+
+  phaseParticles.forEach((p, idx) => {
+    if (state === 'solid') {
+      const tx = p.baseX + (Math.random() - 0.5) * (temp * 0.1 + 2);
+      const ty = p.baseY + (Math.random() - 0.5) * (temp * 0.1 + 2);
+      p.x += (tx - p.x) * 0.3;
+      p.y += (ty - p.y) * 0.3;
+      p.color = '#90CAF9';
+    } else if (state === 'liquid') {
+      p.vx += (Math.random() - 0.5) * 1.5;
+      p.vy += (Math.random() - 0.5) * 1.5;
+      p.vx *= 0.9;
+      p.vy *= 0.9;
+      p.x += p.vx;
+      p.y += p.vy;
+      // Gravity effect
+      p.vy += 0.05;
+      const floorY = H - 80 + idx % 20 * 3;
+      if (p.y > floorY) { p.y = floorY; p.vy *= -0.3; }
+      if (p.x < 5) { p.x = 5; p.vx *= -1; }
+      if (p.x > W - 5) { p.x = W - 5; p.vx *= -1; }
+      if (p.y < 5) { p.y = 5; p.vy *= -1; }
+      p.color = '#42A5F5';
+    } else {
+      p.vx += (Math.random() - 0.5) * 4;
+      p.vy += (Math.random() - 0.5) * 4;
+      p.vx *= 0.95;
+      p.vy *= 0.95;
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 5) { p.x = 5; p.vx *= -1; }
+      if (p.x > W - 5) { p.x = W - 5; p.vx *= -1; }
+      if (p.y < 5) { p.y = 5; p.vy *= -1; }
+      if (p.y > H - 5) { p.y = H - 5; p.vy *= -1; }
+      p.color = `rgba(${200+Math.floor(Math.random()*55)},${100+Math.floor(Math.random()*50)},80,0.8)`;
+    }
+
+    const size = state === 'gas' ? 3 : state === 'liquid' ? 4 : 5;
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, size, 0, Math.PI*2);
+    pCtx.fillStyle = p.color || '#42A5F5';
+    pCtx.fill();
+  });
+
+  // Draw container (beaker)
+  pCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+  pCtx.lineWidth = 2;
+  pCtx.beginPath();
+  pCtx.moveTo(20, 10);
+  pCtx.lineTo(20, H - 10);
+  pCtx.lineTo(W - 20, H - 10);
+  pCtx.lineTo(W - 20, 10);
+  pCtx.stroke();
+
+  // Heat source indicator
+  if (temp > 20) {
+    for (let i = 0; i < 5; i++) {
+      const fx = 100 + i * 120;
+      pCtx.strokeStyle = `rgba(255,${150 - temp},0,${temp/100})`;
+      pCtx.lineWidth = 2;
+      pCtx.beginPath();
+      pCtx.moveTo(fx, H - 5);
+      const waveH = temp * 0.4 + 10;
+      pCtx.bezierCurveTo(fx-10, H-waveH, fx+10, H-waveH*1.5, fx, H-waveH*2);
+      pCtx.stroke();
+    }
+  }
+
+  phaseAnimId = requestAnimationFrame(animatePhase);
+}
+
+function updatePhase() {
+  const temp = +document.getElementById('phase-temp').value;
+  const realTemp = temp - 50;
+  document.getElementById('phase-temp-val').textContent = realTemp + '°C';
+  document.getElementById('thermo-fill').style.height = (temp + 10) + '%';
+
+  const state = temp < 30 ? 'solid' : (temp < 70 ? 'liquid' : 'gas');
+  const phaseInfo = document.getElementById('phase-info');
+  const phaseLabel = document.getElementById('phase-label');
+
+  if (state === 'solid') {
+    phaseLabel.textContent = '🧊 Қатты күй';
+    phaseLabel.style.background = '#1565C030'; phaseLabel.style.color = '#90CAF9';
+    phaseInfo.innerHTML = '<div class="flex items-center gap-2 p-2 bg-blue-50 rounded-lg"><span class="text-2xl">🧊</span><div><div class="font-bold text-blue-700">Қатты күй (мұз)</div><div class="text-on-surface-variant text-xs">Молекулалар кристалдық тордада тербеледі</div></div></div>';
+  } else if (state === 'liquid') {
+    phaseLabel.textContent = '💧 Сұйық күй';
+    phaseLabel.style.background = '#42A5F530'; phaseLabel.style.color = '#42A5F5';
+    phaseInfo.innerHTML = '<div class="flex items-center gap-2 p-2 bg-blue-50 rounded-lg"><span class="text-2xl">💧</span><div><div class="font-bold text-blue-700">Сұйық күй (су)</div><div class="text-on-surface-variant text-xs">Молекулалар еркін қозғалады, бірақ жанасады</div></div></div>';
+  } else {
+    phaseLabel.textContent = '♨️ Газ күй (бу)';
+    phaseLabel.style.background = '#EF535030'; phaseLabel.style.color = '#EF5350';
+    phaseInfo.innerHTML = '<div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg"><span class="text-2xl">♨️</span><div><div class="font-bold text-red-700">Газ күй (бу)</div><div class="text-on-surface-variant text-xs">Молекулалар тез қозғалып, алшақтайды</div></div></div>';
+  }
+}
+
+function setPhasePreset(val) {
+  document.getElementById('phase-temp').value = val;
+  updatePhase();
+}
+
+function startPhaseAnim() {
+  if (!phaseAnimId) {
+    initPhaseParticles('solid');
+    phaseAnimId = requestAnimationFrame(animatePhase);
+  }
+}
+
+// Start phase animation when tab shown
+const origShowTab = showTab;
+window.showTab = function(name) {
+  origShowTab(name);
+  if (name === 'phase' && !phaseAnimId) {
+    initPhaseParticles('solid');
+    phaseAnimId = requestAnimationFrame(animatePhase);
+  }
+}
+
+// ======== QUIZ ========
+const questions = [
+  {
+    q: 'Диффузия дегеніміз не?',
+    opts: ['Заттың еруі','Молекулалардың өздігінен тарауы','Химиялық реакция','Қысымның өзгеруі'],
+    ans: 1, exp: 'Диффузия — молекулалардың жоғары концентрация аймағынан төменге өздігінен тарауы'
+  },
+  {
+    q: 'Идеал газ теңдеуі қандай?',
+    opts: ['pV = nRT','pV = RT','p = nRT','V = nRT'],
+    ans: 0, exp: 'pV = νRT — идеал газ күй теңдеуі (Клапейрон-Менделеев теңдеуі)'
+  },
+  {
+    q: 'Судың қайнау температурасы қандай (атмосфералық қысымда)?',
+    opts: ['0°C','50°C','100°C','200°C'],
+    ans: 2, exp: 'Су 100°C (373 К) температурада қайнайды'
+  },
+  {
+    q: 'Температура жоғарылаған сайын диффузия жылдамдығы қалай өзгереді?',
+    opts: ['Азаяды','Өзгермейді','Артады','Тоқтайды'],
+    ans: 2, exp: 'Температура жоғарыласа молекулалар жылдамырақ қозғалады, диффузия тезірек жүреді'
+  },
+  {
+    q: 'Судың балқу температурасы қандай?',
+    opts: ['-10°C','0°C','10°C','100°C'],
+    ans: 1, exp: 'Мұз 0°C (273 К) температурада балқиды'
+  }
+];
+
+let labAnswers = {};
+let labSubmitted = false;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = questions.map((q, qi) => `
+    <div class="bg-blue-50 rounded-xl p-5" id="q-block-${qi}">
+      <p class="font-headline font-bold text-on-surface mb-3 text-sm">${qi+1}. ${q.q}</p>
+      <div class="space-y-2">
+        ${q.opts.map((o, oi) => `
+          <div class="quiz-opt rounded-xl p-3 text-sm font-medium flex items-center gap-3 bg-white"
+            id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="w-6 h-6 rounded-full border-2 border-blue-200 flex items-center justify-center shrink-0 text-xs font-bold text-blue-600"
+              id="opt-circle-${qi}-${oi}">${String.fromCharCode(65+oi)}</div>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div id="exp-${qi}" class="hidden mt-3 p-3 bg-white rounded-lg text-xs text-on-surface-variant border-l-4 border-blue-500"></div>
+    </div>
+  `).join('');
+}
+
+function selectOpt(qi, oi) {
+  if (labSubmitted) return;
+  labAnswers[qi] = oi;
+  questions[qi].opts.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    el.style.borderColor = '';
+    el.style.background = 'white';
+    document.getElementById(`opt-circle-${qi}-${i}`).style.background = '';
+    document.getElementById(`opt-circle-${qi}-${i}`).style.color = '';
+  });
+  const sel = document.getElementById(`opt-${qi}-${oi}`);
+  sel.style.borderColor = '#1565C0';
+  sel.style.background = '#EFF6FF';
+  document.getElementById(`opt-circle-${qi}-${oi}`).style.background = '#1565C0';
+  document.getElementById(`opt-circle-${qi}-${oi}`).style.color = 'white';
+}
+
+function submitLab() {
+  if (labSubmitted) return;
+  labSubmitted = true;
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const correct = labAnswers[qi] === q.ans;
+    if (correct) score++;
+    questions[qi].opts.forEach((_, oi) => {
+      const el = document.getElementById(`opt-${qi}-${oi}`);
+      if (oi === q.ans) el.classList.add('correct');
+      else if (oi === labAnswers[qi] && !correct) el.classList.add('wrong');
+    });
+    const expEl = document.getElementById(`exp-${qi}`);
+    expEl.textContent = q.exp;
+    expEl.classList.remove('hidden');
+  });
+  document.getElementById('lab-score').textContent = `${score} / ${questions.length}`;
+  const btn = document.getElementById('lab-submit-btn');
+  btn.textContent = '✓ Аяқталды';
+  btn.disabled = true;
+
+  const pct = score >= 3 ? 100 : 75;
+  markProgress(pct);
+
+  const resultEl = document.getElementById('lab-result');
+  resultEl.classList.remove('hidden');
+  if (score >= 4) {
+    resultEl.className = 'mt-5 p-4 rounded-xl text-center bg-green-50 border border-green-200';
+    resultEl.innerHTML = `<div class="text-4xl mb-2">🏆</div><div class="font-headline font-bold text-lg text-green-700">Керемет! ${score}/5 дұрыс!</div><div class="text-sm text-on-surface-variant mt-1">Молекулалық физика бөлімін аяқтадыңыз!</div>`;
+    setTimeout(() => { if(confirm('Келесі бөлімге өту керек пе?')) window.location.href='../section3_electrostatics/code.html'; }, 1500);
+  } else {
+    resultEl.className = 'mt-5 p-4 rounded-xl text-center bg-blue-50 border border-blue-200';
+    resultEl.innerHTML = `<div class="text-4xl mb-2">📚</div><div class="font-headline font-bold text-lg text-blue-700">${score}/5 дұрыс</div><div class="text-sm text-on-surface-variant mt-1">Жақсы! Келесі бөлімге өтуге болады.</div>`;
+    setTimeout(() => { if(confirm('Келесі бөлімге өту керек пе?')) window.location.href='../section3_electrostatics/code.html'; }, 1500);
+  }
+}
+
+buildQuiz();
+
+let molCoinsEarned = 0;
+function showToast(msg) {
+  let t = document.getElementById('mol-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'mol-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#131e17;color:#f0fdf1;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+function showCoinModal(chapterName, required) {
+  const remaining = Math.max(0, required - molCoinsEarned);
+  const unlocked = remaining === 0;
+  document.getElementById('chapter-modal-icon').textContent = unlocked ? 'lock_open' : 'stars';
+  document.getElementById('chapter-modal-icon').style.color = unlocked ? '#1565C0' : '#734e00';
+  document.getElementById('chapter-modal-title').textContent = chapterName;
+  document.getElementById('chapter-modal-body').textContent = unlocked
+    ? 'Тарау ашылды! Жаңа контент жақын арада қосылады.'
+    : `Бұл тарауды ашу үшін тағы ${remaining} Эко-тиын жинаңыз. Зертхана тапсырмаларын орындап монеталар жинаңыз!`;
+  document.getElementById('modal-coins-display').textContent = molCoinsEarned + ' / ' + required + ' Эко-тиын';
+  document.getElementById('chapter-modal').classList.remove('hidden');
+}
+function showPremiumModal(chapterName) {
+  document.getElementById('premium-modal-title').textContent = chapterName;
+  document.getElementById('premium-modal').classList.remove('hidden');
+}
+</script>
+
+<!-- Coin unlock modal -->
+<div id="chapter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <span id="chapter-modal-icon" class="material-symbols-outlined text-5xl" style="font-variation-settings:'FILL' 1;color:#734e00;">stars</span>
+    </div>
+    <h3 id="chapter-modal-title" class="text-lg font-headline font-bold text-on-surface text-center mb-3"></h3>
+    <p id="chapter-modal-body" class="text-sm text-on-surface-variant text-center mb-6"></p>
+    <div class="bg-[#ffdeac]/40 rounded-2xl p-4 mb-6 text-center">
+      <div class="text-xs text-on-surface-variant mb-1">Ағымдағы жинақ</div>
+      <div class="text-2xl font-headline font-bold text-[#734e00]" id="modal-coins-display">0 Эко-тиын</div>
+    </div>
+    <button onclick="document.getElementById('chapter-modal').classList.add('hidden')"
+      class="w-full bg-blue-600 text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">Жарайды</button>
+  </div>
+</div>
+
+<!-- Premium modal -->
+<div id="premium-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 bg-gradient-to-br from-[#734e00] to-[#ffba38] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+      </div>
+    </div>
+    <h3 class="text-xl font-headline font-bold text-on-surface text-center mb-2">Premium тарау</h3>
+    <h4 id="premium-modal-title" class="text-sm text-blue-600 font-medium text-center mb-4"></h4>
+    <p class="text-sm text-on-surface-variant text-center mb-6">Бұл тарауға қол жеткізу үшін PhysiNature Premium мүшелігін сатып алыңыз немесе жеткілікті Эко-тиын жинаңыз.</p>
+    <div class="space-y-3">
+      <button class="w-full bg-gradient-to-r from-[#734e00] to-[#ffba38] text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all"
+        onclick="showToast('Premium мүшелік жақын арада қосылады!'); document.getElementById('premium-modal').classList.add('hidden')">Premium сатып алу</button>
+      <button onclick="document.getElementById('premium-modal').classList.add('hidden')"
+        class="w-full border border-outline-variant text-on-surface-variant py-3 rounded-xl font-headline font-bold text-sm hover:bg-surface-container transition-all">Артқа</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

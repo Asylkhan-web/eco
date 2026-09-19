@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Кіру / Тіркелу</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0d631b","on-primary": "#ffffff","primary-fixed": "#a3f69c",
+          "primary-container": "#2e7d32","surface": "#f0fdf1","surface-bright": "#f0fdf1",
+          "on-surface": "#131e17","on-surface-variant": "#40493d","outline": "#707a6c",
+          "outline-variant": "#bfcaba","surface-container": "#e4f1e5","surface-container-low": "#eaf7eb",
+          "tertiary": "#734e00","tertiary-fixed": "#ffdeac","error": "#ba1a1a"
+        },
+        fontFamily: {"headline": ["Space Grotesk"], "body": ["Inter"]}
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-headline { font-family: 'Space Grotesk', sans-serif; }
+  .tab-active { border-bottom: 3px solid #0d631b; color: #0d631b; }
+  .particle {
+    position: absolute; border-radius: 50%; opacity: 0.15;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.15; }
+    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+  }
+  .form-input { transition: all 0.2s; }
+  .form-input:focus { box-shadow: 0 0 0 3px rgba(13,99,27,0.15); }
+  .btn-primary { transition: all 0.2s; }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .error-msg { animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    75%{transform:translateX(6px)}
+  }
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen flex items-center justify-center relative overflow-hidden">
+
+<!-- Animated background particles -->
+<div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+<!-- Background gradient -->
+<div class="fixed inset-0 bg-gradient-to-br from-[#eaf7eb] via-[#f0fdf1] to-[#d9e6da] z-0"></div>
+
+<!-- Main card -->
+<div class="relative z-10 w-full max-w-md mx-4">
+  <!-- Logo -->
+  <div class="text-center mb-8">
+    <a href="../home_discover_nature_s_physics/code.html" class="inline-flex items-center gap-3">
+      <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
+        <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings:'FILL' 1;">eco</span>
+      </div>
+      <span class="text-3xl font-headline font-extrabold text-primary tracking-tighter">PhysiNature</span>
+    </a>
+    <p class="text-on-surface-variant text-sm mt-2">Физика әлемін зерттеңіз</p>
+  </div>
+
+  <!-- Card -->
+  <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-outline-variant/20">
+    <!-- Tabs -->
+    <div class="flex border-b border-outline-variant/20">
+      <button id="tab-login" onclick="switchTab('login')"
+        class="flex-1 py-4 text-sm font-headline font-bold tab-active transition-all">
+        Кіру
+      </button>
+      <button id="tab-register" onclick="switchTab('register')"
+        class="flex-1 py-4 text-sm font-headline font-bold text-on-surface-variant hover:text-primary transition-all">
+        Тіркелу
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="form-login" class="p-8">
+      <h2 class="text-2xl font-headline font-bold text-on-surface mb-2">Қош келдіңіз!</h2>
+      <p class="text-on-surface-variant text-sm mb-6">Аккаунтыңызға кіріңіз</p>
+      <div id="login-error" class="hidden mb-4 p-3 bg-error/10 border border-error/30 rounded-xl text-error text-sm"></div>
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Пайдаланушы аты немесе Email</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">person</span>
+            <input id="login-username" type="text" required placeholder="username@email.com"
+              class="form-input w-full pl-10 pr-4 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Құпия сөз</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">lock</span>
+            <input id="login-password" type="password" required placeholder="••••••••"
+              class="form-input w-full pl-10 pr-10 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+            <button type="button" onclick="togglePwd('login-password', this)"
+              class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-xl">visibility</button>
+          </div>
+        </div>
+        <button type="submit"
+          class="btn-primary w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-bold text-sm shadow-lg shadow-primary/30 mt-2">
+          Кіру
+        </button>
+      </form>
+      <div class="mt-6 text-center">
+        <p class="text-sm text-on-surface-variant">
+          Аккаунт жоқ па?
+          <button onclick="switchTab('register')" class="text-primary font-medium hover:underline">Тіркелу</button>
+        </p>
+      </div>
+      <div class="mt-4 p-3 bg-primary-fixed/30 rounded-xl text-xs text-center text-on-surface-variant">
+        <span class="font-medium text-primary">Демо аккаунт:</span> demo / demo123
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="form-register" class="p-8 hidden">
+      <h2 class="text-2xl font-headline font-bold text-on-surface mb-2">Тіркелу</h2>
+      <p class="text-on-surface-variant text-sm mb-6">Жаңа аккаунт жасаңыз</p>
+      <div id="register-error" class="hidden mb-4 p-3 bg-error/10 border border-error/30 rounded-xl text-error text-sm"></div>
+      <form onsubmit="handleRegister(event)" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">Аты</label>
+            <input id="reg-firstname" type="text" required placeholder="Аты"
+              class="form-input w-full px-4 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">Тегі</label>
+            <input id="reg-lastname" type="text" required placeholder="Тегі"
+              class="form-input w-full px-4 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Пайдаланушы аты</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">alternate_email</span>
+            <input id="reg-username" type="text" required placeholder="username"
+              class="form-input w-full pl-10 pr-4 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Email</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">email</span>
+            <input id="reg-email" type="email" required placeholder="email@example.com"
+              class="form-input w-full pl-10 pr-4 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Құпия сөз</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">lock</span>
+            <input id="reg-password" type="password" required placeholder="••••••••" minlength="6"
+              class="form-input w-full pl-10 pr-10 py-3 border border-outline-variant rounded-xl bg-surface-container-low focus:outline-none focus:border-primary"/>
+            <button type="button" onclick="togglePwd('reg-password', this)"
+              class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-xl">visibility</button>
+          </div>
+        </div>
+        <button type="submit"
+          class="btn-primary w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-bold text-sm shadow-lg shadow-primary/30 mt-2">
+          Тіркелу
+        </button>
+      </form>
+      <div class="mt-6 text-center">
+        <p class="text-sm text-on-surface-variant">
+          Аккаунт бар ма?
+          <button onclick="switchTab('login')" class="text-primary font-medium hover:underline">Кіру</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-center text-xs text-on-surface-variant mt-6">
+    © 2024 PhysiNature · Физика әлемін табиғатпен бірге зерттеңіз
+  </p>
+</div>
+
+<script>
+  // If already logged in, skip login page
+  if (localStorage.getItem('pn_current_user')) {
+    location.replace('../home_discover_nature_s_physics/code.html');
+  }
+
+  // Initialize demo account
+  if (!localStorage.getItem('pn_users')) {
+    localStorage.setItem('pn_users', JSON.stringify([
+      { username: 'demo', password: 'demo123', email: 'demo@physinature.kz', firstname: 'Демо', lastname: 'Пайдаланушы', progress: {} }
+    ]));
+  }
+
+  function switchTab(tab) {
+    document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+    document.getElementById('tab-login').className = 'flex-1 py-4 text-sm font-headline font-bold transition-all ' + (tab === 'login' ? 'tab-active' : 'text-on-surface-variant hover:text-primary');
+    document.getElementById('tab-register').className = 'flex-1 py-4 text-sm font-headline font-bold transition-all ' + (tab === 'register' ? 'tab-active' : 'text-on-surface-variant hover:text-primary');
+  }
+
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'visibility_off'; }
+    else { inp.type = 'password'; btn.textContent = 'visibility'; }
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    el.classList.add('error-msg');
+    setTimeout(() => el.classList.remove('error-msg'), 500);
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const btn = e.submitter || e.target.querySelector('button[type=submit]');
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    const users = JSON.parse(localStorage.getItem('pn_users') || '[]');
+    const user = users.find(u => (u.username === username || u.email === username) && u.password === password);
+    if (!user) { showError('login-error', 'Пайдаланушы аты немесе құпия сөз қате!'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Жүктелуде...'; }
+    try {
+      localStorage.setItem('pn_current_user', JSON.stringify(user));
+    } catch(err) {
+      showError('login-error', 'localStorage қолжетімсіз. Жеке режимді өшіріңіз.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Кіру'; }
+      return;
+    }
+    window.location.href = '../home_discover_nature_s_physics/code.html';
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    const username = document.getElementById('reg-username').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const firstname = document.getElementById('reg-firstname').value.trim();
+    const lastname = document.getElementById('reg-lastname').value.trim();
+    const users = JSON.parse(localStorage.getItem('pn_users') || '[]');
+    if (users.find(u => u.username === username)) { showError('register-error', 'Бұл пайдаланушы аты бос емес!'); return; }
+    if (users.find(u => u.email === email)) { showError('register-error', 'Бұл email тіркелген!'); return; }
+    const newUser = { username, password, email, firstname, lastname, progress: {} };
+    users.push(newUser);
+    localStorage.setItem('pn_users', JSON.stringify(users));
+    localStorage.setItem('pn_current_user', JSON.stringify(newUser));
+    window.location.href = '../home_discover_nature_s_physics/code.html';
+  }
+
+  // Create animated background particles
+  const colors = ['#a3f69c','#0d631b','#2e7d32','#ffdeac','#734e00'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    const size = Math.random() * 40 + 10;
+    p.className = 'particle';
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+10}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    document.getElementById('particles').appendChild(p);
+  }
+</script>
+</body>
+</html>

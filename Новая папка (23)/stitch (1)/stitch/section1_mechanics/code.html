@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature | Механика және динамика</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "primary":"#0d631b","on-primary":"#ffffff","primary-fixed":"#a3f69c",
+          "surface":"#f0fdf1","on-surface":"#131e17","on-surface-variant":"#40493d",
+          "outline":"#707a6c","outline-variant":"#bfcaba","surface-container":"#e4f1e5",
+          "surface-container-low":"#eaf7eb","tertiary":"#734e00","tertiary-fixed":"#ffdeac",
+          "error":"#ba1a1a","error-container":"#ffdad6"
+        },
+        fontFamily:{"headline":["Space Grotesk"],"body":["Inter"]}
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family:'Inter',sans-serif; }
+  .font-headline { font-family:'Space Grotesk',sans-serif; }
+  canvas { display:block; border-radius:12px; }
+  .sim-panel { background:linear-gradient(135deg,#1a2a1a,#0d1f0d); }
+  .tab-btn { transition:all 0.2s; }
+  .tab-btn.active { background:#0d631b; color:#fff; }
+  .quiz-opt { transition:all 0.2s; cursor:pointer; border:2px solid #bfcaba; }
+  .quiz-opt:hover { border-color:#0d631b; background:#eaf7eb; }
+  .quiz-opt.correct { border-color:#0d631b !important; background:#a3f69c !important; }
+  .quiz-opt.wrong { border-color:#ba1a1a !important; background:#ffdad6 !important; }
+  .toast { animation:slideUp 0.3s ease,fadeOut 0.4s ease 2.6s forwards; }
+  @keyframes slideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes fadeOut { to{opacity:0} }
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+
+<!-- Nav -->
+<nav class="bg-[#f0fdf1]/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm border-b border-outline-variant/20">
+  <div class="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+    <a href="../main_dashboard/code.html" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span class="font-headline font-bold text-primary text-lg">PhysiNature</span>
+    </a>
+    <div class="flex items-center gap-3">
+      <div class="bg-primary-fixed/50 px-4 py-1.5 rounded-full text-sm font-bold text-primary">
+        <span id="nav-section">1 / 4 бөлім</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Section header -->
+  <div class="flex items-center gap-4 mb-6">
+    <div class="w-14 h-14 rounded-2xl bg-primary-fixed flex items-center justify-center shadow">
+      <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">directions_car</span>
+    </div>
+    <div>
+      <div class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Бөлім 1</div>
+      <h1 class="text-2xl font-headline font-bold text-on-surface">Механика және динамика</h1>
+    </div>
+    <div class="ml-auto text-right">
+      <div class="text-xs text-on-surface-variant">Прогресс</div>
+      <div id="section-pct" class="text-xl font-headline font-bold text-primary">0%</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-6 bg-surface-container-low p-1.5 rounded-xl">
+    <button onclick="showTab('theory')" id="tab-theory" class="tab-btn active flex-1 py-2.5 rounded-lg text-sm font-headline font-bold">
+      Теория
+    </button>
+    <button onclick="showTab('sim')" id="tab-sim" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">
+      Симуляция
+    </button>
+    <button onclick="showTab('lab')" id="tab-lab" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-headline font-bold text-on-surface-variant">
+      Зертхана
+    </button>
+  </div>
+
+  <!-- THEORY TAB -->
+  <div id="panel-theory" class="space-y-4">
+    <div class="bg-white rounded-2xl p-6 border border-outline-variant/20 shadow-sm">
+      <h2 class="text-xl font-headline font-bold text-on-surface mb-4">Кинематика</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h3 class="font-headline font-bold text-primary mb-2">Материалдық нүкте</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">Денені оның өлшемдерін ескермей нүкте ретінде қарастыруға болатын идеализацияланған модель.</p>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h3 class="font-headline font-bold text-primary mb-2">Бірқалыпты қозғалыс</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">Жылдамдық өзгермейтін қозғалыс. <strong>v = const</strong>, <br/>s = v · t</p>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h3 class="font-headline font-bold text-primary mb-2">Үдемелі қозғалыс</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">v = v₀ + a·t<br/>s = v₀t + ½at²<br/>v² = v₀² + 2as</p>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h3 class="font-headline font-bold text-primary mb-2">Жылдамдық және үдеу</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">v = Δs/Δt — орташа жылдамдық<br/>a = Δv/Δt — үдеу (м/с²)</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 border border-outline-variant/20 shadow-sm">
+      <h2 class="text-xl font-headline font-bold text-on-surface mb-4">Динамика — Ньютон заңдары</h2>
+      <div class="space-y-3">
+        <div class="flex gap-3 p-4 bg-primary-fixed/30 rounded-xl">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold shrink-0">I</div>
+          <div>
+            <div class="font-headline font-bold text-on-surface text-sm">Бірінші заң (инерция)</div>
+            <div class="text-sm text-on-surface-variant">Дене күш болмаса немесе күштер теңгерілген болса, тыныштықта немесе бірқалыпты қозғалыста болады.</div>
+          </div>
+        </div>
+        <div class="flex gap-3 p-4 bg-primary-fixed/30 rounded-xl">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold shrink-0">II</div>
+          <div>
+            <div class="font-headline font-bold text-on-surface text-sm">Екінші заң</div>
+            <div class="text-sm text-on-surface-variant"><strong>F = m · a</strong> — Күш массаның үдеуге көбейтіндісіне тең.</div>
+          </div>
+        </div>
+        <div class="flex gap-3 p-4 bg-primary-fixed/30 rounded-xl">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold shrink-0">III</div>
+          <div>
+            <div class="font-headline font-bold text-on-surface text-sm">Үшінші заң</div>
+            <div class="text-sm text-on-surface-variant">Іс-әрекет пен қарсы іс-әрекет күштері тең, бірақ қарама-қарсы бағытты.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 grid md:grid-cols-3 gap-3">
+        <div class="bg-tertiary-fixed/40 rounded-xl p-3 text-center">
+          <div class="text-lg font-headline font-bold text-tertiary">F = mg</div>
+          <div class="text-xs text-on-surface-variant mt-1">Ауырлық күші</div>
+        </div>
+        <div class="bg-tertiary-fixed/40 rounded-xl p-3 text-center">
+          <div class="text-lg font-headline font-bold text-tertiary">F = μN</div>
+          <div class="text-xs text-on-surface-variant mt-1">Үйкеліс күші</div>
+        </div>
+        <div class="bg-tertiary-fixed/40 rounded-xl p-3 text-center">
+          <div class="text-lg font-headline font-bold text-tertiary">F = kx</div>
+          <div class="text-xs text-on-surface-variant mt-1">Гук заңы</div>
+        </div>
+      </div>
+    </div>
+    <button onclick="showTab('sim'); markProgress(33)"
+      class="w-full bg-primary text-on-primary py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/30">
+      Симуляцияға өту →
+    </button>
+  </div>
+
+  <!-- SIMULATION TAB -->
+  <div id="panel-sim" class="hidden">
+    <div class="sim-panel rounded-2xl p-5 mb-5">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <h2 class="text-white font-headline font-bold text-lg flex-1">Машина қозғалысы симуляциясы</h2>
+        <div class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-bold font-headline" id="timer-display" style="color:#a3f69c">⏱ 0.0 с</div>
+        <div class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-bold font-headline" id="distance-display" style="color:#ffdeac">📏 0.0 м</div>
+        <div class="bg-white/10 rounded-lg px-3 py-1.5 text-sm font-bold font-headline" id="speed-display" style="color:#42A5F5">⚡ 0.0 м/с</div>
+      </div>
+      <canvas id="simCanvas" width="800" height="280" style="width:100%;background:#1a2a1a;border-radius:12px;"></canvas>
+    </div>
+
+    <!-- Controls -->
+    <div class="grid md:grid-cols-2 gap-4 mb-5">
+      <div class="bg-white rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Қозғалыс параметрлері</h3>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <label class="text-on-surface-variant font-medium">Жылдамдық</label>
+              <span id="speed-val" class="font-bold text-primary">50 м/с</span>
+            </div>
+            <input type="range" id="speed-slider" min="10" max="150" value="50" oninput="updateSlider()"
+              class="w-full accent-[#0d631b]"/>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <label class="text-on-surface-variant font-medium">Көлбеу бұрышы</label>
+              <span id="angle-val" class="font-bold text-primary">0°</span>
+            </div>
+            <input type="range" id="angle-slider" min="0" max="30" value="0" oninput="updateSlider()"
+              class="w-full accent-[#0d631b]"/>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <label class="text-on-surface-variant font-medium">Үдеу</label>
+              <span id="accel-val" class="font-bold text-primary">0 м/с²</span>
+            </div>
+            <input type="range" id="accel-slider" min="-20" max="20" value="0" oninput="updateSlider()"
+              class="w-full accent-[#0d631b]"/>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Басқару</h3>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <button onclick="startSim()" id="btn-start"
+            class="bg-primary text-on-primary py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">
+            ▶ Бастау
+          </button>
+          <button onclick="pauseSim()" id="btn-pause"
+            class="border-2 border-outline-variant py-3 rounded-xl font-headline font-bold text-sm text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+            ⏸ Тоқтату
+          </button>
+          <button onclick="resetSim()"
+            class="col-span-2 border-2 border-outline-variant py-3 rounded-xl font-headline font-bold text-sm text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+            ↺ Қайта бастау
+          </button>
+        </div>
+        <div class="space-y-2 text-sm">
+          <div class="flex gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer hover:bg-primary-fixed/30 transition-all"
+            onclick="setPreset('uniform')">
+            <span class="material-symbols-outlined text-primary text-sm">horizontal_rule</span>
+            <span class="font-medium">Бірқалыпты қозғалыс</span>
+          </div>
+          <div class="flex gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer hover:bg-primary-fixed/30 transition-all"
+            onclick="setPreset('inclined')">
+            <span class="material-symbols-outlined text-primary text-sm">trending_down</span>
+            <span class="font-medium">Көлбеу жазықтықта</span>
+          </div>
+          <div class="flex gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer hover:bg-primary-fixed/30 transition-all"
+            onclick="setPreset('accelerate')">
+            <span class="material-symbols-outlined text-primary text-sm">speed</span>
+            <span class="font-medium">Үдемелі қозғалыс</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulas live -->
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20 shadow-sm mb-5">
+      <h3 class="font-headline font-bold text-on-surface mb-3">Нақты есептеулер</h3>
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="bg-surface-container-low rounded-xl p-3">
+          <div class="text-xs text-on-surface-variant mb-1">Жол (s)</div>
+          <div id="calc-s" class="text-lg font-headline font-bold text-primary">0.0 м</div>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-3">
+          <div class="text-xs text-on-surface-variant mb-1">Жылдамдық (v)</div>
+          <div id="calc-v" class="text-lg font-headline font-bold text-primary">0.0 м/с</div>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-3">
+          <div class="text-xs text-on-surface-variant mb-1">Уақыт (t)</div>
+          <div id="calc-t" class="text-lg font-headline font-bold text-primary">0.0 с</div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="showTab('lab'); markProgress(66)"
+      class="w-full bg-primary text-on-primary py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/30">
+      Зертхана жұмысына өту →
+    </button>
+  </div>
+
+  <!-- LAB TAB -->
+  <div id="panel-lab" class="hidden">
+    <div class="bg-white rounded-2xl p-6 border border-outline-variant/20 shadow-sm mb-5">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">science</span>
+        </div>
+        <div>
+          <h2 class="font-headline font-bold text-on-surface">Зертханалық жұмыс №1</h2>
+          <p class="text-sm text-on-surface-variant">Механикалық қозғалысты зерттеу</p>
+        </div>
+        <div class="ml-auto text-sm font-bold text-primary" id="lab-score">0 / 5</div>
+      </div>
+
+      <div id="quiz-container" class="space-y-5"></div>
+
+      <div id="lab-result" class="hidden mt-5 p-4 rounded-xl text-center">
+        <div id="lab-result-icon" class="text-4xl mb-2"></div>
+        <div id="lab-result-title" class="font-headline font-bold text-lg mb-1"></div>
+        <div id="lab-result-msg" class="text-sm text-on-surface-variant"></div>
+      </div>
+
+      <button id="lab-submit-btn" onclick="submitLab()"
+        class="mt-5 w-full bg-primary text-on-primary py-4 rounded-2xl font-headline font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/30">
+        Тексеру
+      </button>
+    </div>
+  </div>
+
+  <!-- Модуль тараулары -->
+  <div class="mt-8 bg-white rounded-2xl p-6 border border-outline-variant/20 shadow-sm">
+    <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Модуль тараулары</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="flex items-center gap-2 p-3 bg-primary-fixed/20 rounded-xl">
+        <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        <span class="text-sm font-medium text-primary">1-тарау · Кинематика</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showCoinModal('2-тарау · Динамика', 100)">
+        <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+        <span class="text-sm">2-тарау · Динамика</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showPremiumModal('3-тарау · Энергия және жұмыс')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">3-тарау · Энергия және жұмыс</span>
+      </div>
+      <div class="flex items-center gap-2 p-3 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showPremiumModal('4-тарау · Тербеліс және толқын')">
+        <span class="material-symbols-outlined text-sm">lock</span>
+        <span class="text-sm opacity-60">4-тарау · Тербеліс және толқын</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Toast -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-[#f0fdf1] px-6 py-3 rounded-full font-medium text-sm shadow-xl z-50 flex items-center gap-2">
+  <span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// ======== USER / PROGRESS ========
+function getUser() {
+  return JSON.parse(localStorage.getItem('pn_current_user') || 'null');
+}
+function saveProgress(pct) {
+  const user = getUser();
+  if (!user) return;
+  if (!user.progress) user.progress = {};
+  user.progress.section1 = Math.max(user.progress.section1 || 0, pct);
+  const users = JSON.parse(localStorage.getItem('pn_users') || '[]');
+  const idx = users.findIndex(u => u.username === user.username);
+  if (idx >= 0) users[idx] = user;
+  localStorage.setItem('pn_users', JSON.stringify(users));
+  localStorage.setItem('pn_current_user', JSON.stringify(user));
+  document.getElementById('section-pct').textContent = (user.progress.section1 || 0) + '%';
+}
+function markProgress(pct) { saveProgress(pct); }
+
+const user = getUser();
+if (user && user.progress) {
+  const p = user.progress.section1 || 0;
+  document.getElementById('section-pct').textContent = p + '%';
+}
+
+// ======== TABS ========
+function showTab(name) {
+  ['theory','sim','lab'].forEach(t => {
+    document.getElementById('panel-'+t).classList.toggle('hidden', t !== name);
+    const btn = document.getElementById('tab-'+t);
+    btn.classList.toggle('active', t === name);
+    if (t !== name) btn.classList.add('text-on-surface-variant');
+    else btn.classList.remove('text-on-surface-variant');
+  });
+}
+
+// ======== SIMULATION ========
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+
+let simState = {
+  running: false, time: 0, distance: 0,
+  carX: 60, carY: 0,
+  speed: 50, accel: 0, angle: 0,
+  currentSpeed: 50,
+  animId: null, lastTs: null
+};
+
+function updateSlider() {
+  simState.speed = +document.getElementById('speed-slider').value;
+  simState.accel = +document.getElementById('accel-slider').value;
+  simState.angle = +document.getElementById('angle-slider').value;
+  document.getElementById('speed-val').textContent = simState.speed + ' м/с';
+  document.getElementById('accel-val').textContent = simState.accel + ' м/с²';
+  document.getElementById('angle-val').textContent = simState.angle + '°';
+  if (!simState.running) drawFrame();
+}
+
+function setPreset(type) {
+  if (type === 'uniform') {
+    document.getElementById('speed-slider').value = 60;
+    document.getElementById('accel-slider').value = 0;
+    document.getElementById('angle-slider').value = 0;
+  } else if (type === 'inclined') {
+    document.getElementById('speed-slider').value = 30;
+    document.getElementById('accel-slider').value = 10;
+    document.getElementById('angle-slider').value = 20;
+  } else if (type === 'accelerate') {
+    document.getElementById('speed-slider').value = 20;
+    document.getElementById('accel-slider').value = 15;
+    document.getElementById('angle-slider').value = 0;
+  }
+  updateSlider();
+}
+
+function drawFrame() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const angle = simState.angle * Math.PI / 180;
+  const groundY = H - 60;
+
+  // Draw sky gradient
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+  skyGrad.addColorStop(0, '#1a2a1a');
+  skyGrad.addColorStop(1, '#0d1f0d');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, groundY);
+
+  // Draw stars
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  for (let i = 0; i < 20; i++) {
+    ctx.beginPath();
+    ctx.arc(30+i*38, 20+((i*17)%40), 1, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Draw road / inclined surface
+  ctx.save();
+  ctx.translate(0, groundY);
+  ctx.rotate(-angle);
+  const roadLen = W * 2;
+
+  // Road
+  const roadGrad = ctx.createLinearGradient(0, 0, 0, 60);
+  roadGrad.addColorStop(0, '#2d4a2d');
+  roadGrad.addColorStop(1, '#1a2a1a');
+  ctx.fillStyle = roadGrad;
+  ctx.fillRect(-100, 0, roadLen, 60);
+
+  // Road lines
+  ctx.strokeStyle = '#ffba38';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([40, 30]);
+  ctx.beginPath();
+  ctx.moveTo(-100, 20);
+  ctx.lineTo(roadLen, 20);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw car
+  const carX = simState.carX;
+  const carH = 40, carW = 80;
+
+  // Car body
+  ctx.fillStyle = '#e53935';
+  ctx.beginPath();
+  ctx.roundRect(carX - carW/2, -carH, carW, carH, 8);
+  ctx.fill();
+
+  // Car roof
+  ctx.fillStyle = '#c62828';
+  ctx.beginPath();
+  ctx.roundRect(carX - 25, -carH - 22, 50, 22, [8, 8, 0, 0]);
+  ctx.fill();
+
+  // Windows
+  ctx.fillStyle = 'rgba(150,210,255,0.7)';
+  ctx.beginPath();
+  ctx.roundRect(carX - 22, -carH - 20, 18, 16, 3);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(carX + 4, -carH - 20, 18, 16, 3);
+  ctx.fill();
+
+  // Wheels
+  ctx.fillStyle = '#1a1a1a';
+  [carX - 25, carX + 25].forEach(wx => {
+    ctx.beginPath();
+    ctx.arc(wx, 0, 12, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#555';
+    ctx.beginPath();
+    ctx.arc(wx, 0, 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#1a1a1a';
+  });
+
+  // Headlight
+  ctx.fillStyle = '#ffff00';
+  ctx.beginPath();
+  ctx.ellipse(carX + carW/2, -carH + 10, 5, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+
+  // Ground grass
+  const gGrad = ctx.createLinearGradient(0, groundY, 0, H);
+  gGrad.addColorStop(0, '#1a3a1a');
+  gGrad.addColorStop(1, '#0d1f0d');
+  ctx.fillStyle = gGrad;
+  ctx.fillRect(0, groundY, W, H - groundY);
+
+  // Speed/status text
+  ctx.fillStyle = 'rgba(163,246,156,0.9)';
+  ctx.font = 'bold 13px Space Grotesk';
+  ctx.fillText(`v = ${simState.currentSpeed.toFixed(1)} м/с`, W - 160, 25);
+  ctx.fillStyle = 'rgba(255,222,172,0.9)';
+  ctx.fillText(`s = ${simState.distance.toFixed(1)} м`, W - 160, 45);
+  ctx.fillStyle = 'rgba(150,210,255,0.9)';
+  ctx.fillText(`t = ${simState.time.toFixed(1)} с`, W - 160, 65);
+
+  // Progress bar at top
+  const totalDist = 800;
+  const pct = Math.min(simState.distance / totalDist, 1);
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(10, 10, W - 200, 6);
+  ctx.fillStyle = '#a3f69c';
+  ctx.fillRect(10, 10, (W - 200) * pct, 6);
+}
+
+function animate(ts) {
+  if (!simState.lastTs) simState.lastTs = ts;
+  const dt = Math.min((ts - simState.lastTs) / 1000, 0.1);
+  simState.lastTs = ts;
+
+  // Update physics (scale: 1px = 1m, but visually scale down)
+  const scaleFactor = 0.3;
+  simState.currentSpeed = Math.max(0, simState.speed + simState.accel * simState.time);
+  simState.time += dt;
+  const distIncrement = simState.currentSpeed * dt * scaleFactor;
+  simState.distance += distIncrement;
+  simState.carX += distIncrement;
+
+  // Loop car
+  if (simState.carX > canvas.width + 60) {
+    simState.carX = -60;
+  }
+
+  // Update displays
+  document.getElementById('timer-display').textContent = `⏱ ${simState.time.toFixed(1)} с`;
+  document.getElementById('distance-display').textContent = `📏 ${simState.distance.toFixed(1)} м`;
+  document.getElementById('speed-display').textContent = `⚡ ${simState.currentSpeed.toFixed(1)} м/с`;
+  document.getElementById('calc-s').textContent = simState.distance.toFixed(1) + ' м';
+  document.getElementById('calc-v').textContent = simState.currentSpeed.toFixed(1) + ' м/с';
+  document.getElementById('calc-t').textContent = simState.time.toFixed(1) + ' с';
+
+  drawFrame();
+  if (simState.running) simState.animId = requestAnimationFrame(animate);
+}
+
+function startSim() {
+  if (simState.running) return;
+  simState.running = true;
+  simState.lastTs = null;
+  simState.currentSpeed = simState.speed;
+  simState.animId = requestAnimationFrame(animate);
+  markProgress(33);
+}
+
+function pauseSim() {
+  simState.running = false;
+  if (simState.animId) cancelAnimationFrame(simState.animId);
+}
+
+function resetSim() {
+  pauseSim();
+  simState.time = 0;
+  simState.distance = 0;
+  simState.carX = 60;
+  simState.currentSpeed = simState.speed;
+  document.getElementById('timer-display').textContent = '⏱ 0.0 с';
+  document.getElementById('distance-display').textContent = '📏 0.0 м';
+  document.getElementById('speed-display').textContent = '⚡ 0.0 м/с';
+  document.getElementById('calc-s').textContent = '0.0 м';
+  document.getElementById('calc-v').textContent = '0.0 м/с';
+  document.getElementById('calc-t').textContent = '0.0 с';
+  drawFrame();
+}
+
+updateSlider();
+drawFrame();
+
+// ======== QUIZ ========
+const questions = [
+  {
+    q: 'Машина 10 секундта 200 метр жол жүрді. Орташа жылдамдығы қандай?',
+    opts: ['10 м/с','20 м/с','30 м/с','40 м/с'],
+    ans: 1,
+    exp: 'v = s/t = 200/10 = 20 м/с'
+  },
+  {
+    q: 'Ньютонның екінші заңына сәйкес, күш дегеніміз не?',
+    opts: ['F = m/a','F = m + a','F = m · a','F = a/m'],
+    ans: 2,
+    exp: 'F = m·a — Күш массаның үдеуге көбейтіндісі'
+  },
+  {
+    q: 'Бірқалыпты қозғалыста жылдамдық қалай өзгереді?',
+    opts: ['Ұлғаяды','Кемиді','Өзгермейді','Тербеледі'],
+    ans: 2,
+    exp: 'Бірқалыпты қозғалыста v = const, яғни жылдамдық өзгермейді'
+  },
+  {
+    q: 'Масса 2 кг дене 4 м/с² үдеумен қозғалады. Күші қандай?',
+    opts: ['4 Н','6 Н','8 Н','2 Н'],
+    ans: 2,
+    exp: 'F = m·a = 2·4 = 8 Н'
+  },
+  {
+    q: 'Инерция дегеніміз не?',
+    opts: [
+      'Денені тежеу қабілеті',
+      'Денені қозғалыс күйін сақтау қасиеті',
+      'Күштің әсер ету нәтижесі',
+      'Үдеудің өзгеру жылдамдығы'
+    ],
+    ans: 1,
+    exp: 'Инерция — денені өзінің қозғалыс күйін сақтауға деген қасиеті (Ньютонның I заңы)'
+  }
+];
+
+let labAnswers = {};
+let labSubmitted = false;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = questions.map((q, qi) => `
+    <div class="bg-surface-container-low rounded-xl p-5" id="q-block-${qi}">
+      <p class="font-headline font-bold text-on-surface mb-3 text-sm">${qi+1}. ${q.q}</p>
+      <div class="space-y-2">
+        ${q.opts.map((o, oi) => `
+          <div class="quiz-opt rounded-xl p-3 text-sm font-medium flex items-center gap-3"
+            id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center shrink-0 text-xs font-bold"
+              id="opt-circle-${qi}-${oi}">${String.fromCharCode(65+oi)}</div>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div id="exp-${qi}" class="hidden mt-3 p-3 bg-white rounded-lg text-xs text-on-surface-variant border-l-4 border-primary"></div>
+    </div>
+  `).join('');
+}
+
+function selectOpt(qi, oi) {
+  if (labSubmitted) return;
+  labAnswers[qi] = oi;
+  questions[qi].opts.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    const circle = document.getElementById(`opt-circle-${qi}-${i}`);
+    el.style.borderColor = '';
+    el.style.background = '';
+    circle.style.background = '';
+    circle.style.color = '';
+  });
+  const sel = document.getElementById(`opt-${qi}-${oi}`);
+  const selCircle = document.getElementById(`opt-circle-${qi}-${oi}`);
+  sel.style.borderColor = '#0d631b';
+  sel.style.background = '#eaf7eb';
+  selCircle.style.background = '#0d631b';
+  selCircle.style.color = 'white';
+}
+
+function submitLab() {
+  if (labSubmitted) return;
+  labSubmitted = true;
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const userAns = labAnswers[qi];
+    const correct = userAns === q.ans;
+    if (correct) score++;
+    questions[qi].opts.forEach((_, oi) => {
+      const el = document.getElementById(`opt-${qi}-${oi}`);
+      if (oi === q.ans) el.classList.add('correct');
+      else if (oi === userAns && !correct) el.classList.add('wrong');
+    });
+    const expEl = document.getElementById(`exp-${qi}`);
+    expEl.textContent = q.exp;
+    expEl.classList.remove('hidden');
+  });
+  document.getElementById('lab-score').textContent = `${score} / ${questions.length}`;
+  document.getElementById('lab-submit-btn').textContent = '✓ Аяқталды';
+  document.getElementById('lab-submit-btn').disabled = true;
+  document.getElementById('lab-submit-btn').classList.add('opacity-50');
+
+  const pct = score >= 3 ? 100 : (score >= 2 ? 80 : 60);
+  markProgress(pct);
+
+  const resultEl = document.getElementById('lab-result');
+  resultEl.classList.remove('hidden');
+  if (score >= 4) {
+    resultEl.className = 'mt-5 p-4 rounded-xl text-center bg-primary-fixed/40';
+    document.getElementById('lab-result-icon').textContent = '🏆';
+    document.getElementById('lab-result-title').textContent = 'Керемет! Бөлім аяқталды!';
+    document.getElementById('lab-result-msg').textContent = `${score}/5 дұрыс жауап. Сіз «Механика» бөлімін үздік аяқтадыңыз!`;
+  } else if (score >= 2) {
+    resultEl.className = 'mt-5 p-4 rounded-xl text-center bg-tertiary-fixed/40';
+    document.getElementById('lab-result-icon').textContent = '👍';
+    document.getElementById('lab-result-title').textContent = 'Жақсы нәтиже!';
+    document.getElementById('lab-result-msg').textContent = `${score}/5 дұрыс. Келесі бөлімге өтуге болады.`;
+  } else {
+    resultEl.className = 'mt-5 p-4 rounded-xl text-center bg-error-container/40';
+    document.getElementById('lab-result-icon').textContent = '📚';
+    document.getElementById('lab-result-title').textContent = 'Теорияны қайталаңыз';
+    document.getElementById('lab-result-msg').textContent = `${score}/5 дұрыс. Теорияны оқып, қайта тырысыңыз.`;
+  }
+
+  if (score >= 3) {
+    setTimeout(() => {
+      if (confirm('Бөлім аяқталды! Келесі бөлімге өту керек пе?')) {
+        window.location.href = '../section2_molecular/code.html';
+      }
+    }, 1500);
+  }
+}
+
+buildQuiz();
+
+let mechCoinsEarned = 0;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.remove('hidden'); t.classList.add('toast');
+  setTimeout(() => { t.classList.add('hidden'); t.classList.remove('toast'); }, 3200);
+}
+function showCoinModal(chapterName, required) {
+  const remaining = Math.max(0, required - mechCoinsEarned);
+  const unlocked = remaining === 0;
+  document.getElementById('chapter-modal-icon').textContent = unlocked ? 'lock_open' : 'stars';
+  document.getElementById('chapter-modal-icon').style.color = unlocked ? '#0d631b' : '#734e00';
+  document.getElementById('chapter-modal-title').textContent = chapterName;
+  document.getElementById('chapter-modal-body').textContent = unlocked
+    ? 'Тарау ашылды! Жаңа контент жақын арада қосылады.'
+    : `Бұл тарауды ашу үшін тағы ${remaining} Эко-тиын жинаңыз. Зертхана тапсырмаларын орындап монеталар жинаңыз!`;
+  document.getElementById('modal-coins-display').textContent = mechCoinsEarned + ' / ' + required + ' Эко-тиын';
+  document.getElementById('chapter-modal').classList.remove('hidden');
+}
+function showPremiumModal(chapterName) {
+  document.getElementById('premium-modal-title').textContent = chapterName;
+  document.getElementById('premium-modal').classList.remove('hidden');
+}
+</script>
+
+<!-- Coin unlock modal -->
+<div id="chapter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <span id="chapter-modal-icon" class="material-symbols-outlined text-5xl" style="font-variation-settings:'FILL' 1;color:#734e00;">stars</span>
+    </div>
+    <h3 id="chapter-modal-title" class="text-lg font-headline font-bold text-on-surface text-center mb-3"></h3>
+    <p id="chapter-modal-body" class="text-sm text-on-surface-variant text-center mb-6"></p>
+    <div class="bg-[#ffdeac]/40 rounded-2xl p-4 mb-6 text-center">
+      <div class="text-xs text-on-surface-variant mb-1">Ағымдағы жинақ</div>
+      <div class="text-2xl font-headline font-bold text-[#734e00]" id="modal-coins-display">0 Эко-тиын</div>
+    </div>
+    <button onclick="document.getElementById('chapter-modal').classList.add('hidden')"
+      class="w-full bg-primary text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">Жарайды</button>
+  </div>
+</div>
+
+<!-- Premium modal -->
+<div id="premium-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 bg-gradient-to-br from-[#734e00] to-[#ffba38] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+      </div>
+    </div>
+    <h3 class="text-xl font-headline font-bold text-on-surface text-center mb-2">Premium тарау</h3>
+    <h4 id="premium-modal-title" class="text-sm text-primary font-medium text-center mb-4"></h4>
+    <p class="text-sm text-on-surface-variant text-center mb-6">Бұл тарауға қол жеткізу үшін PhysiNature Premium мүшелігін сатып алыңыз немесе жеткілікті Эко-тиын жинаңыз.</p>
+    <div class="space-y-3">
+      <button class="w-full bg-gradient-to-r from-[#734e00] to-[#ffba38] text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all"
+        onclick="showToast('Premium мүшелік жақын арада қосылады!'); document.getElementById('premium-modal').classList.add('hidden')">Premium сатып алу</button>
+      <button onclick="document.getElementById('premium-modal').classList.add('hidden')"
+        class="w-full border border-outline-variant text-on-surface-variant py-3 rounded-xl font-headline font-bold text-sm hover:bg-surface-container transition-all">Артқа</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

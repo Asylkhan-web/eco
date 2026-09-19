@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html class="light" lang="kk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhysiNature - Табиғаттағы кинематика</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{extend:{
+      colors:{
+        "surface-bright":"#f0fdf1","on-primary":"#ffffff","surface-container":"#e4f1e5",
+        "tertiary-container":"#926500","secondary-fixed-dim":"#e4beb2","on-tertiary":"#ffffff",
+        "on-surface-variant":"#40493d","surface-container-low":"#eaf7eb","on-tertiary-container":"#ffefda",
+        "surface":"#f0fdf1","primary-fixed-dim":"#88d982","background":"#f0fdf1",
+        "on-primary-fixed-variant":"#005312","on-secondary-container":"#795c51","primary":"#0d631b",
+        "on-tertiary-fixed":"#281900","on-secondary-fixed":"#2b160f","surface-container-lowest":"#ffffff",
+        "on-secondary":"#ffffff","surface-variant":"#d9e6da","outline":"#707a6c",
+        "surface-container-highest":"#d9e6da","surface-container-high":"#dfece0","secondary":"#75584d",
+        "on-tertiary-fixed-variant":"#604100","primary-fixed":"#a3f69c","inverse-on-surface":"#e7f4e8",
+        "inverse-primary":"#88d982","on-primary-container":"#cbffc2","tertiary":"#734e00","error":"#ba1a1a",
+        "on-error-container":"#93000a","outline-variant":"#bfcaba","inverse-surface":"#28332b",
+        "on-surface":"#131e17","on-error":"#ffffff","on-secondary-fixed-variant":"#5b4137",
+        "secondary-container":"#fed7ca","tertiary-fixed-dim":"#ffba38","on-primary-fixed":"#002204",
+        "surface-dim":"#d0ddd2","secondary-fixed":"#ffdbce","error-container":"#ffdad6",
+        "surface-tint":"#1b6d24","tertiary-fixed":"#ffdeac","primary-container":"#2e7d32","on-background":"#131e17"
+      },
+      borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+      fontFamily:{"headline":["Space Grotesk"],"body":["Inter"],"label":["Inter"]}
+    }}
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  h1,h2,h3 { font-family: 'Space Grotesk', sans-serif; }
+  .quiz-option { transition: all 0.2s ease; cursor: pointer; }
+  .quiz-option:hover { transform: translateX(4px); }
+  .quiz-correct { border-color: #0d631b !important; background: #a3f69c !important; }
+  .quiz-wrong { border-color: #ba1a1a !important; background: #ffdad6 !important; }
+  .toast { animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards; }
+  @keyframes slideIn { from{transform:translateY(100px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes fadeOut { from{opacity:1} to{opacity:0} }
+  .progress-bar { transition: width 1s ease; }
+  .leaf-anim { animation: fall 3s ease-in-out infinite; }
+  @keyframes fall { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(8px) rotate(5deg)} }
+</style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<script>if(!localStorage.getItem('pn_current_user')){location.replace('../login_register/code.html');}</script>
+
+<!-- Жоғарғы навигация -->
+<nav class="bg-[#f0fdf1]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_20px_40px_rgba(19,30,23,0.05)]">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="../home_discover_nature_s_physics/code.html" class="text-2xl font-bold text-[#0d631b] tracking-tighter" style="font-family:'Space Grotesk'">PhysiNature</a>
+    <div class="hidden md:flex items-center space-x-8 font-medium text-sm tracking-tight" style="font-family:'Space Grotesk'">
+      <a class="text-[#0d631b] border-b-2 border-[#0d631b] pb-1 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html">Курстар</a>
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors" href="../user_dashboard_progress/code.html">Басқару тақтасы</a>
+      <a class="text-[#131e17]/70 hover:text-[#0d631b] transition-colors" href="../home_discover_nature_s_physics/code.html#cta">Біз туралы</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-2 bg-secondary-container px-4 py-1.5 rounded-full text-[#75584d] font-bold text-sm">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">eco</span>
+        <span id="coin-display">$420 Эко-тиын</span>
+      </div>
+      <button onclick="showToast('Жаңа хабарландырулар жоқ')" class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <a href="../user_dashboard_progress/code.html">
+        <div class="w-10 h-10 rounded-full border-2 border-primary-fixed hover:border-primary transition-colors bg-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">person</span>
+        </div>
+      </a>
+      <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-on-surface">menu</button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-outline-variant/20 px-8 py-4 space-y-3">
+    <a href="../home_discover_nature_s_physics/code.html" class="block py-2 font-medium text-on-surface-variant">Курстар</a>
+    <a href="../user_dashboard_progress/code.html" class="block py-2 font-medium text-on-surface-variant">Басқару тақтасы</a>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-6 py-12">
+  <!-- Хлебные крошки -->
+  <div class="flex items-center gap-2 text-sm text-on-surface-variant mb-4">
+    <a href="../home_discover_nature_s_physics/code.html" class="hover:text-primary transition-colors">Басты бет</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <a href="../learning_map_the_skill_tree/code.html" class="hover:text-primary transition-colors">Дағды ағашы</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="text-primary font-medium">Кинематика</span>
+  </div>
+
+  <!-- Сабақтар навигациясы -->
+  <div class="flex flex-wrap gap-2 mb-8 p-4 bg-surface-container-low rounded-2xl">
+    <span class="text-xs font-bold text-on-surface-variant self-center mr-2 uppercase tracking-widest">Сабақтар:</span>
+    <a href="../lesson_kinematics_in_nature/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-primary text-white">🚗 Механика</a>
+    <a href="../chlorophyll_physics/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">🔬 Молекулалық физика</a>
+    <a href="../section3_electrostatics/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">⚡ Электростатика</a>
+    <a href="../section4_quantum/code.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant hover:bg-primary-fixed hover:text-primary transition-all">✨ Кванттық физика</a>
+  </div>
+
+  <header class="mb-12">
+    <div class="flex items-center gap-2 text-primary font-medium mb-2">
+      <span class="material-symbols-outlined text-sm">school</span>
+      <span class="text-xs uppercase tracking-widest font-label">01-модуль: Негізгі механика</span>
+    </div>
+    <h1 class="text-5xl md:text-6xl font-bold tracking-tight text-on-surface">Кинематика: Қозғалыс ғылымы</h1>
+    <div class="mt-6 bg-surface-container rounded-2xl p-4">
+      <div class="flex justify-between items-center mb-2 text-sm font-medium">
+        <span>01-модульді аяқтау</span>
+        <span id="progress-text">65%</span>
+      </div>
+      <div class="h-2.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+        <div id="lesson-progress" class="progress-bar h-full bg-primary rounded-full shadow-[0_0_10px_rgba(13,99,27,0.3)]" style="width:65%"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Негізгі мазмұн -->
+    <section class="lg:col-span-8 space-y-10">
+
+      <!-- 1-сабақ картасы -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(19,30,23,0.03)] border border-outline-variant/10">
+        <h2 class="text-3xl font-semibold mb-6">Тік сызықты қозғалыс</h2>
+        <div class="text-on-surface/80 leading-relaxed text-lg space-y-6">
+          <p>
+            Тік сызықты қозғалыс — қозғалыстың ең қарапайым түрі: бір түзу бойымен қозғалу. Табиғи әлемде мұны вакуумда тек гравитация әсерінен түсетін заттарда немесе кезінде тікелей жолмен жырткышқа шабуыл жасайтын барыста көреміз.
+          </p>
+          <div class="relative py-12 my-8 bg-surface-container-low rounded-2xl overflow-hidden group cursor-pointer" onclick="showVideoModal()">
+            <div class="flex flex-col items-center justify-center text-center relative z-10">
+              <div class="w-48 h-32 rounded-lg mb-4 leaf-anim flex items-center justify-center" style="background:linear-gradient(135deg,#eaf7eb,#a3f69c)">
+                <span class="material-symbols-outlined text-6xl text-green-700" style="font-variation-settings:'FILL' 1;">eco</span>
+              </div>
+              <p class="text-sm font-medium text-primary uppercase tracking-tighter">1.1-сурет: Еркін түсу үдеуі (a = g = 9,81 м/с²)</p>
+              <div class="mt-3 flex items-center gap-2 text-primary text-sm font-bold">
+                <span class="material-symbols-outlined text-sm">play_circle</span>
+                Анимацияны қарау үшін нұқыңыз
+              </div>
+            </div>
+          </div>
+          <p>
+            Бұл қозғалысты сипаттау үшін <em>(t)</em> уақыт бойынша орынды <em>(x)</em>, жылдамдықты <em>(v)</em> және үдеуді <em>(a)</em> бақылаймыз. Жоғарыдағы жапырақ органикалық тербелісіне қарамастан, g = 9,81 м/с² тұрақтымен анықталған болжамды тік траектория бойынша қозғалады.
+          </p>
+          <div class="bg-primary-fixed/20 rounded-2xl p-6 border-l-4 border-primary">
+            <h4 class="font-bold text-primary mb-4 text-sm uppercase tracking-widest">Негізгі формулалар — Тік сызықты қозғалыс</h4>
+            <div class="space-y-3 font-mono text-sm">
+              <div class="flex justify-between items-center"><span class="font-bold">v = v₀ + at</span><span class="text-on-surface-variant text-xs">Уақыт бойынша жылдамдық</span></div>
+              <div class="flex justify-between items-center"><span class="font-bold">x = v₀t + ½at²</span><span class="text-on-surface-variant text-xs">Уақыт бойынша орын</span></div>
+              <div class="flex justify-between items-center"><span class="font-bold">v² = v₀² + 2ax</span><span class="text-on-surface-variant text-xs">Жылдамдық-орын қатынасы</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== МАШИНА СИМУЛЯЦИЯСЫ ===== -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-primary-fixed rounded-xl text-primary" style="font-variation-settings:'FILL' 1;">directions_car</span>
+          Машина қозғалысы — интерактивті симуляция
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-5">Жылдамдықты, үдеуді және бұрышты реттеп, машинаның қозғалысын таймер арқылы бақылаңыз.</p>
+
+        <!-- Canvas -->
+        <div class="rounded-2xl overflow-hidden mb-5" style="background:#111;">
+          <div class="flex flex-wrap gap-3 p-4 border-b border-white/10">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(163,246,156,0.15);color:#a3f69c">
+              ⏱ <span id="sim-timer">0.0 с</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,222,172,0.15);color:#ffdeac">
+              📏 <span id="sim-dist">0.0 м</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(66,165,245,0.15);color:#42A5F5">
+              ⚡ <span id="sim-speed">0.0 м/с</span>
+            </div>
+            <div class="ml-auto flex gap-2">
+              <button onclick="simStart()" class="px-4 py-1.5 rounded-lg text-sm font-bold text-white" style="background:#0d631b">▶ Бастау</button>
+              <button onclick="simPause()" class="px-4 py-1.5 rounded-lg text-sm font-bold border" style="border-color:#3a5a3a;color:#a3f69c">⏸</button>
+              <button onclick="simReset()" class="px-4 py-1.5 rounded-lg text-sm font-bold border" style="border-color:#3a5a3a;color:#a3f69c">↺</button>
+            </div>
+          </div>
+          <canvas id="kinCanvas" width="800" height="240" style="width:100%;display:block;background:#0d1a0d;"></canvas>
+        </div>
+
+        <!-- Controls -->
+        <div class="grid md:grid-cols-3 gap-4 mb-5">
+          <div class="bg-surface-container-low rounded-2xl p-4">
+            <div class="flex justify-between text-sm mb-2">
+              <label class="text-on-surface-variant font-medium">Бастапқы жылдамдық</label>
+              <span id="ctrl-v0" class="font-bold text-primary">40 м/с</span>
+            </div>
+            <input type="range" id="slider-v0" min="5" max="120" value="40" oninput="simUpdateControls()" class="w-full accent-[#0d631b]"/>
+          </div>
+          <div class="bg-surface-container-low rounded-2xl p-4">
+            <div class="flex justify-between text-sm mb-2">
+              <label class="text-on-surface-variant font-medium">Үдеу</label>
+              <span id="ctrl-a" class="font-bold text-primary">0 м/с²</span>
+            </div>
+            <input type="range" id="slider-a" min="-15" max="15" value="0" oninput="simUpdateControls()" class="w-full accent-[#0d631b]"/>
+          </div>
+          <div class="bg-surface-container-low rounded-2xl p-4">
+            <div class="flex justify-between text-sm mb-2">
+              <label class="text-on-surface-variant font-medium">Бұрыш</label>
+              <span id="ctrl-ang" class="font-bold text-primary">0°</span>
+            </div>
+            <input type="range" id="slider-ang" min="0" max="25" value="0" oninput="simUpdateControls()" class="w-full accent-[#0d631b]"/>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <div class="flex flex-wrap gap-2 mb-5">
+          <span class="text-sm text-on-surface-variant font-medium self-center">Дайын сценарийлер:</span>
+          <button onclick="simPreset('uniform')" class="px-4 py-2 bg-primary-fixed/40 text-primary rounded-xl text-sm font-bold hover:bg-primary-fixed transition-all">➡ Бірқалыпты</button>
+          <button onclick="simPreset('accel')" class="px-4 py-2 bg-primary-fixed/40 text-primary rounded-xl text-sm font-bold hover:bg-primary-fixed transition-all">🚀 Үдемелі</button>
+          <button onclick="simPreset('incline')" class="px-4 py-2 bg-primary-fixed/40 text-primary rounded-xl text-sm font-bold hover:bg-primary-fixed transition-all">📐 Көлбеу</button>
+          <button onclick="simPreset('decel')" class="px-4 py-2 bg-primary-fixed/40 text-primary rounded-xl text-sm font-bold hover:bg-primary-fixed transition-all">🛑 Тежелу</button>
+        </div>
+
+        <!-- Live formulas -->
+        <div class="bg-primary-fixed/20 rounded-2xl p-5 border-l-4 border-primary">
+          <p class="text-xs font-bold text-primary uppercase tracking-widest mb-3">Нақты уақытта есептеу</p>
+          <div class="grid grid-cols-3 gap-3 text-center font-mono text-sm">
+            <div class="bg-white rounded-xl p-3">
+              <div class="text-xs text-on-surface-variant mb-1">s = v₀t + ½at²</div>
+              <div id="calc-s" class="font-bold text-primary text-lg">0.0 м</div>
+            </div>
+            <div class="bg-white rounded-xl p-3">
+              <div class="text-xs text-on-surface-variant mb-1">v = v₀ + at</div>
+              <div id="calc-v" class="font-bold text-primary text-lg">0.0 м/с</div>
+            </div>
+            <div class="bg-white rounded-xl p-3">
+              <div class="text-xs text-on-surface-variant mb-1">t</div>
+              <div id="calc-t" class="font-bold text-primary text-lg">0.0 с</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ЗЕРТХАНА ЖҰМЫСЫ ===== -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-tertiary-fixed rounded-xl text-tertiary" style="font-variation-settings:'FILL' 1;">science</span>
+          Зертханалық жұмыс — Механикалық қозғалыс
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-5">Симуляцияны зерттеп, төмендегі сұрақтарға жауап беріңіз. <span id="lab-score-inline" class="font-bold text-primary">0 / 4</span></p>
+
+        <div id="lab-questions" class="space-y-5"></div>
+
+        <div id="lab-feedback" class="hidden mt-5 p-5 rounded-2xl text-center"></div>
+
+        <button id="lab-btn" onclick="submitLab()"
+          class="mt-5 w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:brightness-110 transition-all shadow-lg shadow-primary/20">
+          Тексеру
+        </button>
+      </div>
+
+      <!-- ===== ФАЗАЛЫҚ ӨТУЛЕР ===== -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-primary-fixed rounded-xl text-primary" style="font-variation-settings:'FILL' 1;">device_thermostat</span>
+          Фазалық өтулер — қатты · сұйық · газ
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-5">Температура сырғытқышын жылжытып, молекулалардың күй өзгерісін бақылаңыз.</p>
+        <canvas id="phaseCanvas" width="700" height="200" style="width:100%;display:block;background:#0a0f0a;border-radius:12px;" class="mb-4"></canvas>
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div class="col-span-2 bg-surface-container-low rounded-xl p-3">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-on-surface-variant">Температура</span>
+              <span id="phase-temp-lbl" class="font-bold text-primary">−50°C · Қатты</span>
+            </div>
+            <input type="range" id="phase-temp" min="-100" max="300" value="-50" oninput="phaseUpdate()" class="w-full accent-[#0d631b]"/>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-3 text-center flex flex-col justify-center">
+            <div class="text-xs text-on-surface-variant mb-1">Зат күйі</div>
+            <div id="phase-state" class="text-xl font-bold" style="color:#3b82f6">Қатты</div>
+          </div>
+        </div>
+        <div class="flex gap-2 mb-4">
+          <button onclick="phasePreset('solid')" class="px-4 py-2 rounded-xl text-sm font-bold" style="background:#dbeafe;color:#1e40af">🧊 Қатты</button>
+          <button onclick="phasePreset('liquid')" class="px-4 py-2 rounded-xl text-sm font-bold" style="background:#e0f2fe;color:#0369a1">💧 Сұйық</button>
+          <button onclick="phasePreset('gas')" class="px-4 py-2 rounded-xl text-sm font-bold" style="background:#ffedd5;color:#c2410c">♨️ Газ</button>
+        </div>
+        <div class="bg-primary-fixed/20 border-l-4 border-primary rounded-xl p-4 text-sm text-on-surface-variant">
+          <strong class="text-primary">Ескертпе:</strong> Балқу нүктесі (0°C) мен қайнау нүктесі (100°C) кезінде температура тұрақты болады — бүкіл жылу фазаны өзгертуге жұмсалады (жасырын жылу).
+        </div>
+      </div>
+
+      <!-- ===== ЭЛЕКТР ТІЗБЕГІ ===== -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-primary-fixed rounded-xl text-primary" style="font-variation-settings:'FILL' 1;">bolt</span>
+          Электр тізбегі есептегіші
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-5">Тізбек түрін таңдап, кедергілерді өзгертіңіз — ток пен кернеуді нақты уақытта есептеңіз.</p>
+        <div class="flex gap-3 mb-5">
+          <button id="cir-series-btn" onclick="cirMode('series')" class="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-sm">Тізбектей (Series)</button>
+          <button id="cir-parallel-btn" onclick="cirMode('parallel')" class="flex-1 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-bold text-sm">Параллель</button>
+        </div>
+        <canvas id="cirCanvas" width="700" height="200" style="width:100%;display:block;background:#0a0f0a;border-radius:12px;" class="mb-4"></canvas>
+        <div class="grid md:grid-cols-3 gap-3 mb-4">
+          <div class="bg-surface-container-low rounded-xl p-3">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-on-surface-variant">ЭҚК (В)</span>
+              <span id="cir-emf-lbl" class="font-bold text-primary">12 В</span>
+            </div>
+            <input type="range" id="cir-emf" min="1" max="24" value="12" oninput="cirCalc()" class="w-full accent-[#0d631b]"/>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-3">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-on-surface-variant">R₁ (Ом)</span>
+              <span id="cir-r1-lbl" class="font-bold text-primary">4 Ом</span>
+            </div>
+            <input type="range" id="cir-r1" min="1" max="20" value="4" oninput="cirCalc()" class="w-full accent-[#0d631b]"/>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-3">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-on-surface-variant">R₂ (Ом)</span>
+              <span id="cir-r2-lbl" class="font-bold text-primary">8 Ом</span>
+            </div>
+            <input type="range" id="cir-r2" min="1" max="20" value="8" oninput="cirCalc()" class="w-full accent-[#0d631b]"/>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-3">
+          <div class="bg-primary/10 rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">R жалпы</div>
+            <div id="cir-rt" class="text-lg font-bold text-primary">12.0 Ом</div>
+          </div>
+          <div class="bg-primary/10 rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">I (Ток)</div>
+            <div id="cir-i" class="text-lg font-bold text-primary">1.00 А</div>
+          </div>
+          <div class="bg-primary/10 rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">U₁ кернеуі</div>
+            <div id="cir-u1" class="text-lg font-bold text-primary">4.0 В</div>
+          </div>
+          <div class="bg-primary/10 rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">P (Қуат)</div>
+            <div id="cir-p" class="text-lg font-bold text-primary">12.0 Вт</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== МАГНИТ СИМУЛЯТОРЫ ===== -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h2 class="text-2xl font-bold mb-2 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-primary-fixed rounded-xl text-primary" style="font-variation-settings:'FILL' 1;">magnet</span>
+          Магнит өрісі симуляторы
+        </h2>
+        <p class="text-on-surface-variant text-sm mb-5">Магниттерді тышқанмен сүйреп өзгертіңіз. Екі рет шерту арқылы полюсті ауыстырыңыз.</p>
+        <canvas id="magCanvas" width="700" height="250" style="width:100%;display:block;background:#0a0f0a;border-radius:12px;cursor:crosshair;" class="mb-4"
+          onmousedown="magMouseDown(event)" onmousemove="magMouseMove(event)" onmouseup="magMouseUp()" onmouseleave="magMouseUp()"></canvas>
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div class="bg-surface-container-low rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">Арасындағы қашықтық</div>
+            <div id="mag-dist-lbl" class="text-lg font-bold text-primary">—</div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">Кулон күші</div>
+            <div id="mag-force" class="text-lg font-bold text-primary">—</div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-3 text-center">
+            <div class="text-xs text-on-surface-variant mb-1">Өзара әрекет</div>
+            <div id="mag-type" class="text-lg font-bold text-primary">—</div>
+          </div>
+        </div>
+        <div class="bg-primary-fixed/20 border-l-4 border-primary rounded-xl p-4 text-sm text-on-surface-variant">
+          <strong class="text-primary">Кулон заңы:</strong> F = k·q₁·q₂/r² — заряд арасындағы күш қашықтықтың квадратына кері пропорционал.
+        </div>
+      </div>
+
+      <!-- Тест 1 -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-primary-fixed rounded-xl text-primary">quiz</span>
+          Білімді тексеру
+        </h3>
+        <p class="text-lg font-medium mb-6">Егер объект нөлдік үдеумен тұрақты тік сызықты қозғалыста болса, оның жылдамдығы туралы не айтуға болады?</p>
+        <div id="quiz-1" class="space-y-4">
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(1, 'wrong', this)">
+            <span>Ол уақыт өте экспоненциалды түрде өседі.</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(1, 'correct', this)">
+            <span class="font-semibold">Ол шамасы мен бағыты бойынша тұрақты болып қалады.</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(1, 'wrong', this)">
+            <span>Ол ақыры нөлге оралуы керек.</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+        </div>
+        <div id="quiz-1-feedback" class="hidden mt-4 p-4 rounded-2xl"></div>
+      </div>
+
+      <!-- 2-сабақ картасы -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(19,30,23,0.03)] border border-outline-variant/10">
+        <h2 class="text-3xl font-semibold mb-6">Табиғаттағы снарядтық қозғалыс</h2>
+        <div class="text-on-surface/80 leading-relaxed text-lg space-y-6">
+          <p>
+            Мергеншілік балық салбырап тұрған бұтақтардағы жәндіктерді атқан кезде, ол снарядтық қозғалысты инстинктивті есептеу жасайды — сыну мен өз снарядының параболалық доғасы үшін компенсация жасай отырып.
+          </p>
+          <p>
+            Снарядтық қозғалыс тік бағыттағы тұрақты еркін түсуді көлденең бағыттағы тұрақты жылдамдықпен біріктіреді. Көлденең және тік компоненттер тәуелсіз — бұл математиканы ашатын негізгі түсінік.
+          </p>
+          <div class="bg-surface-container-low rounded-2xl p-6">
+            <h4 class="font-bold text-primary mb-4 text-sm uppercase tracking-widest">Снарядтық қозғалыс формулалары</h4>
+            <div class="grid grid-cols-2 gap-4 font-mono text-sm">
+              <div class="bg-white rounded-xl p-3 text-center"><div class="font-bold">x = v₀cosθ · t</div><div class="text-xs text-on-surface-variant mt-1">Көлденең</div></div>
+              <div class="bg-white rounded-xl p-3 text-center"><div class="font-bold">y = v₀sinθ · t − ½gt²</div><div class="text-xs text-on-surface-variant mt-1">Тік</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Тест 2 -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+        <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+          <span class="material-symbols-outlined p-2 bg-tertiary-fixed rounded-xl text-tertiary">quiz</span>
+          Күрделі сұрақ
+        </h3>
+        <p class="text-lg font-medium mb-6">Идеал снарядтық қозғалыста қай бағыт гравитацияға ұшырамайды?</p>
+        <div id="quiz-2" class="space-y-4">
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(2, 'correct', this)">
+            <span class="font-semibold">Көлденең (x-осі)</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(2, 'wrong', this)">
+            <span>Тік (y-осі)</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+          <button class="quiz-option w-full text-left p-5 rounded-2xl border-2 border-transparent bg-surface-container-low flex justify-between items-center group"
+            onclick="answerQuiz(2, 'wrong', this)">
+            <span>Екі бағыт та бірдей</span>
+            <span class="material-symbols-outlined opacity-30 group-hover:opacity-100 transition-opacity">radio_button_unchecked</span>
+          </button>
+        </div>
+        <div id="quiz-2-feedback" class="hidden mt-4 p-4 rounded-2xl"></div>
+      </div>
+    </section>
+
+    <!-- Бүйір панель -->
+    <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+      <!-- Бейне картасы -->
+      <div class="bg-primary-container text-on-primary-container rounded-3xl p-8 shadow-xl shadow-primary/10 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+              <span class="material-symbols-outlined text-white">play_circle</span>
+            </div>
+            <h3 class="text-xl font-bold leading-tight">Табиғаттағы физика: Құстар жылдамдықты қалай пайдаланады</h3>
+          </div>
+          <div class="aspect-video rounded-2xl bg-black/20 mb-6 relative group cursor-pointer overflow-hidden" onclick="showVideoModal()">
+            <div class="w-full h-full flex items-center justify-center opacity-80 group-hover:scale-110 transition-transform duration-500" style="background:linear-gradient(135deg,#1a2a1a,#2e5c2e)">
+              <span class="material-symbols-outlined text-7xl text-green-300" style="font-variation-settings:'FILL' 1;">flight</span>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-2xl scale-95 group-hover:scale-100 transition-transform">
+                <span class="material-symbols-outlined text-3xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-white/80 leading-relaxed mb-6">Сапсандар сүңгу кезінде үдеуді барынша арттыру үшін беткейін қалай өзгертетінін зерттеңіз — 320 км/сағ жылдамдықта.</p>
+          <button onclick="showVideoModal()" class="w-full py-3 bg-white text-primary font-bold rounded-xl hover:bg-surface-bright transition-colors active:scale-95">
+            Кейс-стадиді қарау
+          </button>
+        </div>
+      </div>
+
+      <!-- Прогресс картасы -->
+      <div class="bg-surface-container-high rounded-3xl p-6">
+        <h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Курс прогрессі</h4>
+        <div class="space-y-4">
+          <div class="flex justify-between text-sm font-medium">
+            <span>01-модульді аяқтау</span>
+            <span id="sidebar-progress-text">65%</span>
+          </div>
+          <div class="h-3 w-full bg-surface-container-lowest rounded-full overflow-hidden">
+            <div id="sidebar-progress" class="progress-bar h-full w-[65%] bg-primary rounded-r-full shadow-[0_0_10px_rgba(13,99,27,0.3)]"></div>
+          </div>
+          <div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-2xl">
+            <span class="material-symbols-outlined text-tertiary" style="font-variation-settings:'FILL' 1;">stars</span>
+            <span class="text-xs font-medium" id="coins-to-unlock">2-тарауды ашу үшін тағы 35 ұпай жинаңыз</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Эко-тиын -->
+      <div class="bg-white rounded-3xl p-6 border border-outline-variant/10 shadow-sm">
+        <h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Сіздің Эко-тиындарыңыз</h4>
+        <div class="text-center">
+          <div class="text-4xl font-headline font-black text-tertiary" style="font-family:'Space Grotesk'" id="total-coins">420</div>
+          <div class="text-xs text-on-surface-variant mt-1 mb-4">Ағымдағы баланс</div>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between text-on-surface-variant">
+              <span>Тест 1 (дұрыс болса)</span>
+              <span class="font-bold text-primary">+50 тиын</span>
+            </div>
+            <div class="flex justify-between text-on-surface-variant">
+              <span>Тест 2 (дұрыс болса)</span>
+              <span class="font-bold text-primary">+75 тиын</span>
+            </div>
+            <div class="flex justify-between text-on-surface-variant">
+              <span>Сабақты аяқтау</span>
+              <span class="font-bold text-primary">+100 тиын</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Модуль тараулары -->
+      <div class="bg-surface-container-lowest rounded-3xl p-6 border border-outline-variant/10">
+        <h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Модуль тараулары</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-3 p-2 bg-primary-fixed/20 rounded-xl">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            <span class="text-sm font-medium text-primary">1-тарау · Тік сызықты қозғалыс</span>
+          </div>
+          <div class="flex items-center gap-3 p-2 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showCoinModal('2-тарау · Снарядтық қозғалыс', 125)">
+            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+            <span class="text-sm">2-тарау · Снарядтық қозғалыс</span>
+          </div>
+          <div class="flex items-center gap-3 p-2 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showPremiumModal('3-тарау · Шеңберлік қозғалыс')">
+            <span class="material-symbols-outlined text-sm">lock</span>
+            <span class="text-sm opacity-60">3-тарау · Шеңберлік қозғалыс</span>
+          </div>
+          <div class="flex items-center gap-3 p-2 rounded-xl text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors" onclick="showPremiumModal('4-тарау · Сұйықтық кинематикасы')">
+            <span class="material-symbols-outlined text-sm">lock</span>
+            <span class="text-sm opacity-60">4-тарау · Сұйықтық кинематикасы</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Навигация -->
+  <nav class="mt-16 py-8 flex justify-between items-center border-t border-outline-variant/20">
+    <a href="../home_discover_nature_s_physics/code.html" class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-primary hover:bg-primary-fixed transition-all active:scale-95">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Алдыңғы
+    </a>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex gap-1">
+        <div class="w-2 h-2 rounded-full bg-primary"></div>
+        <div class="w-2 h-2 rounded-full bg-primary"></div>
+        <div class="w-2 h-2 rounded-full bg-primary/20"></div>
+        <div class="w-2 h-2 rounded-full bg-primary/20"></div>
+      </div>
+      <button id="next-btn" onclick="completeLesson()" class="flex items-center gap-2 px-8 py-3 rounded-xl font-bold bg-primary text-on-primary hover:brightness-110 transition-all active:scale-95 shadow-md">
+        Сабақты аяқтау
+        <span class="material-symbols-outlined text-sm">check</span>
+      </button>
+    </div>
+  </nav>
+</main>
+
+<footer class="bg-[#131e17] w-full mt-auto">
+  <div class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
+    <div class="text-lg font-bold text-white" style="font-family:'Space Grotesk'">PhysiNature</div>
+    <div class="flex flex-wrap justify-center gap-8 text-xs uppercase tracking-widest text-white/60">
+      <a class="hover:text-[#2e7d32] transition-colors" href="../home_discover_nature_s_physics/code.html#cta">Эко-миссия</a>
+      <a class="hover:text-[#2e7d32] transition-colors" href="#" onclick="showToast('Қолдау қызметі жақында хабарласады!')">Қолдау қызметі</a>
+      <a class="hover:text-[#2e7d32] transition-colors" href="#">Құпиялылық саясаты</a>
+      <a class="hover:text-[#2e7d32] transition-colors" href="#">Қызмет шарттары</a>
+    </div>
+    <div class="text-[10px] uppercase tracking-widest text-white/40">© 2024 PhysiNature.</div>
+  </div>
+</footer>
+
+<!-- Бейне модалы -->
+<div id="video-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeVideoModal(event)">
+  <div class="bg-white rounded-3xl overflow-hidden max-w-3xl w-full shadow-2xl" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-center p-6 border-b border-outline-variant/20">
+      <h3 class="font-headline font-bold text-lg" style="font-family:'Space Grotesk'">Табиғаттағы физика: Сапсан жылдамдығы</h3>
+      <button onclick="closeVideoModal()" class="material-symbols-outlined text-on-surface-variant hover:text-on-surface">close</button>
+    </div>
+    <div class="aspect-video bg-black flex items-center justify-center relative w-full h-full">
+      <iframe class="w-full h-full" src="https://www.youtube.com/embed/3WKiGzjtGhM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="p-6">
+      <p class="text-on-surface-variant text-sm leading-relaxed">Сапсандар аң аулау кезінде сүңгуде 320 км/сағ асатын жылдамдыққа жетеді. Қанаттарын ішінара бүге отырып, олар кедергіні күрт азайтады, ал гравитация оларды үдетеді — кинематиканың нақты әлемдегі тамаша демонстрациясы.</p>
+      <button onclick="closeVideoModal(); showToast('+25 Эко-тиын көру үшін!')" class="mt-4 bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:brightness-110 transition-all active:scale-95">
+        Көрілді деп белгілеу (+25 тиын)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Аяқтау модалы -->
+<div id="complete-modal" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl text-center">
+    <div class="w-24 h-24 rounded-full bg-primary-fixed flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings:'FILL' 1;">celebration</span>
+    </div>
+    <h3 class="text-3xl font-black mb-3" style="font-family:'Space Grotesk'">Сабақ аяқталды!</h3>
+    <p class="text-on-surface-variant mb-6">Сіз «Кинематика: Қозғалыс ғылымын» аяқтадыңыз</p>
+    <div class="bg-tertiary-fixed/30 rounded-2xl p-4 mb-8">
+      <div class="text-3xl font-black text-tertiary" style="font-family:'Space Grotesk'" id="earned-coins">+225 Эко-тиын</div>
+      <div class="text-sm text-on-surface-variant mt-1">Әмияныңызға қосылды</div>
+    </div>
+    <div class="flex gap-3">
+      <a href="../user_dashboard_progress/code.html" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:brightness-110 transition-all active:scale-95">
+        Басқару тақтасы
+      </a>
+      <a href="../learning_map_the_skill_tree/code.html" class="flex-1 border border-outline-variant py-3 rounded-xl font-medium text-on-surface-variant hover:bg-surface-container transition-colors text-center">
+        Дағды ағашы
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Тост -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-inverse-on-surface px-6 py-3 rounded-full font-medium text-sm shadow-xl z-[100] flex items-center gap-2">
+  <span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings:'FILL' 1;">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  let quiz1Answered = false;
+  let quiz2Answered = false;
+  let coinsEarned = 0;
+  let totalCoins = 420;
+
+  function answerQuiz(quizNum, result, btn) {
+    if (quizNum === 1 && quiz1Answered) return;
+    if (quizNum === 2 && quiz2Answered) return;
+
+    const container = document.getElementById(`quiz-${quizNum}`);
+    const feedback = document.getElementById(`quiz-${quizNum}-feedback`);
+    const allBtns = container.querySelectorAll('.quiz-option');
+
+    allBtns.forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+
+    if (result === 'correct') {
+      btn.classList.add('quiz-correct');
+      btn.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+      btn.querySelector('.material-symbols-outlined').style.opacity = '1';
+      btn.querySelector('.material-symbols-outlined').style.color = '#0d631b';
+
+      const coins = quizNum === 1 ? 50 : 75;
+      coinsEarned += coins;
+      totalCoins += coins;
+      let u = JSON.parse(localStorage.getItem('pn_current_user')) || { ecoCoins: 420 };
+      u.ecoCoins = (u.ecoCoins || 420) + coins;
+      const users = JSON.parse(localStorage.getItem('pn_users') || "[]");
+      const idx = users.findIndex(v => v && u && v.email === u.email);
+      if (idx !== -1) { users[idx] = u; localStorage.setItem('pn_users', JSON.stringify(users)); }
+      localStorage.setItem('pn_current_user', JSON.stringify(u));
+
+      feedback.className = 'mt-4 p-4 rounded-2xl bg-primary-fixed/30 text-primary font-medium flex items-center gap-3';
+      feedback.innerHTML = `<span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">check_circle</span><div><strong>Дұрыс! +${coins} Эко-тиын</strong><br><span class="text-sm font-normal">${quizNum === 1 ? 'Нөлдік үдеу кезінде жылдамдық өзгермейді — Ньютонның бірінші заңы.' : 'Снарядтық қозғалыста горизонтальді бағыт гравитацияға ұшырамайды.'}</span></div>`;
+      feedback.classList.remove('hidden');
+
+      document.getElementById('coin-display').textContent = `$${totalCoins} Эко-тиын`;
+      document.getElementById('total-coins').textContent = totalCoins;
+      showToast(`+${coins} Эко-тиын жиналды!`);
+
+      const newProgress = Math.min(65 + (coinsEarned / 125) * 20, 85);
+      document.getElementById('lesson-progress').style.width = newProgress + '%';
+      document.getElementById('progress-text').textContent = Math.round(newProgress) + '%';
+      document.getElementById('sidebar-progress').style.width = newProgress + '%';
+      document.getElementById('sidebar-progress-text').textContent = Math.round(newProgress) + '%';
+
+      const remaining = 125 - coinsEarned;
+      document.getElementById('coins-to-unlock').textContent = remaining > 0
+        ? `2-тарауды ашу үшін тағы ${remaining} ұпай жинаңыз`
+        : '2-тарау ашылды! 🎉';
+    } else {
+      btn.classList.add('quiz-wrong');
+      btn.querySelector('.material-symbols-outlined').textContent = 'cancel';
+      btn.querySelector('.material-symbols-outlined').style.opacity = '1';
+      btn.querySelector('.material-symbols-outlined').style.color = '#ba1a1a';
+
+      feedback.className = 'mt-4 p-4 rounded-2xl bg-error-container/50 text-error font-medium flex items-center gap-3';
+      feedback.innerHTML = `<span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">cancel</span><div><strong>Дұрыс емес.</strong><br><span class="text-sm font-normal">${quizNum === 1 ? 'Нөлдік үдеу кезінде жылдамдық тұрақты болып қалады.' : 'Горизонтальді бағыт гравитацияға ұшырамайды — тік бағыт ғана.'}</span></div>`;
+      feedback.classList.remove('hidden');
+      showToast('Диаграмманы қайта қараңыз!');
+    }
+
+    if (quizNum === 1) quiz1Answered = true;
+    if (quizNum === 2) quiz2Answered = true;
+  }
+
+  function completeLesson() {
+    const total = coinsEarned + 100;
+    document.getElementById('earned-coins').textContent = `+${total} Эко-тиын`;
+    document.getElementById('complete-modal').classList.remove('hidden');
+    document.getElementById('lesson-progress').style.width = '100%';
+    document.getElementById('progress-text').textContent = '100%';
+    document.getElementById('sidebar-progress').style.width = '100%';
+    document.getElementById('sidebar-progress-text').textContent = '100%';
+  }
+
+  function showVideoModal() {
+    document.getElementById('video-modal').classList.remove('hidden');
+  }
+  function closeVideoModal(e) {
+    if (!e || e.target === document.getElementById('video-modal')) {
+      document.getElementById('video-modal').classList.add('hidden');
+    }
+  }
+  function toggleMobileMenu() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  }
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.remove('hidden');
+    toast.classList.add('toast');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.add('hidden'); toast.classList.remove('toast'); }, 3200);
+  }
+
+  // ============================================================
+  // МАШИНА СИМУЛЯЦИЯСЫ — КОД
+  // ============================================================
+  const kinCanvas = document.getElementById('kinCanvas');
+  const kinCtx = kinCanvas.getContext('2d');
+
+  let sim = {
+    running: false, time: 0, dist: 0,
+    carX: 70, animId: null, lastTs: null,
+    v0: 40, accel: 0, angle: 0, curV: 40
+  };
+
+  function simUpdateControls() {
+    sim.v0  = +document.getElementById('slider-v0').value;
+    sim.accel = +document.getElementById('slider-a').value;
+    sim.angle = +document.getElementById('slider-ang').value;
+    document.getElementById('ctrl-v0').textContent  = sim.v0 + ' м/с';
+    document.getElementById('ctrl-a').textContent   = sim.accel + ' м/с²';
+    document.getElementById('ctrl-ang').textContent = sim.angle + '°';
+    if (!sim.running) kinDraw();
+  }
+
+  function simPreset(type) {
+    const presets = {
+      uniform: { v0:60, a:0, ang:0 },
+      accel:   { v0:20, a:12, ang:0 },
+      incline: { v0:30, a:8,  ang:20 },
+      decel:   { v0:80, a:-10, ang:0 }
+    };
+    const p = presets[type];
+    document.getElementById('slider-v0').value  = p.v0;
+    document.getElementById('slider-a').value   = p.a;
+    document.getElementById('slider-ang').value = p.ang;
+    simUpdateControls();
+  }
+
+  function kinDraw() {
+    const W = kinCanvas.width, H = kinCanvas.height;
+    kinCtx.fillStyle = '#0d1a0d'; kinCtx.fillRect(0, 0, W, H);
+
+    const ang = sim.angle * Math.PI / 180;
+    const groundY = H - 55;
+
+    // Sky gradient
+    const sky = kinCtx.createLinearGradient(0,0,0,groundY);
+    sky.addColorStop(0,'#0d1a22'); sky.addColorStop(1,'#162a16');
+    kinCtx.fillStyle = sky; kinCtx.fillRect(0,0,W,groundY);
+
+    // Stars
+    kinCtx.fillStyle='rgba(255,255,255,0.25)';
+    for(let i=0;i<18;i++){kinCtx.beginPath();kinCtx.arc(25+i*42,12+(i%4)*10,1,0,Math.PI*2);kinCtx.fill();}
+
+    // Road + incline
+    kinCtx.save(); kinCtx.translate(0, groundY); kinCtx.rotate(-ang);
+    const rg = kinCtx.createLinearGradient(0,0,0,55);
+    rg.addColorStop(0,'#2a4a2a'); rg.addColorStop(1,'#111');
+    kinCtx.fillStyle=rg; kinCtx.fillRect(-100,0,W*2,55);
+    kinCtx.strokeStyle='#ffba38'; kinCtx.lineWidth=2; kinCtx.setLineDash([35,25]);
+    kinCtx.beginPath(); kinCtx.moveTo(-100,18); kinCtx.lineTo(W*2,18); kinCtx.stroke();
+    kinCtx.setLineDash([]);
+
+    // Car body
+    const cx=sim.carX, ch=38, cw=76;
+    kinCtx.fillStyle='#e53935';
+    kinCtx.beginPath(); kinCtx.roundRect(cx-cw/2,-ch,cw,ch,7); kinCtx.fill();
+    kinCtx.fillStyle='#c62828';
+    kinCtx.beginPath(); kinCtx.roundRect(cx-22,-ch-20,44,20,[7,7,0,0]); kinCtx.fill();
+    kinCtx.fillStyle='rgba(130,200,255,0.75)';
+    [[-18,-ch-18],[6,-ch-18]].forEach(([ox,oy])=>{
+      kinCtx.beginPath(); kinCtx.roundRect(cx+ox,oy,16,14,3); kinCtx.fill();
+    });
+    kinCtx.fillStyle='#ffff00';
+    kinCtx.beginPath(); kinCtx.ellipse(cx+cw/2,-ch+10,4,7,0,0,Math.PI*2); kinCtx.fill();
+    [cx-24,cx+24].forEach(wx=>{
+      kinCtx.fillStyle='#111'; kinCtx.beginPath(); kinCtx.arc(wx,0,11,0,Math.PI*2); kinCtx.fill();
+      kinCtx.fillStyle='#444'; kinCtx.beginPath(); kinCtx.arc(wx,0,5,0,Math.PI*2); kinCtx.fill();
+    });
+    kinCtx.restore();
+
+    // Ground
+    const gg = kinCtx.createLinearGradient(0,groundY,0,H);
+    gg.addColorStop(0,'#1a3a1a'); gg.addColorStop(1,'#0d1a0d');
+    kinCtx.fillStyle=gg; kinCtx.fillRect(0,groundY,W,H-groundY);
+
+    // Progress bar
+    kinCtx.fillStyle='rgba(255,255,255,0.08)'; kinCtx.fillRect(10,8,W-180,5);
+    kinCtx.fillStyle='#a3f69c';
+    kinCtx.fillRect(10,8,Math.min((W-180)*sim.dist/600,W-180),5);
+  }
+
+  function simAnimate(ts) {
+    if (!sim.lastTs) sim.lastTs = ts;
+    const dt = Math.min((ts - sim.lastTs)/1000, 0.1);
+    sim.lastTs = ts;
+
+    sim.time += dt;
+    sim.curV = Math.max(0, sim.v0 + sim.accel * sim.time);
+    const dx = sim.curV * dt * 0.25;
+    sim.dist += dx; sim.carX += dx;
+    if (sim.carX > kinCanvas.width + 60) sim.carX = -60;
+
+    document.getElementById('sim-timer').textContent = sim.time.toFixed(1) + ' с';
+    document.getElementById('sim-dist').textContent  = sim.dist.toFixed(1) + ' м';
+    document.getElementById('sim-speed').textContent = sim.curV.toFixed(1) + ' м/с';
+    document.getElementById('calc-s').textContent = sim.dist.toFixed(1) + ' м';
+    document.getElementById('calc-v').textContent = sim.curV.toFixed(1) + ' м/с';
+    document.getElementById('calc-t').textContent = sim.time.toFixed(1) + ' с';
+
+    kinDraw();
+    if (sim.running) sim.animId = requestAnimationFrame(simAnimate);
+  }
+
+  function simStart() {
+    if (sim.running) return;
+    sim.running = true; sim.lastTs = null;
+    sim.curV = sim.v0;
+    sim.animId = requestAnimationFrame(simAnimate);
+  }
+  function simPause() {
+    sim.running = false;
+    if (sim.animId) cancelAnimationFrame(sim.animId);
+  }
+  function simReset() {
+    simPause();
+    sim.time=0; sim.dist=0; sim.carX=70; sim.curV=sim.v0;
+    ['sim-timer','sim-dist','sim-speed','calc-s','calc-v','calc-t'].forEach((id,i)=>{
+      document.getElementById(id).textContent = '0.0 ' + ['с','м','м/с','м','м/с','с'][i];
+    });
+    kinDraw();
+  }
+
+  simUpdateControls(); kinDraw();
+
+  // ============================================================
+  // ЗЕРТХАНА СҰРАҚТАРЫ
+  // ============================================================
+  const labQs = [
+    { q:'Машина 120 м жол жүрді, уақыты 6 с. Орташа жылдамдық?',
+      opts:['10 м/с','20 м/с','30 м/с','40 м/с'], ans:1,
+      exp:'v = s/t = 120/6 = 20 м/с' },
+    { q:'Бірқалыпты қозғалыста үдеу нешеге тең?',
+      opts:['0 м/с²','1 м/с²','9.8 м/с²','F/m'], ans:0,
+      exp:'Бірқалыпты қозғалыста жылдамдық өзгермейді, сондықтан a = 0' },
+    { q:'Ньютонның II заңы: F = ?',
+      opts:['m/a','m + a','m · a','a/m'], ans:2,
+      exp:'F = m · a — Ньютонның екінші заңы' },
+    { q:'Машина v₀=10 м/с, a=2 м/с², 5 секундтан кейінгі жылдамдық?',
+      opts:['10 м/с','15 м/с','20 м/с','25 м/с'], ans:2,
+      exp:'v = v₀ + at = 10 + 2×5 = 20 м/с' }
+  ];
+
+  let labAnswers = {}, labDone = false;
+
+  function buildLab() {
+    const c = document.getElementById('lab-questions');
+    c.innerHTML = labQs.map((q,qi) => `
+      <div class="bg-surface-container-low rounded-2xl p-5">
+        <p class="font-bold text-on-surface mb-3">${qi+1}. ${q.q}</p>
+        <div class="space-y-2">
+          ${q.opts.map((o,oi)=>`
+            <button class="quiz-option w-full text-left p-4 rounded-xl border-2 border-transparent bg-white flex justify-between items-center group"
+              id="lab-opt-${qi}-${oi}" onclick="selectLabOpt(${qi},${oi})">
+              <span>${String.fromCharCode(65+oi)}. ${o}</span>
+              <span class="material-symbols-outlined opacity-20 group-hover:opacity-60 transition-opacity">radio_button_unchecked</span>
+            </button>`).join('')}
+        </div>
+        <div id="lab-exp-${qi}" class="hidden mt-3 p-3 bg-primary-fixed/30 rounded-xl text-sm text-on-surface border-l-4 border-primary"></div>
+      </div>`).join('');
+  }
+
+  function selectLabOpt(qi, oi) {
+    if (labDone) return;
+    labAnswers[qi] = oi;
+    labQs[qi].opts.forEach((_,i)=>{
+      const el = document.getElementById(`lab-opt-${qi}-${i}`);
+      el.style.borderColor=''; el.style.background='white';
+      el.querySelector('.material-symbols-outlined').textContent='radio_button_unchecked';
+    });
+    const sel = document.getElementById(`lab-opt-${qi}-${oi}`);
+    sel.style.borderColor='#0d631b'; sel.style.background='#eaf7eb';
+    sel.querySelector('.material-symbols-outlined').textContent='radio_button_checked';
+  }
+
+  function submitLab() {
+    if (labDone) return; labDone = true;
+    let score = 0;
+    labQs.forEach((q,qi)=>{
+      const correct = labAnswers[qi] === q.ans;
+      if (correct) score++;
+      labQs[qi].opts.forEach((_,oi)=>{
+        const el = document.getElementById(`lab-opt-${qi}-${oi}`);
+        if (oi === q.ans) { el.classList.add('quiz-correct'); }
+        else if (oi === labAnswers[qi] && !correct) { el.classList.add('quiz-wrong'); }
+      });
+      const exp = document.getElementById(`lab-exp-${qi}`);
+      exp.textContent = q.exp; exp.classList.remove('hidden');
+    });
+    document.getElementById('lab-score-inline').textContent = `${score} / ${labQs.length}`;
+    const btn = document.getElementById('lab-btn');
+    btn.textContent = '✓ Аяқталды'; btn.disabled = true; btn.classList.add('opacity-50');
+    const fb = document.getElementById('lab-feedback');
+    fb.classList.remove('hidden');
+    if (score >= 3) {
+      fb.className='mt-5 p-5 rounded-2xl text-center bg-primary-fixed/40 border border-primary/20';
+      fb.innerHTML=`<div class="text-4xl mb-2">🏆</div><div class="font-bold text-xl text-primary">Керемет! ${score}/4 дұрыс!</div><div class="text-sm text-on-surface-variant mt-1">Зертхана жұмысы аяқталды! +150 Эко-тиын</div>`;
+      showToast('+150 Эко-тиын жиналды!');
+      setTimeout(()=>{ 
+        let u = JSON.parse(localStorage.getItem('pn_current_user')) || { ecoCoins: 420 };
+        u.ecoCoins = (u.ecoCoins || 420) + 150;
+        localStorage.setItem('pn_current_user', JSON.stringify(u));
+       }, 500);
+    } else {
+      fb.className='mt-5 p-5 rounded-2xl text-center bg-tertiary-fixed/40 border border-tertiary/20';
+      fb.innerHTML=`<div class="text-4xl mb-2">📚</div><div class="font-bold text-xl text-tertiary">${score}/4 дұрыс</div><div class="text-sm text-on-surface-variant mt-1">Теорияны қайталаңыз!</div>`;
+    }
+  }
+
+  buildLab();
+
+  // ============================================================
+  // ФАЗАЛЫҚ ӨТУЛЕР JS
+  // ============================================================
+  let phaseTVal = -50;
+  const phParts = [], phOX = [], phOY = [];
+  (function phaseInit() {
+    const c = document.getElementById('phaseCanvas'); if (!c) return;
+    const W = c.width, H = c.height, cols = 10, rows = 6;
+    for (let r = 0; r < rows; r++) for (let col = 0; col < cols; col++) {
+      const x = 30 + col*(W-60)/(cols-1), y = 22 + r*(H-44)/(rows-1);
+      phParts.push({x, y, vx:0, vy:0}); phOX.push(x); phOY.push(y);
+    }
+    requestAnimationFrame(phaseLoop);
+  })();
+
+  function phaseLoop() {
+    const c = document.getElementById('phaseCanvas'); if (!c) return;
+    const ctx = c.getContext('2d'), W = c.width, H = c.height;
+    const solid = phaseTVal < 0, gas = phaseTVal >= 100;
+    const spd = solid ? 0.08 : gas ? 4.0 : 1.2;
+    const col = solid ? '#64b5f6' : gas ? '#ff8a65' : '#4fc3f7';
+    ctx.fillStyle = '#0a0f0a'; ctx.fillRect(0,0,W,H);
+    phParts.forEach((p, i) => {
+      if (solid) {
+        p.x = phOX[i] + (Math.random()-.5)*spd*12;
+        p.y = phOY[i] + (Math.random()-.5)*spd*12;
+      } else {
+        p.vx += (Math.random()-.5)*spd*0.35; p.vy += (Math.random()-.5)*spd*0.35;
+        const mv = spd*1.8; p.vx = Math.max(-mv, Math.min(mv, p.vx)); p.vy = Math.max(-mv, Math.min(mv, p.vy));
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<5){p.x=5;p.vx*=-1;} if(p.x>W-5){p.x=W-5;p.vx*=-1;}
+        if(p.y<5){p.y=5;p.vy*=-1;} if(p.y>H-5){p.y=H-5;p.vy*=-1;}
+      }
+      if (!gas) {
+        for (let j = i+1; j < phParts.length; j++) {
+          const dx = phParts[j].x-p.x, dy = phParts[j].y-p.y, d = Math.sqrt(dx*dx+dy*dy);
+          const md = solid ? 90 : 55;
+          if (d < md) {
+            ctx.strokeStyle = `rgba(${solid?'100,181,246':'79,195,247'},${(1-d/md)*0.35})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(phParts[j].x, phParts[j].y); ctx.stroke();
+          }
+        }
+      }
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fillStyle = col; ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = 'bold 12px Inter';
+    ctx.fillText(solid?'ҚАТТЫ':gas?'ГАЗ':'СҰЙЫҚ', 12, H-10);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '11px Inter';
+    ctx.fillText('T = '+phaseTVal+'°C', W-75, H-10);
+    requestAnimationFrame(phaseLoop);
+  }
+
+  function phaseUpdate() {
+    phaseTVal = parseInt(document.getElementById('phase-temp').value);
+    const solid = phaseTVal < 0, gas = phaseTVal >= 100;
+    const name = solid ? 'Қатты' : gas ? 'Газ' : 'Сұйық';
+    document.getElementById('phase-temp-lbl').textContent = phaseTVal+'°C · '+name;
+    document.getElementById('phase-state').textContent = name;
+    document.getElementById('phase-state').style.color = solid?'#3b82f6':gas?'#f97316':'#0ea5e9';
+  }
+
+  function phasePreset(s) {
+    const v = {solid:-50, liquid:50, gas:200};
+    document.getElementById('phase-temp').value = v[s]; phaseTVal = v[s]; phaseUpdate();
+  }
+
+  // ============================================================
+  // ЭЛЕКТР ТІЗБЕГІ JS
+  // ============================================================
+  let cirType = 'series';
+
+  function cirMode(t) {
+    cirType = t;
+    document.getElementById('cir-series-btn').className = t==='series'
+      ? 'flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-sm'
+      : 'flex-1 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-bold text-sm';
+    document.getElementById('cir-parallel-btn').className = t==='parallel'
+      ? 'flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-sm'
+      : 'flex-1 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-bold text-sm';
+    cirCalc();
+  }
+
+  function cirCalc() {
+    const emf = +document.getElementById('cir-emf').value;
+    const r1 = +document.getElementById('cir-r1').value;
+    const r2 = +document.getElementById('cir-r2').value;
+    document.getElementById('cir-emf-lbl').textContent = emf+' В';
+    document.getElementById('cir-r1-lbl').textContent = r1+' Ом';
+    document.getElementById('cir-r2-lbl').textContent = r2+' Ом';
+    let rt, I, u1, u2;
+    if (cirType==='series') { rt=r1+r2; I=emf/rt; u1=I*r1; u2=I*r2; }
+    else { rt=(r1*r2)/(r1+r2); I=emf/rt; u1=emf; u2=emf; }
+    document.getElementById('cir-rt').textContent = rt.toFixed(1)+' Ом';
+    document.getElementById('cir-i').textContent = I.toFixed(2)+' А';
+    document.getElementById('cir-u1').textContent = u1.toFixed(1)+' В';
+    document.getElementById('cir-p').textContent = (emf*I).toFixed(1)+' Вт';
+    cirDraw(emf, r1, r2, I, u1, u2);
+  }
+
+  function cirDraw(emf, r1, r2, I, u1, u2) {
+    const c = document.getElementById('cirCanvas'); if (!c) return;
+    const ctx = c.getContext('2d'), W = c.width, H = c.height;
+    ctx.fillStyle = '#0a0f0a'; ctx.fillRect(0,0,W,H);
+    const wire='#4fc3f7', res='#ff8a65', bat='#ffba38', lbl='rgba(255,255,255,0.65)';
+    if (cirType==='series') {
+      ctx.strokeStyle = wire; ctx.lineWidth = 2;
+      [[80,40,80,H-40],[80,40,620,40],[80,H-40,620,H-40],[620,40,620,H-40]].forEach(([x1,y1,x2,y2])=>{
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      });
+      // Battery
+      ctx.strokeStyle = bat;
+      [H/2-18,H/2-7,H/2+7,H/2+18].forEach((y,i)=>{
+        ctx.lineWidth = i%2===0?4:2;
+        const hw = i%2===0?13:8;
+        ctx.beginPath(); ctx.moveTo(80-hw,y); ctx.lineTo(80+hw,y); ctx.stroke();
+      });
+      ctx.fillStyle=bat; ctx.font='bold 10px Inter';
+      ctx.fillText('+',83,H/2-25); ctx.fillText('−',83,H/2+30); ctx.fillText(emf+'В',58,H/2+50);
+      // R1
+      ctx.strokeStyle=res; ctx.lineWidth=2; ctx.strokeRect(245,28,110,24);
+      ctx.fillStyle='rgba(255,138,101,0.12)'; ctx.fillRect(245,28,110,24);
+      ctx.fillStyle=res; ctx.font='11px Inter'; ctx.fillText('R₁='+r1+'Ом',252,43);
+      // R2
+      ctx.strokeStyle=res; ctx.strokeRect(445,28,110,24);
+      ctx.fillStyle='rgba(255,138,101,0.12)'; ctx.fillRect(445,28,110,24);
+      ctx.fillStyle=res; ctx.font='11px Inter'; ctx.fillText('R₂='+r2+'Ом',452,43);
+      // Labels
+      ctx.fillStyle='#a3f69c'; ctx.font='bold 11px Inter';
+      ctx.fillText('I = '+I.toFixed(2)+' А', 140, 33);
+      ctx.fillStyle=lbl; ctx.font='11px Inter';
+      ctx.fillText('U₁='+u1.toFixed(1)+'В', 270, 22);
+      ctx.fillText('U₂='+u2.toFixed(1)+'В', 472, 22);
+    } else {
+      // Parallel
+      const mx = 80, top = H/2-65, bot = H/2+65, rx = 620;
+      ctx.strokeStyle = wire; ctx.lineWidth = 2;
+      [[mx,top,rx,top],[mx,bot,rx,bot],[mx,top,mx,bot],[rx,top,rx,bot]].forEach(([x1,y1,x2,y2])=>{
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      });
+      // Battery
+      ctx.strokeStyle = bat;
+      [H/2-18,H/2-7,H/2+7,H/2+18].forEach((y,i)=>{
+        ctx.lineWidth = i%2===0?4:2;
+        const hw = i%2===0?13:8;
+        ctx.beginPath(); ctx.moveTo(mx-hw,y); ctx.lineTo(mx+hw,y); ctx.stroke();
+      });
+      ctx.fillStyle=bat; ctx.font='bold 10px Inter';
+      ctx.fillText('+',mx+4,H/2-25); ctx.fillText('−',mx+4,H/2+30); ctx.fillText(emf+'В',mx-20,H/2+52);
+      // Branches
+      [250,460].forEach((x,bi)=>{
+        ctx.strokeStyle=wire; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(x,top); ctx.lineTo(x,top+30); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x,bot); ctx.lineTo(x,bot-30); ctx.stroke();
+        ctx.strokeStyle=res; ctx.lineWidth=2; ctx.strokeRect(x-18,top+30,36,bot-top-60);
+        ctx.fillStyle='rgba(255,138,101,0.12)'; ctx.fillRect(x-18,top+30,36,bot-top-60);
+        ctx.fillStyle=res; ctx.font='10px Inter'; ctx.textAlign='center';
+        ctx.fillText('R'+(bi+1)+'='+(bi===0?r1:r2)+'Ом', x, H/2+4);
+        ctx.textAlign='left';
+      });
+      ctx.fillStyle='#a3f69c'; ctx.font='bold 11px Inter';
+      ctx.fillText('I = '+I.toFixed(2)+' А', 160, top-5);
+      ctx.fillStyle=lbl; ctx.font='11px Inter';
+      ctx.fillText(emf+' В (параллель)', 280, H/2-75);
+    }
+  }
+
+  // ============================================================
+  // МАГНИТ СИМУЛЯТОРЫ JS
+  // ============================================================
+  const magC = document.getElementById('magCanvas');
+  const magCtx = magC ? magC.getContext('2d') : null;
+  let magnets = [
+    {x:200, y:125, q:+1, label:'N', color:'#ef4444'},
+    {x:500, y:125, q:-1, label:'S', color:'#3b82f6'}
+  ];
+  let magDrag = null, magOff = {x:0, y:0};
+
+  function magDraw() {
+    if (!magCtx) return;
+    const W = magC.width, H = magC.height;
+    magCtx.fillStyle = '#0a0f0a'; magCtx.fillRect(0,0,W,H);
+    // Field lines
+    for (let gx=20; gx<W; gx+=32) {
+      for (let gy=20; gy<H; gy+=32) {
+        let fx=0, fy=0;
+        magnets.forEach(m=>{
+          const dx=gx-m.x, dy=gy-m.y, d2=dx*dx+dy*dy, d=Math.sqrt(d2);
+          if(d<5) return;
+          const k=m.q*900/d2; fx+=k*dx/d; fy+=k*dy/d;
+        });
+        const fl = Math.sqrt(fx*fx+fy*fy); if(fl<0.05) continue;
+        const ux=fx/fl*7, uy=fy/fl*7;
+        magCtx.strokeStyle = `rgba(163,246,156,${Math.min(fl*0.35,0.5)})`;
+        magCtx.lineWidth = 1;
+        magCtx.beginPath(); magCtx.moveTo(gx,gy); magCtx.lineTo(gx+ux,gy+uy); magCtx.stroke();
+      }
+    }
+    // Stats
+    const dx=magnets[1].x-magnets[0].x, dy=magnets[1].y-magnets[0].y;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    const attract = magnets[0].q !== magnets[1].q;
+    const F = (8990/((dist*0.01)*(dist*0.01))).toFixed(2);
+    document.getElementById('mag-dist-lbl').textContent = (dist/100).toFixed(2)+' м';
+    document.getElementById('mag-force').textContent = F+' Н';
+    document.getElementById('mag-type').textContent = attract?'Тарту':'Тебу';
+    document.getElementById('mag-type').style.color = attract?'#0d631b':'#ef4444';
+    // Arrows
+    if (attract) {
+      magArrow(magnets[0].x+26, magnets[0].y, magnets[1].x-26, magnets[1].y, '#a3f69c');
+      magArrow(magnets[1].x-26, magnets[1].y, magnets[0].x+26, magnets[0].y, '#a3f69c');
+    } else {
+      magArrow(magnets[0].x-26, magnets[0].y, magnets[0].x-70, magnets[0].y, '#ef4444');
+      magArrow(magnets[1].x+26, magnets[1].y, magnets[1].x+70, magnets[1].y, '#ef4444');
+    }
+    // Magnets
+    magnets.forEach(m=>{
+      const grd = magCtx.createRadialGradient(m.x,m.y,0,m.x,m.y,24);
+      grd.addColorStop(0, m.color+'cc'); grd.addColorStop(1, m.color+'33');
+      magCtx.beginPath(); magCtx.arc(m.x,m.y,24,0,Math.PI*2);
+      magCtx.fillStyle=grd; magCtx.fill();
+      magCtx.strokeStyle=m.color; magCtx.lineWidth=2.5; magCtx.stroke();
+      magCtx.fillStyle='#fff'; magCtx.font='bold 16px Inter';
+      magCtx.textAlign='center'; magCtx.textBaseline='middle';
+      magCtx.fillText(m.label, m.x, m.y);
+      magCtx.textAlign='left'; magCtx.textBaseline='alphabetic';
+    });
+  }
+
+  function magArrow(x1,y1,x2,y2,color) {
+    magCtx.strokeStyle=color; magCtx.lineWidth=2; magCtx.globalAlpha=0.75;
+    magCtx.beginPath(); magCtx.moveTo(x1,y1); magCtx.lineTo(x2,y2); magCtx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1);
+    magCtx.beginPath(); magCtx.moveTo(x2,y2);
+    magCtx.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));
+    magCtx.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));
+    magCtx.closePath(); magCtx.fillStyle=color; magCtx.fill();
+    magCtx.globalAlpha=1;
+  }
+
+  function magMouseDown(e) {
+    const rect=magC.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(magC.width/rect.width);
+    const my=(e.clientY-rect.top)*(magC.height/rect.height);
+    magnets.forEach((m,i)=>{ if(Math.hypot(mx-m.x,my-m.y)<30){magDrag=i;magOff={x:mx-m.x,y:my-m.y};} });
+  }
+  function magMouseMove(e) {
+    if(magDrag===null) return;
+    const rect=magC.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(magC.width/rect.width);
+    const my=(e.clientY-rect.top)*(magC.height/rect.height);
+    magnets[magDrag].x=Math.max(28,Math.min(magC.width-28,mx-magOff.x));
+    magnets[magDrag].y=Math.max(28,Math.min(magC.height-28,my-magOff.y));
+    magDraw();
+  }
+  function magMouseUp() { magDrag=null; }
+
+  magC && magC.addEventListener('dblclick', e=>{
+    const rect=magC.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(magC.width/rect.width);
+    const my=(e.clientY-rect.top)*(magC.height/rect.height);
+    magnets.forEach(m=>{
+      if(Math.hypot(mx-m.x,my-m.y)<30){
+        m.q*=-1; m.label=m.q>0?'N':'S'; m.color=m.q>0?'#ef4444':'#3b82f6';
+        magDraw();
+      }
+    });
+  });
+
+  cirCalc();
+  magDraw();
+
+  function showCoinModal(chapterName, required) {
+    let u = JSON.parse(localStorage.getItem('pn_current_user')) || { ecoCoins: 420, unlockedChapters: [] };
+    u.unlockedChapters = u.unlockedChapters || [];
+    const isUnlocked = u.unlockedChapters.includes(chapterName);
+    
+    document.getElementById('chapter-modal-icon').textContent = isUnlocked ? 'lock_open' : 'stars';
+    document.getElementById('chapter-modal-icon').style.color = isUnlocked ? '#0d631b' : '#734e00';
+    document.getElementById('chapter-modal-title').textContent = chapterName;
+    
+    const modalBtn = document.querySelector('#chapter-modal button');
+    
+    if (isUnlocked) {
+      document.getElementById('chapter-modal-body').textContent = 'Тарау ашылды! Жаңа контентке қош келдіңіз.';
+      document.getElementById('modal-coins-display').textContent = 'АШЫҚ';
+      if(modalBtn) { modalBtn.textContent = 'Кіру'; modalBtn.onclick = function() { document.getElementById('chapter-modal').classList.add('hidden'); }; }
+    } else {
+      const currentCoins = u.ecoCoins || 420;
+      const remaining = Math.max(0, required - currentCoins);
+      if (remaining > 0) {
+        document.getElementById('chapter-modal-body').textContent = `Бұл тарауды ашу үшін тағы ${remaining} Эко-тиын жетіспейді. Сабақтарды орындап тиын жинаңыз!`;
+        document.getElementById('modal-coins-display').textContent = currentCoins + ' / ' + required + ' Эко-тиын';
+        if(modalBtn) { modalBtn.textContent = 'Жабық'; modalBtn.onclick = function() { document.getElementById('chapter-modal').classList.add('hidden'); }; }
+      } else {
+        document.getElementById('chapter-modal-body').textContent = `Сізде жеткілікті тиын бар. Тарауды ашу үшін ${required} Эко-тиын жұмсалады.`;
+        document.getElementById('modal-coins-display').textContent = 'Құны: ' + required + ' Эко-тиын';
+        if(modalBtn) {
+          modalBtn.textContent = 'Ашу (Тиын жұмсау)';
+          modalBtn.onclick = function() {
+            u.ecoCoins -= required; u.unlockedChapters.push(chapterName);
+            const users = JSON.parse(localStorage.getItem('pn_users') || "[]");
+            const idx = users.findIndex(v => v && u && v.email === u.email);
+            if (idx !== -1) { users[idx] = u; localStorage.setItem('pn_users', JSON.stringify(users)); }
+            localStorage.setItem('pn_current_user', JSON.stringify(u));
+            const cd = document.getElementById('coin-display'); if(cd) cd.textContent = "$" + u.ecoCoins + " Эко-тиын";
+            const td = document.getElementById('total-coins'); if(td) td.textContent = u.ecoCoins;
+            showCoinModal(chapterName, required);
+            if(typeof showToast === 'function') showToast(chapterName + ' ашылды!');
+          };
+        }
+      }
+    }
+    document.getElementById('chapter-modal').classList.remove('hidden');
+  }
+
+  function showPremiumModal(chapterName) {
+    document.getElementById('premium-modal-title').textContent = chapterName;
+    document.getElementById('premium-modal').classList.remove('hidden');
+  }
+</script>
+
+<!-- Coin unlock modal -->
+<div id="chapter-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <span id="chapter-modal-icon" class="material-symbols-outlined text-5xl" style="font-variation-settings:'FILL' 1;color:#734e00;">stars</span>
+    </div>
+    <h3 id="chapter-modal-title" class="text-lg font-headline font-bold text-on-surface text-center mb-3"></h3>
+    <p id="chapter-modal-body" class="text-sm text-on-surface-variant text-center mb-6"></p>
+    <div class="bg-tertiary-fixed/40 rounded-2xl p-4 mb-6 text-center">
+      <div class="text-xs text-on-surface-variant mb-1">Ағымдағы жинақ</div>
+      <div class="text-2xl font-headline font-bold text-tertiary" id="modal-coins-display">0 Эко-тиын</div>
+    </div>
+    <button onclick="document.getElementById('chapter-modal').classList.add('hidden')"
+      class="w-full bg-primary text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all">
+      Жарайды
+    </button>
+  </div>
+</div>
+
+<!-- Premium modal -->
+<div id="premium-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 bg-gradient-to-br from-[#734e00] to-[#ffba38] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+      </div>
+    </div>
+    <h3 class="text-xl font-headline font-bold text-on-surface text-center mb-2">Premium тарау</h3>
+    <h4 id="premium-modal-title" class="text-sm text-primary font-medium text-center mb-4"></h4>
+    <p class="text-sm text-on-surface-variant text-center mb-6">Бұл тарауға қол жеткізу үшін PhysiNature Premium мүшелігін сатып алыңыз немесе жеткілікті Эко-тиын жинаңыз.</p>
+    <div class="space-y-3">
+      <button class="w-full bg-gradient-to-r from-[#734e00] to-[#ffba38] text-white py-3 rounded-xl font-headline font-bold text-sm hover:brightness-110 transition-all"
+        onclick="showToast('Premium мүшелік жақын арада қосылады!'); document.getElementById(\'premium-modal\').classList.add(\'hidden\')">
+        Premium сатып алу
+      </button>
+      <button onclick="document.getElementById('premium-modal').classList.add('hidden')"
+        class="w-full border border-outline-variant text-on-surface-variant py-3 rounded-xl font-headline font-bold text-sm hover:bg-surface-container transition-all">
+        Артқа
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
